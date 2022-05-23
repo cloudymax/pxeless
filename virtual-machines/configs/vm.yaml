@@ -1,0 +1,18 @@
+VM:
+  host_address: 192.168.50.100
+  host_ssh_port: '22'
+  vm_name: testvm
+  vm_user: vmadmin
+  vm_ssh_port: '1234'
+  disk_name: boot.img
+  disk_size: 20G
+  iso_file: ubuntu-22.04-live-server-amd64.iso
+  ubuntu_codename: jammy
+  cloud_image_name: '-server-cloudimg-amd64'
+  cloud_image_filetype: '.img'
+  cloud_image_url: 'https://cloud-images.ubuntu.com/jammy/current'
+  memory: 4G
+  physical_cores: '2'
+  vga: std
+  vm_key: ''
+  vm_key_file: $VM_USER
