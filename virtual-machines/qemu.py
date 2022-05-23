@@ -18,7 +18,7 @@ import time
 import io
 import math 
 
-vm_config_path = "/Users/max/Desktop/Repos/ark8de/ansible/vm.yaml"
+vm_config_path = "/Users/max/Desktop/Repos/public-infra/virtual-machines/configs/vm.yaml"
 
 log_level = log.INFO
 program_log = log.getLogger(f"qemu-py")
@@ -130,8 +130,8 @@ def download_file(url: str, output_name: str):
                     timer = 0
                     sys.stdout.write(f"tick")
 
-                #sys.stdout.write(f"\r {time_elapsed} [{bar_left}{bar_right}] {progress}% - {round(speed, 2)}Mbps")
-                #sys.stdout.flush()
+                sys.stdout.write(f"\r {time_elapsed} [{bar_left}{bar_right}] {progress}% - {round(speed, 2)}Mbps")
+                sys.stdout.flush()
 
 # load the yaml config file
 vm_config = read_yaml_file(vm_config_path)
