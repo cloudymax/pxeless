@@ -18,7 +18,7 @@ import time
 import io
 import math 
 
-vm_config_path = "/Users/max/Desktop/Repos/public-infra/virtual-machines/configs/vm.yaml"
+vm_config_path = "/home/max/public-infra/virtual-machines/configs/vm.yaml"
 
 log_level = log.INFO
 program_log = log.getLogger(f"qemu-py")
@@ -115,23 +115,24 @@ def download_file(url: str, output_name: str):
         if total_bytes is None: # no content length header
             f.write(response.content)
         else:
-            total_bytes = int(total_bytes)
-            for chunk in response.iter_content(chunk_size):
-                downloaded_bytes += len(chunk)
-                time_elapsed = time.time()  - start
-                timer += time_elapsed
-                f.write(chunk)
-                progress = round((downloaded_bytes/total_bytes) * 100, 2)
-                bar_fill = int(bar_length * downloaded_bytes / int(total_bytes))
-                speed = (downloaded_bytes // time_elapsed) / 100000
-                bar_left = '*' * bar_fill
-                bar_right = ' ' * (bar_length - bar_fill)
-                if timer >= frame_length:
-                    timer = 0
-                    sys.stdout.write(f"tick")
+            with open(output_name, 'wb') as f:
+                total_bytes = int(total_bytes)
+                for chunk in response.iter_content(chunk_size):
+                    downloaded_bytes += len(chunk)
+                    time_elapsed = time.time()  - start
+                    timer += time_elapsed
+                    f.write(chunk)
+                    progress = round((downloaded_bytes/total_bytes) * 100, 2)
+                    bar_fill = int(bar_length * downloaded_bytes / int(total_bytes))
+                    speed = (downloaded_bytes // time_elapsed) / 100000
+                    bar_left = '*' * bar_fill
+                    bar_right = ' ' * (bar_length - bar_fill)
+                    if timer >= frame_length:
+                        timer = 0
+                        sys.stdout.write(f"tick")
 
-                sys.stdout.write(f"\r {time_elapsed} [{bar_left}{bar_right}] {progress}% - {round(speed, 2)}Mbps")
-                sys.stdout.flush()
+                    sys.stdout.write(f"\r {round(time_elapsed)} [{bar_left}{bar_right}] {round(progress)}% - {round(speed, 2)} Mbps\r\r")
+                    sys.stdout.flush()
 
 # load the yaml config file
 vm_config = read_yaml_file(vm_config_path)
