@@ -46,7 +46,9 @@ FlatBradley:
   - RAM: "16GB"
 ```
 
-## Getting your GPU PCI Information
+## Metal Configuration
+
+1. Getting your GPU PCIe Information
 
 Your GPU that you wish to pass through to the VM will often have other devices in its IOMMU group.
 If this is the case, ALL devices in that IOMMU group should be passed through to your VM.
@@ -66,6 +68,8 @@ IOMMU Group 14 02:00.2 USB [10de:1ada]
 IOMMU Group 14 02:00.3 Serial [10de:1adb]
 ```
 
+2. Kernel Modules/Grub configuration
+
 From the above output, get the PCI Bus, Device ID, IOMMU Group, and Type of NVIDIA pci devices. Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 14]. Use these values modify kernel modules via a script or with a kernel mod line in /etc/defaul/grub
 
 - /etc/defaut/grub
@@ -77,82 +81,79 @@ From the above output, get the PCI Bus, Device ID, IOMMU Group, and Type of NVID
 - module script
 
   ```zsh
-  
+
   cat << EOF > /etc/initramfs-tools/scripts/init-top/vfio.sh
   #!/bin/sh
-  
+
   # VGA-compatible-controller
   PCIbusID0="01:00.0"
-  
+
   # audio-device
   PCIbusID1="01:00.1"
-  
+
   PREREQ=""
-  
+
   prereqs()
   {
      echo "$PREREQ"
   }
-  
+
   case $1 in
   prereqs)
      prereqs
      exit 0
      ;;
   esac
-  
+
   for dev in 0000:"$PCIbusID0" 0000:"$PCIbusID1"
   do 
    echo "vfio-pci" > /sys/bus/pci/devices/$dev/driver_override 
    echo "$dev" > /sys/bus/pci/drivers/vfio-pci/bind 
   done
-  
+
   exit 0
-  
+
   EOF
-  
+
   ```
-Make it executable:
+
+3. Set the kernel module options by creating a replacement config file for: "/etc/initramfs-tools/modules"
+
+
+- Create the file in the local dir
+
+  ```zsh
+
+  cat << EOF > modules
+  # List of modules that you want to include in your initramfs.
+  # They will be loaded at boot time in the order below.
+  #
+  # Syntax:  module_name [args ...]
+  #
+  # You must run update-initramfs(8) to effect this change.
+  #
+  # Examples:
+  #
+  # raid1
+  # sd_mod
+  options kvm ignore_msrs=1
+  EOF
+
+  ```
+
+- Move it into place and correct the ownership and pemrissions
+
+  ```zsh
+  sudo mv /etc/initramfs-tools/modules /etc/initramfs-tools/modules.bak
+  sudo mv modules /etc/initramfs-tools/
+  sudo chown root:root /etc/initramfs-tools/modules 
+  sudo chmod 644 /etc/initramfs-tools/modules 
+  ```
+
+
+4. CPU Pinning
 
 ```zsh
-chmod +x vfio.sh
-```
-
-Setting the kernel module options by creating a replacement config file for: "/etc/initramfs-tools/modules"
-
-
-Create the file in the local dir
-
-```zsh
-
-cat << EOF > modules
-# List of modules that you want to include in your initramfs.
-# They will be loaded at boot time in the order below.
-#
-# Syntax:  module_name [args ...]
-#
-# You must run update-initramfs(8) to effect this change.
-#
-# Examples:
-#
-# raid1
-# sd_mod
-options kvm ignore_msrs=1
-EOF
-
-```
-
-Move it into place and correct the ownership and pemrissions
-
-```
-sudo mv /etc/initramfs-tools/modules /etc/initramfs-tools/modules.bak
-sudo mv modules /etc/initramfs-tools/
-sudo chown root:root /etc/initramfs-tools/modules 
-sudo chmod 644 /etc/initramfs-tools/modules 
-```
-
-
-CPU Pinning
  <vcpu placement='static'>14</vcpu>
  <iothreads>1</iothreads>
  <cputune>
@@ -173,9 +174,10 @@ CPU Pinning
     <emulatorpin cpuset='0,8'/>
     <iothreadpin iothread='1' cpuset='0,8'/>
  </cputune>
+```
  
  
-# simple launch to get into the gui
+## VM creation
 
 Once we can get into the GUI we must update some group policy values to set the proper GPU for use with RDP connections
 
