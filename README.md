@@ -1,13 +1,13 @@
-# [QEMU](https://www.qemu.org/) Virtual Machines
+# GPU Accelereated Virtual Machines with QEMU
 
 QEMU is a generic and open source machine emulator and virtualizer. It can be used for __system emulation__, where it provides a virtual model of an entire machine to run a guest OS or it may work with a hypervisor such as KVM, Xen, Hax or Hypervisor. The second supported way to use QEMU is __user mode emulation__, where QEMU can launch processes compiled for one CPU on another CPU. In this mode the CPU is always emulated.
 
-QEMU is special among its counterparts for a couple important reasons:
+QEMU is special amongst its counterparts for a couple important reasons:
 
   - Like ESXi, its capable of PCI passthrough for GPUs (VirtualBox cant help us here)
   - Unlike ESXi, it's free
   - It's multi-platform
-  - It's fast - not as fast as LXD, FireCracker, Cloud-Hypervisor, or NEMU however it's way more mature and documented 
+  - It's fast - not as fast as [LXD](https://linuxcontainers.org/lxd/introduction/), [FireCracker](https://firecracker-microvm.github.io/), or [Cloud-Hypervisor](https://github.com/cloud-hypervisor/cloud-hypervisor)(formerly NEMU) - it's way more mature and documented. However unlike a system container it can create windows hosts, and unlike Firecracker it supports pinning memmory addresses and cpu cores.
 
 
 ## Sources
