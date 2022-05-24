@@ -56,7 +56,6 @@ This is only really an issue if your GPU for the Host and the GPU for the Guest 
 If that's the case, you need a patched kernel[idk how to do it yet] or to put the GPU in a differient PCI-e slot on your motherboard.
 
 The [iommu-finder.sh](virtual-machines/iommu-finder.sh) script will gather all the PCI devices and sort them cleanly based on their IOMMU Group:
->>>>>>> Stashed changes
 
 ```zsh
 > bash iommu-finder.sh |grep NVIDIA |awk '{print $1,$2,$3,$4,$5,$(NF-2)}'
@@ -67,53 +66,52 @@ IOMMU Group 14 02:00.2 USB [10de:1ada]
 IOMMU Group 14 02:00.3 Serial [10de:1adb]
 ```
 
-Froxm the above output I get the PCI Bus, Device ID, IOMMU Group, and Type of NVIDIA pci devices. Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 14]. To apply these values im going modify kernel modules via scripts. xsssssthat will same effect as a kernel mod line in /etc/defaul/grub like:
+From the above output, get the PCI Bus, Device ID, IOMMU Group, and Type of NVIDIA pci devices. Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 14]. Use these values modify kernel modules via a script or with a kernel mod line in /etc/defaul/grub
 
-```zsh
+- /etc/defaut/grub
 
-GRUB_CMDLINE_LINUX_DEFAULT="amd_iommu=on iommu=pt kvm.ignore_msrs=1 vfio-pci.ids=<someID-0>,<someID-1>"
+  ```zsh
+  GRUB_CMDLINE_LINUX_DEFAULT="amd_iommu=on iommu=pt kvm.ignore_msrs=1 vfio-pci.ids=<someID-0>,<someID-1>"
+  ```
 
-```
+- module script
 
-
-Creating /etc/initramfs-tools/scripts/init-top/vfio.sh
-
-```zsh
-
-cat << EOF > /etc/initramfs-tools/scripts/init-top/vfio.sh
-#!/bin/sh
-
-# VGA-compatible-controller
-PCIbusID0="01:00.0"
-
-# audio-device
-PCIbusID1="01:00.1"
-
-PREREQ=""
-
-prereqs()
-{
-   echo "$PREREQ"
-}
-
-case $1 in
-prereqs)
-   prereqs
-   exit 0
-   ;;
-esac
-
-for dev in 0000:"$PCIbusID0" 0000:"$PCIbusID1"
-do 
- echo "vfio-pci" > /sys/bus/pci/devices/$dev/driver_override 
- echo "$dev" > /sys/bus/pci/drivers/vfio-pci/bind 
-done
-
-exit 0
-
-EOF
-
-```
+  ```zsh
+  
+  cat << EOF > /etc/initramfs-tools/scripts/init-top/vfio.sh
+  #!/bin/sh
+  
+  # VGA-compatible-controller
+  PCIbusID0="01:00.0"
+  
+  # audio-device
+  PCIbusID1="01:00.1"
+  
+  PREREQ=""
+  
+  prereqs()
+  {
+     echo "$PREREQ"
+  }
+  
+  case $1 in
+  prereqs)
+     prereqs
+     exit 0
+     ;;
+  esac
+  
+  for dev in 0000:"$PCIbusID0" 0000:"$PCIbusID1"
+  do 
+   echo "vfio-pci" > /sys/bus/pci/devices/$dev/driver_override 
+   echo "$dev" > /sys/bus/pci/drivers/vfio-pci/bind 
+  done
+  
+  exit 0
+  
+  EOF
+  
+  ```
 Make it executable:
 
 ```zsh
