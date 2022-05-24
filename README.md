@@ -38,38 +38,10 @@ This is only really an issue if your GPU for the Host and the GPU for the Guest 
 If that's the case, you need a patched kernel[idk how to do it yet] or to put the GPU in a differient PCI-e slot on your motherboard.
 
 
-This script will gather all the PCI devices and sort them cleanly based on their IOMMU Group:
+The iommu-finder.sh script will gather all the PCI devices and sort them cleanly based on their IOMMU Group:
 
 ```zsh
-
-cat << EOF > iommu-finder.sh
-#!/bin/bash
-# change the 999 if needed
-shopt -s nullglob
-for d in /sys/kernel/iommu_groups/{0..999}/devices/*; do
-    n=${d#*/iommu_groups/*}; n=${n%%/*}
-    printf 'IOMMU Group %s ' "$n"
-    lspci -nns "${d##*/}"
-done;
-EOF
-
-chmod +x iommu-finder
-```
-
-Example script output
-
-```zsh
-...
-...
-IOMMU Group 0 00:00.0 Host bridge [0600]: Intel Corporation 4th Gen Core Processor DRAM Controller [8086:0c00] (rev 06)
-IOMMU Group 1 00:01.0 PCI bridge [0604]: Intel Corporation Xeon E3-1200 v3/4th Gen Core Processor PCI Express x16 Controller [8086:0c01] (rev 06)
-IOMMU Group 1 01:00.0 VGA compatible controller [0300]: NVIDIA Corporation GP104 [GeForce GTX 1070 Ti] [10de:1b82] (rev a1)
-IOMMU Group 1 01:00.1 Audio device [0403]: NVIDIA Corporation GP104 High Definition Audio Controller [10de:10f0] (rev a1)
-IOMMU Group 2 00:02.0 VGA compatible controller [0300]: Intel Corporation Xeon E3-1200 v3/4th Gen Core Processor Integrated Graphics Controller [8086:0412] (rev 06)
-IOMMU Group 3 00:03.0 Audio device [0403]: Intel Corporation Xeon E3-1200 v3/4th Gen Core Processor HD Audio Controller [8086:0c0c] (rev 06)
-...
-...
-
+bash iommu-finder.sh |grep NVIDIA |awk '{print $1,$2,$3,$4,$5,$(NF-2)}'
 ```
 
 From the above output I found the PCI Bus and Device ID of the NVIDIA GPU and its related devices. 
