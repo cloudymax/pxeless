@@ -20,13 +20,9 @@ The second supported way to use QEMU is __user mode emulation__, where QEMU can 
 
 - [virtualization-hypervisors-explaining-qemu-kvm-libvirt](https://sumit-ghosh.com/articles/virtualization-hypervisors-explaining-qemu-kvm-libvirt/) by Sumit Ghosh
 
-## usage in kubernetes
-
 - [Schedule GPUs in K8s](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/#deploying-amd-gpu-device-plugin)
 
-## installation of Nvidia Container Toolkit
-
-- [install guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
+- [Nvidia Container Toolkit install guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
 
 ## Getting your GPU PCI Information
 
