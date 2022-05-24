@@ -42,19 +42,13 @@ bash iommu-finder.sh |grep NVIDIA |awk '{print $1,$2,$3,$4,$5,$(NF-2)}'
 
 From the above output I found the PCI Bus and Device ID of the NVIDIA GPU and its related devices. 
 
-```yaml
-Nvidia:
-  - GUEST_GPU: GTX 1070ti
-    IOMMU_Group: '1'
-  - Name: PCI Bridge
-    Bus: '00:01.0'
-    DeviceId: '8086:0c01'
-  - Name: VGA-compatible-controller
-    Bus: '01:00.0'
-    DeviceId": '10de:1b82'
-  - Name: Audio_Device
-    Bus: '01:00.1'
-    DeviceId": '10de:10f0'
+```zsh
+> bash iommu-finder.sh |grep NVIDIA |awk '{print $1,$2,$3,$4,$5,$(NF-2)}'
+
+IOMMU Group 14 02:00.0 VGA [10de:1f08]
+IOMMU Group 14 02:00.1 Audio [10de:10f9]
+IOMMU Group 14 02:00.2 USB [10de:1ada]
+IOMMU Group 14 02:00.3 Serial [10de:1adb]
 ```
 
 Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 1]
