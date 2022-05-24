@@ -11,6 +11,7 @@ QEMU is special amongst its counterparts for a couple important reasons:
   - Unlike a [system container](https://linuxcontainers.org/lxd/introduction/) or [Multipass](https://multipass.run/docs) it can create windows hosts 
   - Unlike Firecracker it supports pinning memmory addresses and cpu cores.
 
+These qualities make QEMU well-suited for those seeking a hypervisor running the first layer of virtualization. In your second layer though, you should consider the lighter, faster LXD, Firecracker, and Cloud-Hypervisor.
 
 ## Sources
 
