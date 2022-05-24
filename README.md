@@ -37,15 +37,15 @@ These qualities make QEMU well-suited for those seeking a hypervisor running the
 ## Tested Hardware
 
 ```yaml
-Compububu:
+Node0:
   - GPU: "GTX 1070ti"
   - CPU: "i7-4770k"
   - RAM: "16GB"
-BigBradley:
+Node1:
   - GPU: "RTX 2060"
   - CPU: "i7-11700"
   - RAM: "72GB"
-FlatBradley:
+Node2:
   - GPU: "gtx 970m"
   - CPU: "i7 4720HQ"
   - RAM: "16GB"
@@ -75,76 +75,24 @@ IOMMU Group 14 02:00.3 Serial [10de:1adb]
 
 2. Kernel Modules/Grub configuration
 
-From the above output, get the PCI Bus, Device ID, IOMMU Group, and Type of NVIDIA pci devices. Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 14]. Use these values modify kernel modules via a script or with a kernel mod line in /etc/defaul/grub
+From the above output, get the PCI Bus, Device ID, IOMMU Group, and Type of NVIDIA pci devices. Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 14]. Use these values modify kernel modules via [/etc/initramfs-tools/scripts/init-top/vfio.sh](virtusl-machines/vfio.sh) or with a kernel mod line in /etc/defaul/grub.
 
-- /etc/defaut/grub
+- script option
+
+  ```zsh
+  sudo cp virtual-machines/vfio.sh /etc/initramfs-tools/scripts/init-top/vfio.sh
+  chmod +x /etc/initramfs-tools/scripts/init-top/vfio.sh
+  ```
+
+- /etc/defaut/grub example
 
   ```zsh
   GRUB_CMDLINE_LINUX_DEFAULT="amd_iommu=on iommu=pt kvm.ignore_msrs=1 vfio-pci.ids=<someID-0>,<someID-1>"
   ```
 
-- module script
-
-  ```zsh
-
-  cat << EOF > /etc/initramfs-tools/scripts/init-top/vfio.sh
-  #!/bin/sh
-
-  # VGA-compatible-controller
-  PCIbusID0="01:00.0"
-
-  # audio-device
-  PCIbusID1="01:00.1"
-
-  PREREQ=""
-
-  prereqs()
-  {
-     echo "$PREREQ"
-  }
-
-  case $1 in
-  prereqs)
-     prereqs
-     exit 0
-     ;;
-  esac
-
-  for dev in 0000:"$PCIbusID0" 0000:"$PCIbusID1"
-  do 
-   echo "vfio-pci" > /sys/bus/pci/devices/$dev/driver_override 
-   echo "$dev" > /sys/bus/pci/drivers/vfio-pci/bind 
-  done
-
-  exit 0
-
-  EOF
-
-  ```
 
 3. Set the kernel module options by creating a replacement config file for: "/etc/initramfs-tools/modules"
 
-
-- Create the file in the local dir
-
-  ```zsh
-
-  cat << EOF > modules
-  # List of modules that you want to include in your initramfs.
-  # They will be loaded at boot time in the order below.
-  #
-  # Syntax:  module_name [args ...]
-  #
-  # You must run update-initramfs(8) to effect this change.
-  #
-  # Examples:
-  #
-  # raid1
-  # sd_mod
-  options kvm ignore_msrs=1
-  EOF
-
-  ```
 
 - Move it into place and correct the ownership and pemrissions
 
