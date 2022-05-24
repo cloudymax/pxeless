@@ -1,8 +1,13 @@
 # [QEMU](https://www.qemu.org/) Virtual Machines
 
-QEMU is a generic and open source machine emulator and virtualizer. It can be used for __system emulation__, where it provides a virtual model of an entire machine to run a guest OS or it may work with a hypervisor such as KVM, Xen, Hax or Hypervisor.
+QEMU is a generic and open source machine emulator and virtualizer. It can be used for __system emulation__, where it provides a virtual model of an entire machine to run a guest OS or it may work with a hypervisor such as KVM, Xen, Hax or Hypervisor. The second supported way to use QEMU is __user mode emulation__, where QEMU can launch processes compiled for one CPU on another CPU. In this mode the CPU is always emulated.
 
-The second supported way to use QEMU is __user mode emulation__, where QEMU can launch processes compiled for one CPU on another CPU. In this mode the CPU is always emulated.
+QEMU is special among its counterparts for a couple important reasons:
+
+  - Like ESXi, its capable of PCI passthrough for GPUs (VirtualBox cant help us here)
+  - Unlike ESXi, it's free
+  - It's multi-platform
+  - It's fast - not as fast as LXD, FireCracker, Cloud-Hypervisor, or NEMU however it's way more mature and documented 
 
 
 ## Sources
@@ -22,7 +27,24 @@ The second supported way to use QEMU is __user mode emulation__, where QEMU can 
 
 - [Schedule GPUs in K8s](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/#deploying-amd-gpu-device-plugin)
 
-- [Nvidia Container Toolkit install guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
+- [NVIDIA Container Toolkit install guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
+
+## Tested Hardware
+
+```yaml
+Compububu:
+  - GPU: "GTX 1070ti"
+  - CPU: "i7-4770k"
+  - RAM: "16GB"
+BigBradley:
+  - GPU: "RTX 2060"
+  - CPU: "i7-11700"
+  - RAM: "72GB"
+FlatBradley:
+  - GPU: "gtx 970m"
+  - CPU: "i7 4720HQ"
+  - RAM: "16GB"
+```
 
 ## Getting your GPU PCI Information
 
@@ -33,14 +55,8 @@ are attached to the GPU as well.
 This is only really an issue if your GPU for the Host and the GPU for the Guest are in the same IOMMU Group.
 If that's the case, you need a patched kernel[idk how to do it yet] or to put the GPU in a differient PCI-e slot on your motherboard.
 
-
-The iommu-finder.sh script will gather all the PCI devices and sort them cleanly based on their IOMMU Group:
-
-```zsh
-bash iommu-finder.sh |grep NVIDIA |awk '{print $1,$2,$3,$4,$5,$(NF-2)}'
-```
-
-From the above output I found the PCI Bus and Device ID of the NVIDIA GPU and its related devices. 
+The [iommu-finder.sh](virtual-machines/iommu-finder.sh) script will gather all the PCI devices and sort them cleanly based on their IOMMU Group:
+>>>>>>> Stashed changes
 
 ```zsh
 > bash iommu-finder.sh |grep NVIDIA |awk '{print $1,$2,$3,$4,$5,$(NF-2)}'
@@ -51,11 +67,7 @@ IOMMU Group 14 02:00.2 USB [10de:1ada]
 IOMMU Group 14 02:00.3 Serial [10de:1adb]
 ```
 
-Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 1]
-
-
-To apply these values im going modify kernel modules via scripts.
-that will same effect as a kernel mod line in /etc/defaul/grub like:
+Froxm the above output I get the PCI Bus, Device ID, IOMMU Group, and Type of NVIDIA pci devices. Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 14]. To apply these values im going modify kernel modules via scripts. xsssssthat will same effect as a kernel mod line in /etc/defaul/grub like:
 
 ```zsh
 
