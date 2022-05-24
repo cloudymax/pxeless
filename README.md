@@ -4,10 +4,12 @@ QEMU is a generic and open source machine emulator and virtualizer. It can be us
 
 QEMU is special amongst its counterparts for a couple important reasons:
 
-  - Like ESXi, its capable of PCI passthrough for GPUs (VirtualBox cant help us here)
+  - Like [ESXi](https://www.vmware.com/nl/products/esxi-and-esx.html), its capable of PCI passthrough for GPUs ([VirtualBox](https://docs.oracle.com/en/virtualization/virtualbox/6.0/user/guestadd-video.html) cant help us here)
   - Unlike ESXi, it's free
   - It's multi-platform
-  - It's fast - not as fast as [LXD](https://linuxcontainers.org/lxd/introduction/), [FireCracker](https://firecracker-microvm.github.io/), or [Cloud-Hypervisor](https://github.com/cloud-hypervisor/cloud-hypervisor)(formerly NEMU) - it's way more mature and documented. However unlike a system container it can create windows hosts, and unlike Firecracker it supports pinning memmory addresses and cpu cores.
+  - It's fast - not as fast as [LXD](https://linuxcontainers.org/lxd/introduction/), [FireCracker](https://firecracker-microvm.github.io/), or [Cloud-Hypervisor](https://github.com/cloud-hypervisor/cloud-hypervisor)(formerly NEMU), but its far more mature and thoroughly documented. 
+  - Unlike a [system container](https://linuxcontainers.org/lxd/introduction/) or [Multipass](https://multipass.run/docs) it can create windows hosts 
+  - Unlike Firecracker it supports pinning memmory addresses and cpu cores.
 
 
 ## Sources
