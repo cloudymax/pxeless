@@ -74,21 +74,12 @@ Node2:
 
 2. Enable [IOMMU](https://askubuntu.com/questions/85776/what-is-iommu-and-will-it-improve-my-vm-performance) via Kernel Modules/Grub configuration
 
-    From the output in the previous step, get the PCI Bus, Device ID, IOMMU Group, and Type of NVIDIA pci devices. Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 14]. Use these values modify kernel modules via [/etc/initramfs-tools/scripts/init-top/vfio.sh](virtual-machines/qemu/host-config-resources/vfio.sh) or with a kernel mod line in /etc/defaul/grub.
+    From the output in the previous step, get the PCI Bus, Device ID, IOMMU Group, and Type of NVIDIA pci devices. Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 14]. Use [vmhost.sh](virtual-machines/qemu/host-config-resources/vmhost.sh) to generate a GRUB_CMDLINE_LINUX_DEFAULT string.
 
-    - script option
-
-      ```zsh
-      # after adding your own values
-      sudo cp virtual-machines/vfio.sh /etc/initramfs-tools/  scripts/init-top/vfio.sh
-
-      chmod +x /etc/initramfs-tools/scripts/init-top/vfio.sh
-      ```
-
-    - /etc/defaut/grub example
+    - example
 
       ```zsh
-      GRUB_CMDLINE_LINUX_DEFAULT="amd_iommu=on iommu=pt kvm. ignore_msrs=1 vfio-pci.ids=<someID-0>,<someID-1>"
+      GRUB_CMDLINE_LINUX_DEFAULT="amd_iommu=on iommu=pt kvm.ignore_msrs=1 vfio-pci.ids=10de:1f08,10de:10f9,10de:1ada,10de:1adb i915.enable_gvt=1 intel_iommu=igfx_off kvm.report_ignored_msrs=0 preempt=voluntary"
       ```
 
 

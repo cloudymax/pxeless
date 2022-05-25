@@ -28,6 +28,8 @@ export KVM_IGNORE_MSRS="1"
 export KVM_REPORT_IGNORED_MSRS="0"
 
 
-export GRUB_CMDLINE_LINUX_DEFAULT="amd_iommu=$AMD_IOMMU iommu=$IOMMU kvm.ignore_msrs=$KVM_IGNORE_MSRS vfio-pci.ids=$VFIO_PCI_IDS i915.enable_gvt=$I915_ENABLE_GVT intel_iommu=$INTEL_IOMMU kvm.report_ignored_msrs=$KVM_REPORT_IGNORED_MSRS preempt=$PREEMPT"
+export GRUB_CMDLINE_LINUX_DEFAULT="GRUB_CMDLINE_LINUX_DEFAULT=\"amd_iommu=$AMD_IOMMU iommu=$IOMMU kvm.ignore_msrs=$KVM_IGNORE_MSRS vfio-pci.ids=$VFIO_PCI_IDS i915.enable_gvt=$I915_ENABLE_GVT intel_iommu=$INTEL_IOMMU kvm.report_ignored_msrs=$KVM_REPORT_IGNORED_MSRS preempt=$PREEMPT\""
 
 echo $GRUB_CMDLINE_LINUX_DEFAULT
+
+sudo sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"\"/$GRUB_CMDLINE_LINUX_DEFAULT/g" /etc/default/grub
