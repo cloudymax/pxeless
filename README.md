@@ -68,7 +68,7 @@ Node2:
       IOMMU Group 14 02:00.3 Serial [10de:1adb]
       ```
 
-2. Kernel Modules/Grub configuration
+2. Enable [IOMMU](https://askubuntu.com/questions/85776/what-is-iommu-and-will-it-improve-my-vm-performance) via Kernel Modules/Grub configuration
 
     From the above output, get the PCI Bus, Device ID, IOMMU Group, and Type of NVIDIA pci devices. Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 14]. Use these values modify kernel modules via [/etc/initramfs-tools/scripts/init-top/vfio.sh](virtusl-machines/vfio.sh) or with a kernel mod line in /etc/defaul/grub.
 
@@ -100,6 +100,11 @@ Node2:
     ```
 
 ## Optimizations
+
+1. CPU Topology
+    
+    This one is pretty simple, when we allow QEMU/KVM to access the Host's CPU firectly without emulation, performance is better.
+
 
 1. CPU Pinning
 
@@ -264,3 +269,20 @@ sudo qemu-system-x86_64 \
    -net user \
    -bios /usr/share/qemu/OVMF.fd
 ```
+
+## Packages
+
+```bash
+sudo apt-get install qemu-kvm libvirt-bin bridge-utils virtinst ovmf qemu-utils
+```
+
+## Glossary
+
+What do all the acronyms and buzzwords even *mean*?
+
+**KMV**: Kernel Virtual Machine
+**ESXi**: Elastic Sky X Integrated
+**VFIO**: Virtual FunctionI/O
+**QEMU**: Quick Emulator
+**Metal Host**: A physical computer that runs VMs or containers
+**Guest**: A VM or Container running on a Host
