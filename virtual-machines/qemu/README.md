@@ -82,19 +82,6 @@ Node2:
       GRUB_CMDLINE_LINUX_DEFAULT="amd_iommu=on iommu=pt kvm.ignore_msrs=1 vfio-pci.ids=10de:1f08,10de:10f9,10de:1ada,10de:1adb i915.enable_gvt=1 intel_iommu=igfx_off kvm.report_ignored_msrs=0 preempt=voluntary"
       ```
 
-
-3. Set the kernel module options by creating a replacement config file for: "/etc/initramfs-tools/modules"
-
-
-    - Move it into place and correct the ownership and pemrissions
-
-      ```zsh
-      sudo mv /etc/initramfs-tools/modules /etc/  initramfs-tools/modules.bak
-      sudo mv modules /etc/initramfs-tools/
-      sudo chown root:root /etc/initramfs-tools/modules 
-      sudo chmod 644 /etc/initramfs-tools/modules 
-      ```
-
 ## Optimizations
 
 1. CPU Topology
