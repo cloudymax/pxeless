@@ -95,7 +95,7 @@ Node2:
 3. Set the kernel module options by creating a replacement config file for: "/etc/initramfs-tools/modules"
 
 
-- Move it into place and correct the ownership and pemrissions
+  - Move it into place and correct the ownership and pemrissions
 
   ```zsh
   sudo mv /etc/initramfs-tools/modules /etc/initramfs-tools/modules.bak
