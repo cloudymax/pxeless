@@ -74,7 +74,7 @@ Node2:
 
 2. Enable [IOMMU](https://askubuntu.com/questions/85776/what-is-iommu-and-will-it-improve-my-vm-performance) via Kernel Modules/Grub configuration
 
-    From the output in the previous step, get the PCI Bus, Device ID, IOMMU Group, and Type of NVIDIA pci devices. Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 14]. Use these values modify kernel modules via [/etc/initramfs-tools/scripts/init-top/vfio.sh](virtusl-machines/qemu/host-config-resources/vfio.sh) or with a kernel mod line in /etc/defaul/grub.
+    From the output in the previous step, get the PCI Bus, Device ID, IOMMU Group, and Type of NVIDIA pci devices. Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 14]. Use these values modify kernel modules via [/etc/initramfs-tools/scripts/init-top/vfio.sh](virtual-machines/qemu/host-config-resources/vfio.sh) or with a kernel mod line in /etc/defaul/grub.
 
     - script option
 
