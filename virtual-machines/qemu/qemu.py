@@ -2,7 +2,9 @@
 """
 Python program to build the boilerplate infrastructure needed to
 properly take over an environment and provide a homogenous base
-from which to run/deploy IaC.
+from which to run/deploy IaC. Several of these functions are borrowed 
+from io_tools and will be excized form this script at a later time,
+and rolled back into that package
 """
 
 import json
@@ -18,13 +20,14 @@ import time
 import io
 import math 
 
-vm_config_path = "/home/max/public-infra/virtual-machines/configs/vm.yaml"
+vm_config_path = "/home/max/public-infra/virtual-machines/configs/qemu-vm.yaml"
 
 log_level = log.INFO
 program_log = log.getLogger(f"qemu-py")
 log.basicConfig(level=log_level)
 program_log.info("logging config loaded")
 
+# from io_tools
 def read_yaml_file(yaml_file_path):
     """
     Reads a .yaml file as raw, converts to json, formats it, then reloads 
@@ -51,6 +54,7 @@ def read_yaml_file(yaml_file_path):
 
     return json_object
 
+# from io_tools
 def make_dir(path: str, clear: bool = False, debug: bool = False,
              format="json"):
     """
@@ -81,6 +85,7 @@ def make_dir(path: str, clear: bool = False, debug: bool = False,
             if debug:
                 name = input("Any key to continue")
 
+# should add to io_tools
 def convert_size(size_bytes):
    if size_bytes == 0:
        return "0B"
@@ -90,6 +95,7 @@ def convert_size(size_bytes):
    s = round(size_bytes / p, 2)
    return "%s %s" % (s, size_name[i])
 
+# should add to io_tools
 def download_file(url: str, output_name: str):
     """
     Downloads a file and shows a simple progress bar
@@ -107,10 +113,10 @@ def download_file(url: str, output_name: str):
         total_bytes = response.headers.get('content-length')
         downloaded_bytes = 0
         bar_length = 20
-        chunk_size = 4096
+        chunk_size = 16384
         start = time.time()
         timer = 0
-        frame_length = 0.03
+        frame_length = 0.1
         
         if total_bytes is None: # no content length header
             f.write(response.content)
@@ -129,24 +135,24 @@ def download_file(url: str, output_name: str):
                     bar_right = ' ' * (bar_length - bar_fill)
                     if timer >= frame_length:
                         timer = 0
-                        sys.stdout.write(f"tick")
+                        sys.stdout.write(f"\r {round(time_elapsed)} [{bar_left}{bar_right}] {round(progress)}% - {round(speed, 2)} Mbps\r\r")
+                        sys.stdout.flush()
 
-                    sys.stdout.write(f"\r {round(time_elapsed)} [{bar_left}{bar_right}] {round(progress)}% - {round(speed, 2)} Mbps\r\r")
-                    sys.stdout.flush()
+def main(){
 
-# load the yaml config file
-vm_config = read_yaml_file(vm_config_path)
-print(vm_config)
+    # load the yaml config file
+    vm_config = read_yaml_file(vm_config_path)
+    print(vm_config)
 
-# create a directory to hold the VM assets
-make_dir(vm_config['VM']['vm_name'], False, True)
+    # create a directory to hold the VM assets
+    make_dir(vm_config['VM']['vm_name'], False, True)
 
-# download a cloud image
-# build the download url from base url, codename, image name, and filetype
-# Name and Type
-name = f"{vm_config['VM']['ubuntu_codename']}{vm_config['VM']['cloud_image_name']}{vm_config['VM']['cloud_image_filetype']}"
-url = f"{vm_config['VM']['cloud_image_url']}/{name}"
+    # download a cloud image
+    # build the download url from base url, codename, image name, and filetype
+    # Name and Type
+    name = f"{vm_config['VM']['ubuntu_codename']}{vm_config['VM']['cloud_image_name']}{vm_config['VM']['cloud_image_filetype']}"
+    url = f"{vm_config['VM']['cloud_image_url']}/{name}"
 
-download_file(url, name)
-
+    download_file(url, name)
+}
 
