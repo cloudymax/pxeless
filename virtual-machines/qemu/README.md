@@ -72,7 +72,7 @@ Node2:
         IOMMU Group 14 02:00.3 Serial [10de:1adb]
         ```
 
-2. Enable [IOMMU](https://askubuntu.com/questions/85776/what-is-iommu-and-will-it-improve-my-vm-performance) via Kernel Modules/Grub configuration
+2. Enable IOMMU via Kernel Modules/Grub configuration
 
     From the output in the previous step, get the PCI Bus, Device ID, IOMMU Group, and Type of NVIDIA pci devices. Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 14]. Use [vmhost.sh](https://github.com/cloudymax/public-infra/blob/main/virtual-machines/qemu/host-config-resources/vmhost.sh) to generate a GRUB_CMDLINE_LINUX_DEFAULT string.
 
