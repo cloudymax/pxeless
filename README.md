@@ -57,7 +57,7 @@ Node2:
 
     Your GPU that you wish to pass through to the VM will often have other devices in its IOMMU group. If this is the case, ALL devices in that IOMMU group should be passed through to your VM. This shouldnt be too much of a problem, as those companion devices will likely be audio or busses that are attached to the GPU as well. This is only really an issue if your GPU for the Host and the GPU for the Guest are in the same IOMMU Group. If that's the case, you need a patched kernel[idk how to do it yet] or to put the GPU in a differient PCI-e slot on your motherboard.
 
-    The [iommu-finder.sh](virtual-machines/iommu-finder.sh) script will gather all the PCI devices and sort them cleanly based on their IOMMU Group:
+    The [iommu-finder.sh](virtual-machines/qemu/iommu-finder.sh) script will gather all the PCI devices and sort them cleanly based on their IOMMU Group:
 
       ```zsh
       > bash iommu-finder.sh |grep NVIDIA |awk '{print $1$2,$3,$4,$5,$(NF-2)}'
@@ -70,7 +70,7 @@ Node2:
 
 2. Enable [IOMMU](https://askubuntu.com/questions/85776/what-is-iommu-and-will-it-improve-my-vm-performance) via Kernel Modules/Grub configuration
 
-    From the above output, get the PCI Bus, Device ID, IOMMU Group, and Type of NVIDIA pci devices. Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 14]. Use these values modify kernel modules via [/etc/initramfs-tools/scripts/init-top/vfio.sh](virtusl-machines/vfio.sh) or with a kernel mod line in /etc/defaul/grub.
+    From the above output, get the PCI Bus, Device ID, IOMMU Group, and Type of NVIDIA pci devices. Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 14]. Use these values modify kernel modules via [/etc/initramfs-tools/scripts/init-top/vfio.sh](virtusl-machines/qemu/vfio.sh) or with a kernel mod line in /etc/defaul/grub.
 
   - script option
 
