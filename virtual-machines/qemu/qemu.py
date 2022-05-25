@@ -20,7 +20,7 @@ import time
 import io
 import math 
 
-vm_config_path = "/home/max/public-infra/virtual-machines/configs/qemu-vm.yaml"
+vm_config_path = "/home/max/public-infra/virtual-machines/quemu/configs/qemu-vm.yaml"
 
 log_level = log.INFO
 program_log = log.getLogger(f"qemu-py")

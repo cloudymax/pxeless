@@ -18,6 +18,9 @@
 #
 # Depends on grub-pc-bin, nmap, net-tools, cloud-image-utils, whois
 
+set -o nounset
+set -o pipefail
+
 # VM metadata
 export_metatdata(){
   export IMAGE_TYPE="img" #img or iso
@@ -86,6 +89,7 @@ create_ssh_key(){
   VM_KEY=$(cat "$VM_KEY_FILE".pub)
 }
 
+# cloud-init logs are in /run/cloud-init/result.json
 create_user_data(){
 cat > user-data <<EOF
 #cloud-config
