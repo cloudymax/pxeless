@@ -1,6 +1,6 @@
 # GPU Accelereated Virtual Machines with QEMU
 
-QEMU is a generic and open source machine emulator and virtualizer. It can be used for __system emulation__, where it provides a virtual model of an entire machine to run a guest OS or it may work with a hypervisor such as KVM, Xen, Hax or Hypervisor. The second supported way to use QEMU is __user mode emulation__, where QEMU can launch processes compiled for one CPU on another CPU. In this mode the CPU is always emulated.
+[QEMU](https://www.qemu.org/documentation/) is an open source machine emulator and virtualizer. It can be used for __system emulation__, where it provides a virtual model of an entire machine to run a guest OS or it may work with a another hypervisor like KVM or Xen. QEMU can also provide __user mode emulation__, where QEMU can launch processes compiled for one CPU on another CPU via emulation.
 
 QEMU is special amongst its counterparts for a couple important reasons:
 
@@ -9,7 +9,7 @@ QEMU is special amongst its counterparts for a couple important reasons:
   - It's multi-platform
   - It's fast - not as fast as [LXD](https://linuxcontainers.org/lxd/introduction/), [FireCracker](https://firecracker-microvm.github.io/), or [Cloud-Hypervisor](https://github.com/cloud-hypervisor/cloud-hypervisor) (formerly [NEMU](https://github.com/intel/nemu)), but its far more mature and thoroughly documented. 
   - Unlike a [system container](https://linuxcontainers.org/lxd/introduction/) or [Multipass](https://multipass.run/docs) it can create windows hosts 
-  - Unlike Firecracker it supports pinning memmory addresses and cpu cores.
+  - [Unlike Firecracker](https://github.com/firecracker-microvm/firecracker/issues/849#issuecomment-464731628) it supports pinning memmory addresses, and wont because it would break their core feature of over-subscription.
 
 These qualities make QEMU well-suited for those seeking a hypervisor running the first layer of virtualization. In your second layer though, you should consider the lighter, faster LXD, Firecracker, and Cloud-Hypervisor.
 
@@ -57,7 +57,7 @@ Node2:
 
 1. Getting your GPU PCIe Information
 
-    Your GPU that you wish to pass through to the VM will often have other devices in its IOMMU group. If this is the case, ALL devices in that IOMMU group should be passed through to your VM. This shouldnt be too much of a problem, as those companion devices will likely be audio or busses that are attached to the GPU as well. This is only really an issue if your GPU for the Host and the GPU for the Guest are in the same IOMMU Group. If that's the case, you need a patched kernel[idk how to do it yet] or to put the GPU in a differient PCI-e slot on your motherboard.
+    Your GPU that you wish to pass through to the VM will often have other devices in its IOMMU group. If this is the case, ALL devices in that IOMMU group should be passed through to your VM. This shouldnt be too much of a problem, as those companion devices will likely be audio or busses that are attached to the GPU as well. This is only really an issue if your GPU for the Host and the GPU for the Guest are in the same IOMMU Group. If that's the case, you need to put the GPU in a differient PCI-e slot on your motherboard.
 
       - The [iommu-finder.sh](virtual-machines/qemu/host-config-resources/iommu-finder.sh) script will gather all the PCI devices and sort them cleanly based on their IOMMU Group:
 
@@ -74,7 +74,7 @@ Node2:
 
 2. Enable [IOMMU](https://askubuntu.com/questions/85776/what-is-iommu-and-will-it-improve-my-vm-performance) via Kernel Modules/Grub configuration
 
-    From the above output, get the PCI Bus, Device ID, IOMMU Group, and Type of NVIDIA pci devices. Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 14]. Use these values modify kernel modules via [/etc/initramfs-tools/scripts/init-top/vfio.sh](virtusl-machines/qemu/host-config-resources/vfio.sh) or with a kernel mod line in /etc/defaul/grub.
+    From the output in the previous step, get the PCI Bus, Device ID, IOMMU Group, and Type of NVIDIA pci devices. Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 14]. Use these values modify kernel modules via [/etc/initramfs-tools/scripts/init-top/vfio.sh](virtusl-machines/qemu/host-config-resources/vfio.sh) or with a kernel mod line in /etc/defaul/grub.
 
     - script option
 

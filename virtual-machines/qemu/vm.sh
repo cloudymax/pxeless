@@ -102,9 +102,12 @@ cloud_final_modules:
  - [users-groups, always]
  - [scripts-user, once-per-instance]
 
+groups:
+  - docker
+
 users:
   - name: ${VM_USER}
-    groups: [ wheel ]
+    groups: docker, admin, sudo, users
     shell: /bin/bash
     sudo: [ "ALL=(ALL) NOPASSWD:ALL" ]
     ssh-authorized-keys:
@@ -142,7 +145,6 @@ boot_ubuntu_cloud_vm(){
     $@" ENTER
 }
 
-
 # start the cloud-init backed VM
 create_ubuntu_cloud_vm(){
   tmux new-session -d -s "${VM_NAME}_session"
@@ -172,7 +174,6 @@ ssh_to_vm(){
     -i "$VM_NAME"/"$VM_USER" \
     -p "$VM_SSH_PORT" "$VM_USER"@"$HOST_ADDRESS"
 }
-
 
 # TODO 
 # create an iso image https://quantum-integration.org/posts/install-cloud-guest-with-virt-install-and-cloud-init-configuration.html
