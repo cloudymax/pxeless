@@ -55,40 +55,41 @@ Node2:
 
 1. Getting your GPU PCIe Information
 
-Your GPU that you wish to pass through to the VM will often have other devices in its IOMMU group.
-If this is the case, ALL devices in that IOMMU group should be passed through to your VM.
-This shouldnt be too much of a problem, as those companion devices will likely be audio or busses that 
-are attached to the GPU as well. 
-This is only really an issue if your GPU for the Host and the GPU for the Guest are in the same IOMMU Group.
-If that's the case, you need a patched kernel[idk how to do it yet] or to put the GPU in a differient PCI-e slot on your motherboard.
+  Your GPU that you wish to pass through to the VM will often have other devices in its IOMMU group.
+  If this is the case, ALL devices in that IOMMU group should be passed through to your VM.
+  This shouldnt be too much of a problem, as those companion devices will likely be audio or busses that 
+  are attached to the GPU as well. 
+  This is only really an issue if your GPU for the Host and the GPU for the Guest are in the same IOMMU Group.
+  If that's the case, you need a patched kernel[idk how to do it yet] or to put the GPU in a differient PCI-e slot on your motherboard.
 
-The [iommu-finder.sh](virtual-machines/iommu-finder.sh) script will gather all the PCI devices and sort them cleanly based on their IOMMU Group:
+  The [iommu-finder.sh](virtual-machines/iommu-finder.sh) script will gather all the PCI devices and sort them cleanly based on their IOMMU Group:
 
-```zsh
-> bash iommu-finder.sh |grep NVIDIA |awk '{print $1,$2,$3,$4,$5,$(NF-2)}'
+  ```zsh
+  > bash iommu-finder.sh |grep NVIDIA |awk '{print $1,$2,$3,$4,$5,$(NF-2)}'
 
-IOMMU Group 14 02:00.0 VGA [10de:1f08]
-IOMMU Group 14 02:00.1 Audio [10de:10f9]
-IOMMU Group 14 02:00.2 USB [10de:1ada]
-IOMMU Group 14 02:00.3 Serial [10de:1adb]
-```
+  IOMMU Group 14 02:00.0 VGA [10de:1f08]
+  IOMMU Group 14 02:00.1 Audio [10de:10f9]
+  IOMMU Group 14 02:00.2 USB [10de:1ada]
+  IOMMU Group 14 02:00.3 Serial [10de:1adb]
+  ```
 
 2. Kernel Modules/Grub configuration
 
-From the above output, get the PCI Bus, Device ID, IOMMU Group, and Type of NVIDIA pci devices. Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 14]. Use these values modify kernel modules via [/etc/initramfs-tools/scripts/init-top/vfio.sh](virtusl-machines/vfio.sh) or with a kernel mod line in /etc/defaul/grub.
+  From the above output, get the PCI Bus, Device ID, IOMMU Group, and Type of NVIDIA pci devices. Fortunately, all needed of these devices were already in separate IOMMU groups, or bundeled together in [group 14]. Use these values modify kernel modules via [/etc/initramfs-tools/scripts/init-top/vfio.sh](virtusl-machines/vfio.sh) or with a kernel mod line in /etc/defaul/grub.
 
-- script option
+  - script option
 
-  ```zsh
-  sudo cp virtual-machines/vfio.sh /etc/initramfs-tools/scripts/init-top/vfio.sh
-  chmod +x /etc/initramfs-tools/scripts/init-top/vfio.sh
-  ```
+    ```zsh
+    # after adding your own values
+    sudo cp virtual-machines/vfio.sh /etc/initramfs-tools/scripts/init-top/vfio.sh
+    chmod +x /etc/initramfs-tools/scripts/init-top/vfio.sh
+    ```
 
-- /etc/defaut/grub example
+  - /etc/defaut/grub example
 
-  ```zsh
-  GRUB_CMDLINE_LINUX_DEFAULT="amd_iommu=on iommu=pt kvm.ignore_msrs=1 vfio-pci.ids=<someID-0>,<someID-1>"
-  ```
+    ```zsh
+    GRUB_CMDLINE_LINUX_DEFAULT="amd_iommu=on iommu=pt kvm.ignore_msrs=1 vfio-pci.ids=<someID-0>,<someID-1>"
+    ```
 
 
 3. Set the kernel module options by creating a replacement config file for: "/etc/initramfs-tools/modules"
@@ -103,31 +104,30 @@ From the above output, get the PCI Bus, Device ID, IOMMU Group, and Type of NVID
   sudo chmod 644 /etc/initramfs-tools/modules 
   ```
 
-
 4. CPU Pinning
 
-```zsh
- <vcpu placement='static'>14</vcpu>
- <iothreads>1</iothreads>
- <cputune>
-    <vcpupin vcpu='0' cpuset='1'/>
-    <vcpupin vcpu='1' cpuset='2'/>
-    <vcpupin vcpu='2' cpuset='3'/>
-    <vcpupin vcpu='3' cpuset='4'/>
-    <vcpupin vcpu='4' cpuset='5'/>
-    <vcpupin vcpu='5' cpuset='6'/>
-    <vcpupin vcpu='6' cpuset='7'/>
-    <vcpupin vcpu='7' cpuset='9'/>
-    <vcpupin vcpu='8' cpuset='10'/>
-    <vcpupin vcpu='9' cpuset='11'/>
-    <vcpupin vcpu='10' cpuset='12'/>
-    <vcpupin vcpu='11' cpuset='13'/>
-    <vcpupin vcpu='12' cpuset='14'/>
-    <vcpupin vcpu='13' cpuset='15'/>
-    <emulatorpin cpuset='0,8'/>
-    <iothreadpin iothread='1' cpuset='0,8'/>
- </cputune>
-```
+  ```zsh
+   <vcpu placement='static'>14</vcpu>
+   <iothreads>1</iothreads>
+   <cputune>
+      <vcpupin vcpu='0' cpuset='1'/>
+      <vcpupin vcpu='1' cpuset='2'/>
+      <vcpupin vcpu='2' cpuset='3'/>
+      <vcpupin vcpu='3' cpuset='4'/>
+      <vcpupin vcpu='4' cpuset='5'/>
+      <vcpupin vcpu='5' cpuset='6'/>
+      <vcpupin vcpu='6' cpuset='7'/>
+      <vcpupin vcpu='7' cpuset='9'/>
+      <vcpupin vcpu='8' cpuset='10'/>
+      <vcpupin vcpu='9' cpuset='11'/>
+      <vcpupin vcpu='10' cpuset='12'/>
+      <vcpupin vcpu='11' cpuset='13'/>
+      <vcpupin vcpu='12' cpuset='14'/>
+      <vcpupin vcpu='13' cpuset='15'/>
+      <emulatorpin cpuset='0,8'/>
+      <iothreadpin iothread='1' cpuset='0,8'/>
+   </cputune>
+  ```
  
  
 ## VM creation
