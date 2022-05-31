@@ -139,7 +139,7 @@ boot_ubuntu_cloud_vm(){
     -m "$MEMORY" \
     -nographic \
     -device virtio-net-pci,netdev=net0 \
-    -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
+    -netdev bridge,br=virbr0,id=br0 \
     -drive if=virtio,format=qcow2,file="$CLOUD_IMAGE_NAME"-new.img \
     -vnc :0 \
     $@" ENTER
@@ -155,7 +155,7 @@ create_ubuntu_cloud_vm(){
     -m "$MEMORY" \
     -nographic \
     -device virtio-net-pci,netdev=net0 \
-    -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
+    -netdev bridge,br=virbr0,id=br0 \
     -drive if=virtio,format=qcow2,file="$CLOUD_IMAGE_NAME"-new.img \
     -drive if=virtio,format=raw,file=seed.img \
     -vnc :0 \

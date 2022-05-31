@@ -11,9 +11,11 @@ QEMU is special amongst its counterparts for a couple important reasons:
   - Unlike a [system container](https://linuxcontainers.org/lxd/introduction/) or [Multipass](https://multipass.run/docs) it can create windows hosts 
   - [Unlike Firecracker](https://github.com/firecracker-microvm/firecracker/issues/849#issuecomment-464731628) it supports pinning memmory addresses, and wont because it would break their core feature of over-subscription.
 
-These qualities make QEMU well-suited for those seeking a hypervisor running the first layer of virtualization. In your second layer though, you should consider the lighter, faster LXD, Firecracker, and Cloud-Hypervisor.
+These qualities make QEMU well-suited for those seeking a hypervisor running the first layer of virtualization. In your second layer though, you should consider the lighter and faster LXD, Firecracker, or Cloud-Hypervisor.
 
 ## References
+
+- [Comprehensive guide to performance optimizations for gaming on virtual machines with KVM/QEMU and PCI passthrough](https://mathiashueber.com/performance-tweaks-gaming-on-virtual-machines/) - Mathias Hüber
 
 - [Improving the performance of a Windows Guest on KVM/QEMU](https://leduccc.medium.com/improving-the-performance-of-a-windows-10-guest-on-qemu-a5b3f54d9cf5) - leduccc
 
@@ -21,8 +23,7 @@ These qualities make QEMU well-suited for those seeking a hypervisor running the
 
 - [Faster Virtual Machines in Linux](https://adamgradzki.com/2020/04/06/faster-virtual-machines-linux/)
 
-- [gpu-virtualization-with-kvm-qemu](https://medium.com/@calerogers/gpu-virtualization-with-kvm-qemu-63ca98a6a172)
- by Cale Rogers
+- [gpu-virtualization-with-kvm-qemu](https://medium.com/@calerogers/gpu-virtualization-with-kvm-qemu-63ca98a6a172) - Cale Rogers
 
 - [A Study of Performance and Security Across the Virtualization Spectrum](https://repository.tudelft.nl/islandora/object/uuid:34b3732e-2960-4374-94a2-1c1b3f3c4bd5/datastream/OBJ/download) - Vincent van Rijn
 
@@ -83,6 +84,25 @@ Node2:
       ```
 
 ## Optimizations
+
+- kernel upgrade:
+
+  Get the latest from here: https://kernel.ubuntu.com/~kernel-ppa/mainline/?C=N;O=D
+
+  ```zsh
+  mkdir kernel_upgrade 
+  cd kernel_upgrade
+
+  wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.18/amd64/linux-headers-5.18.0-051800-generic_5.18.0-051800.202205222030_amd64.deb
+
+  wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.18/amd64/linux-headers-5.18.0-051800_5.18.0-051800.202205222030_all.deb
+
+  wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.18/amd64/linux-image-unsigned-5.18.0-051800-generic_5.18.0-051800.202205222030_amd64.deb
+
+  wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.18/amd64/linux-modules-5.18.0-051800-generic_5.18.0-051800.202205222030_amd64.deb
+
+  sudo dpkg -i *.deb
+  ```
 
 1. CPU Topology
     
@@ -148,13 +168,13 @@ Make sure bridge-utils is installed:
 
 edit `/etc/network/interfaces`:
 
-```
+```bash
 auto lo
 iface lo inet loopback
 
 auto br0
 iface br0 inet static
-        address 192.168.50.23
+        address 192.168.50.100
         network 192.168.50.0
         netmask 255.255.255.0
         broadcast 192.168.50.255
@@ -166,7 +186,8 @@ iface br0 inet static
         bridge_maxwait 0
 ```
 
-Restart networking? :shrug: maybe reboot if you can't figure that out :shrug:
+reboot the host pc.
+
 
 The XML for the networking in virtual manager:
 ```xml
