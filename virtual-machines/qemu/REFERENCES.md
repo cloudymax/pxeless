@@ -6,9 +6,14 @@ You'll find a mix among the various articles here.
 Everyone agrees on how to verufy the status of the system though:
 
 ```zsh
-sudo lspci -nnk |grep -A4 NVIDIA |grep "Kernel driver"
+[~]$ sudo lspci -nnk |grep -A4 NVIDIA |grep "Kernel driver"
+        Kernel driver in use: vfio-pci
+        Kernel driver in use: vfio-pci
+        Kernel driver in use: vfio-pci
+        Kernel driver in use: vfio-pci
 
-sudo find /sys/kernel/iommu_groups/ -type l
+sudo find /sys/kernel/iommu_groups/ -type l |grep -c "/sys/kernel/iommu_groups/"
+24
 ```
 
 |Author| Year |CPU | GPU | OS | modules method | pci-ids medthod |

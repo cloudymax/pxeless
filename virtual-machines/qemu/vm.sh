@@ -36,7 +36,9 @@ export_metatdata(){
   export CLOUD_IMAGE_NAME="${UBUNTU_CODENAME}-server-cloudimg-amd64"
   export CLOUD_IMAGE_URL="https://cloud-images.ubuntu.com/jammy/current"
   export MEMORY="8G"
-  export PHYSICAL_CORES="4"
+  export SOCKETS="1"
+  export PHYSICAL_CORES="2"
+  export THREADS="2"
   export VGA="std"
   export VM_KEY=""
   export VM_KEY_FILE="$VM_USER"
@@ -94,6 +96,9 @@ create_user_data(){
 cat > user-data <<EOF
 #cloud-config
 #vim:syntax=yaml
+hostname: ${VM_NAME}
+fqdn: ${VM_NAME}
+manage_etc_hosts: false
 
 cloud_config_modules:
  - runcmd
@@ -105,13 +110,21 @@ cloud_final_modules:
 groups:
   - docker
 
+ssh_pwauth: true
+disable_root: false
 users:
   - name: ${VM_USER}
     groups: docker, admin, sudo, users
     shell: /bin/bash
     sudo: [ "ALL=(ALL) NOPASSWD:ALL" ]
+    lock_passwd: false
     ssh-authorized-keys:
       - ${VM_KEY}
+
+chpasswd:
+  list: |
+    root:1024
+  expire: False
 EOF
 }
 
@@ -128,17 +141,21 @@ generate_seed_iso(){
   cloud-localds seed.img user-data
 }
 
+   -smp sockets=1,cores=2,threads=2 \
+      -device vfio-pci,host=01:00.0,multifunction=on \
+   -device vfio-pci,host=01:00.1 \
 # Boot exisiting cloud-init backed VM
 boot_ubuntu_cloud_vm(){
   tmux new-session -d -s "${VM_NAME}_session"
   tmux send-keys -t "${VM_NAME}_session" "sudo qemu-system-x86_64  \
     -machine accel=kvm,type=q35 \
-    -cpu host \
-    -smp "$PHYSICAL_CORES" \
+    -cpu host,kvm="off",hv_vendor_id=null  \
+    -smp sockets="$SOCKETS",cores="$PHYSICAL_CORES",threads="$THREADS" \
     -m "$MEMORY" \
     -nographic \
+    -device vfio-pci,host=02:00.0,multifunction=on,x-vga=on \
     -device virtio-net-pci,netdev=net0 \
-    -netdev bridge,br=virbr0,id=br0 \
+    -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
     -drive if=virtio,format=qcow2,file="$CLOUD_IMAGE_NAME"-new.img \
     -vnc :0 \
     $@" ENTER
@@ -149,12 +166,13 @@ create_ubuntu_cloud_vm(){
   tmux new-session -d -s "${VM_NAME}_session"
   tmux send-keys -t "${VM_NAME}_session" "sudo qemu-system-x86_64  \
     -machine accel=kvm,type=q35 \
-    -cpu host \
-    -smp "$PHYSICAL_CORES" \
+    -cpu host,kvm="off",hv_vendor_id="null" \
+    -smp sockets="$SOCKETS",cores="$PHYSICAL_CORES",threads="$THREADS" \
     -m "$MEMORY" \
     -nographic \
+    -device vfio-pci,host=02:00.0,multifunction=on,x-vga=on \
     -device virtio-net-pci,netdev=net0 \
-    -netdev bridge,br=virbr0,id=br0 \
+    -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
     -drive if=virtio,format=qcow2,file="$CLOUD_IMAGE_NAME"-new.img \
     -drive if=virtio,format=raw,file=seed.img \
     -vnc :0 \
