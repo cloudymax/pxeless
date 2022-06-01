@@ -115,7 +115,6 @@ users:
 EOF
 }
 
-
 # create a disk
 create_virtual_disk(){
   qemu-img create -f qcow2 \
