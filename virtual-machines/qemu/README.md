@@ -37,10 +37,7 @@ On the metal host:
 
 6. `bash vm.sh create`
 
-7. press `ctrl` + `b`, then `d` to detach from the tmux session
-
-8. connect to the vm with `bash vm.sh ssh_to_vm` or over VNC at `<metal-host-ip>:5900`
-
+7. Log in, connect vis ssh `bash vm.sh ssh_to_vm` or VNC `<metal-host-ip>:5900`
 
 ## Tested Hardware
 
