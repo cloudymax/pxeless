@@ -17,7 +17,16 @@ These qualities make QEMU well-suited for those seeking a hypervisor running the
 
 ## Requirements
 
-WiP
+```yaml
+# WiP
+Apt_Packages:
+  - qemu-kvm
+  - libvirt-bin
+  - bridge-utils
+  - virtinst 
+  - ovmf
+  - qemu-utils
+```
 
 ## Usage
 
