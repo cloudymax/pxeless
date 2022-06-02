@@ -43,7 +43,11 @@ export_metatdata(){
   export VM_KEY=""
   export VM_KEY_FILE="$VM_USER"
   export UUID="none"
+  export PASSWD="\$6\$saltsaltlettuce\$ua5R/p0ntvbHjz.RpRPLi7yx9Q731MsYUlxpUTojnjI8..EUtcoLF6HYEI0YrxKybdzfWIneiK6WH0uhH0FP01"
 }
+
+# password hashing notes
+# mkpasswd -m sha-512 password -s "saltsaltlettuce"
 
 # create a directory to hold the VM assets
 create_dir(){
@@ -118,13 +122,9 @@ users:
     shell: /bin/bash
     sudo: [ "ALL=(ALL) NOPASSWD:ALL" ]
     lock_passwd: false
+    passwd: ${PASSWD}
     ssh-authorized-keys:
       - ${VM_KEY}
-
-chpasswd:
-  list: |
-    root:1024
-  expire: False
 EOF
 }
 
