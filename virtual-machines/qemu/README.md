@@ -19,9 +19,11 @@ These qualities make QEMU well-suited for those seeking a hypervisor running the
 
 ```yaml
 # WiP
+# Do NOT install nvidia drivers on the metal
+# The metal should be headless or using embeded graphics 
+# installing the nvidia drivers on the host metal causes a wormhole of DRM and framebuffer errors you dont want to mess with.
 Apt_Packages:
   - qemu-kvm
-  - libvirt-bin
   - bridge-utils
   - virtinst 
   - ovmf
