@@ -21,7 +21,10 @@ These qualities make QEMU well-suited for those seeking a hypervisor running the
 # WiP
 # Do NOT install nvidia drivers on the metal
 # The metal should be headless or using embeded graphics 
-# installing the nvidia drivers on the host metal causes a wormhole of DRM and framebuffer errors you dont want to mess with.
+# installing the nvidia drivers on the host metal causes a wormhole of DRM and framebuffer errors 
+# you dont want to mess with.
+# BUT if youre running NVidia optomus laptops which can already disable the gpu gracefully, 
+# you SHOULD install those drivers.
 Apt_Packages:
   - qemu-kvm
   - bridge-utils
