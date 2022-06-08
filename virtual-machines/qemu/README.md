@@ -31,6 +31,8 @@ Apt_Packages:
   - virtinst 
   - ovmf
   - qemu-utils
+  - cloud-image-utils
+  - ubuntu-drivers-common
 ```
 
 ## Usage
@@ -52,6 +54,8 @@ On the metal host:
 6. `bash vm.sh create`
 
 7. Log in, connect vis ssh `bash vm.sh ssh_to_vm` or VNC `<metal-host-ip>:5900`
+
+8. `sudo ubuntu-drivers autoinstall`
 
 ## Tested Hardware
 

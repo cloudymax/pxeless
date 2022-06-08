@@ -44,6 +44,14 @@ export_metatdata(){
   export VM_KEY_FILE="$VM_USER"
   export UUID="none"
   export PASSWD="\$6\$saltsaltlettuce\$ua5R/p0ntvbHjz.RpRPLi7yx9Q731MsYUlxpUTojnjI8..EUtcoLF6HYEI0YrxKybdzfWIneiK6WH0uhH0FP01"
+  export GPU_ACCEL="false"
+
+  # set graphics options based on gpu presence.
+  if [[ "$GPU_ACCEL" == "false" ]]; then
+    export VGA_OPT="-nographic \\"
+  else
+    export VGA_OPT="-vga none -nographic -serial none -parallel none \\"
+  fi
 }
 
 # password hashing notes
@@ -141,9 +149,6 @@ generate_seed_iso(){
   cloud-localds seed.img user-data
 }
 
-   -smp sockets=1,cores=2,threads=2 \
-      -device vfio-pci,host=01:00.0,multifunction=on \
-   -device vfio-pci,host=01:00.1 \
 # Boot exisiting cloud-init backed VM
 boot_ubuntu_cloud_vm(){
   tmux new-session -d -s "${VM_NAME}_session"
@@ -152,7 +157,7 @@ boot_ubuntu_cloud_vm(){
     -cpu host,kvm="off",hv_vendor_id=null  \
     -smp sockets="$SOCKETS",cores="$PHYSICAL_CORES",threads="$THREADS" \
     -m "$MEMORY" \
-    -nographic \
+    $VGA_OPT
     -device vfio-pci,host=02:00.0,multifunction=on,x-vga=on \
     -device virtio-net-pci,netdev=net0 \
     -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
@@ -169,7 +174,7 @@ create_ubuntu_cloud_vm(){
     -cpu host,kvm="off",hv_vendor_id="null" \
     -smp sockets="$SOCKETS",cores="$PHYSICAL_CORES",threads="$THREADS" \
     -m "$MEMORY" \
-    -nographic \
+    $VGA_OPT
     -device vfio-pci,host=02:00.0,multifunction=on,x-vga=on \
     -device virtio-net-pci,netdev=net0 \
     -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
@@ -188,6 +193,7 @@ ssh_to_vm(){
   export_metatdata
   ssh-keygen -f "/home/${USER}/.ssh/known_hosts" -R "[${HOST_ADDRESS}]:${VM_SSH_PORT}"
   ssh -o "StrictHostKeyChecking no" \
+    -X \
     -i "$VM_NAME"/"$VM_USER" \
     -p "$VM_SSH_PORT" "$VM_USER"@"$HOST_ADDRESS"
 }
