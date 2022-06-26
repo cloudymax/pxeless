@@ -17,9 +17,11 @@
 # guest VMs, which I also need.
 #
 # Depends on grub-pc-bin, nmap, net-tools, cloud-image-utils, whois
+set -Eeuo pipefail
 
-set -o nounset
-set -o pipefail
+deps(){
+    sudo apt-get install qemu-kvm bridge-utils virtinst ovmf qemu-utils cloud-image-utils
+}
 
 # VM metadata
 export_metatdata(){
@@ -30,16 +32,16 @@ export_metatdata(){
   export VM_USER="vmadmin"
   export VM_SSH_PORT="1234"
   export DISK_NAME="boot.img"
-  export DISK_SIZE="60G"
+  export DISK_SIZE="30G"
   export ISO_FILE="ubuntu-22.04-live-server-amd64.iso"
   export UBUNTU_CODENAME="jammy"
   export CLOUD_IMAGE_NAME="${UBUNTU_CODENAME}-server-cloudimg-amd64"
   export CLOUD_IMAGE_URL="https://cloud-images.ubuntu.com/jammy/current"
   export MEMORY="8G"
   export SOCKETS="1"
-  export PHYSICAL_CORES="2"
-  export THREADS="2"
-  export VGA="std"
+  export PHYSICAL_CORES="4"
+  export THREADS="1"
+  export VGA="virtio"
   export VM_KEY=""
   export VM_KEY_FILE="$VM_USER"
   export UUID="none"
@@ -50,6 +52,7 @@ export_metatdata(){
   if [[ "$GPU_ACCEL" == "false" ]]; then
     export VGA_OPT="-nographic \\"
   else
+    export PCI_GPU="-device vfio-pci,host=02:00.0,multifunction=on,x-vga=on \\"
     export VGA_OPT="-vga none -nographic -serial none -parallel none \\"
   fi
 }
@@ -59,7 +62,7 @@ export_metatdata(){
 
 # create a directory to hold the VM assets
 create_dir(){
-  mkdir "$VM_NAME"
+  mkdir -p "$VM_NAME"
   cd "$VM_NAME"
   export UUID=$(uuidgen)
 }
@@ -138,10 +141,11 @@ EOF
 
 # create a disk
 create_virtual_disk(){
-  qemu-img create -f qcow2 \
-    -F qcow2 \
-    -b "$CLOUD_IMAGE_NAME"_base.qcow2 \
-    hdd.qcow2 "$DISK_SIZE"
+  #qemu-img create -f qcow2 \
+  #  -F qcow2 \
+  #  -b "$CLOUD_IMAGE_NAME"_base.qcow2 \
+  #  hdd.qcow2 "$DISK_SIZE"
+  qemu-img create -f qcow2 hdd.img "$DISK_SIZE"
 }
 
 # Generate an ISO image
@@ -158,7 +162,7 @@ boot_ubuntu_cloud_vm(){
     -smp sockets="$SOCKETS",cores="$PHYSICAL_CORES",threads="$THREADS" \
     -m "$MEMORY" \
     $VGA_OPT
-    -device vfio-pci,host=02:00.0,multifunction=on,x-vga=on \
+    $PCI_GPU
     -device virtio-net-pci,netdev=net0 \
     -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
     -drive if=virtio,format=qcow2,file="$CLOUD_IMAGE_NAME"-new.img \
@@ -175,7 +179,7 @@ create_ubuntu_cloud_vm(){
     -smp sockets="$SOCKETS",cores="$PHYSICAL_CORES",threads="$THREADS" \
     -m "$MEMORY" \
     $VGA_OPT
-    -device vfio-pci,host=02:00.0,multifunction=on,x-vga=on \
+    $PCI_GPU
     -device virtio-net-pci,netdev=net0 \
     -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
     -drive if=virtio,format=qcow2,file="$CLOUD_IMAGE_NAME"-new.img \
@@ -206,27 +210,47 @@ ssh_to_vm(){
 
 # luanch the VM to install from ISO to Disk
 create_vm_from_iso(){
-  sudo qemu-system-x86_64 -enable-kvm \
-          -cpu host,nx \
-          -smp 2 \
-          -drive file="$CLOUD_IMAGE_NAME"_base.img,if=virtio \
-          -net nic -net user,hostfwd=::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
-          -m "$MEMORY" \
-          -vga "$VGA" \
-          -monitor stdio \
-          -vnc :0 \
-          $@
+  tmux new-session -d -s "${VM_NAME}_session"
+  tmux send-keys -t "${VM_NAME}_session" "sudo qemu-system-x86_64 \
+    -machine accel=kvm,type=q35 \
+    -cpu host,kvm="off",hv_vendor_id="null" \
+    -smp sockets="$SOCKETS",cores="$PHYSICAL_CORES",threads="$THREADS" \
+    -m "$MEMORY" \
+    -cdrom /home/ubuntu/ubuntu-autoinstall-generator-dockerized/ubuntu-autoinstall-2022-06-26.iso \
+    -hda hdd.img \
+    -device virtio-net-pci,netdev=net0 \
+    -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
+    -vga virtio \
+    -vnc :0 \
+    $@" ENTER
+}
+
+boot_vm_from_iso(){
+  tmux new-session -d -s "${VM_NAME}_session"
+  tmux send-keys -t "${VM_NAME}_session" "sudo qemu-system-x86_64 \
+    -machine accel=kvm,type=q35 \
+    -cpu host,kvm="off",hv_vendor_id="null" \
+    -smp sockets="$SOCKETS",cores="$PHYSICAL_CORES",threads="$THREADS" \
+    -m "$MEMORY" \
+    -hda hdd.img \
+    -device virtio-net-pci,netdev=net0 \
+    -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
+    -vga virtio \
+    -vnc :0 \
+    $@" ENTER
 }
 
 create(){
   export_metatdata
   create_dir
-  download_cloud_image
-  expand_cloud_image
-  create_ssh_key
-  create_user_data
-  generate_seed_iso
-  create_ubuntu_cloud_vm
+  #download_cloud_image
+  #expand_cloud_image
+  #create_ssh_key
+  #create_user_data
+  #generate_seed_iso
+  create_virtual_disk
+  create_vm_from_iso
+  #create_ubuntu_cloud_vm
   attach_to_vm_tmux
 }
 
@@ -238,7 +262,8 @@ boot(){
   #create_ssh_key
   #create_user_data
   #generate_seed_iso
-  boot_ubuntu_cloud_vm
+  #boot_ubuntu_cloud_vm
+  boot_vm_from_iso
   attach_to_vm_tmux
 }
 
