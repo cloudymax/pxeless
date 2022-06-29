@@ -20,7 +20,13 @@
 set -Eeuo pipefail
 
 deps(){
-    sudo apt-get install qemu-kvm bridge-utils virtinst ovmf qemu-utils cloud-image-utils
+    sudo apt-get install \
+      qemu-kvm \
+      bridge-utils \
+      virtinst \
+      ovmf \
+      qemu-utils \
+      cloud-image-utils
 }
 
 # VM metadata
@@ -32,8 +38,8 @@ export_metatdata(){
   export VM_USER="vmadmin"
   export VM_SSH_PORT="1234"
   export DISK_NAME="boot.img"
-  export DISK_SIZE="30G"
-  export ISO_FILE="ubuntu-22.04-live-server-amd64.iso"
+  export DISK_SIZE="16G"
+  export ISO_FILE="/home/ubuntu/public-infra/virtual-machines/qemu/debian-live-11.3.0-amd64-cinnamon.iso"
   export UBUNTU_CODENAME="jammy"
   export CLOUD_IMAGE_NAME="${UBUNTU_CODENAME}-server-cloudimg-amd64"
   export CLOUD_IMAGE_URL="https://cloud-images.ubuntu.com/jammy/current"
@@ -145,7 +151,7 @@ create_virtual_disk(){
   #  -F qcow2 \
   #  -b "$CLOUD_IMAGE_NAME"_base.qcow2 \
   #  hdd.qcow2 "$DISK_SIZE"
-  qemu-img create -f qcow2 hdd.img "$DISK_SIZE"
+  qemu-img create -f raw /media/hdd.img $DISK_SIZE
 }
 
 # Generate an ISO image
@@ -216,8 +222,10 @@ create_vm_from_iso(){
     -cpu host,kvm="off",hv_vendor_id="null" \
     -smp sockets="$SOCKETS",cores="$PHYSICAL_CORES",threads="$THREADS" \
     -m "$MEMORY" \
-    -cdrom /home/ubuntu/ubuntu-autoinstall-generator-dockerized/ubuntu-autoinstall-2022-06-26.iso \
-    -hda hdd.img \
+    -cdrom $ISO_FILE \
+    -object iothread,id=io1 \
+    -device virtio-blk-pci,drive=disk0,iothread=io1 \
+    -drive if=none,id=disk0,cache=none,format=raw,aio=threads,file=/media/hdd.img \
     -device virtio-net-pci,netdev=net0 \
     -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
     -vga virtio \
@@ -232,7 +240,9 @@ boot_vm_from_iso(){
     -cpu host,kvm="off",hv_vendor_id="null" \
     -smp sockets="$SOCKETS",cores="$PHYSICAL_CORES",threads="$THREADS" \
     -m "$MEMORY" \
-    -hda hdd.img \
+    -object iothread,id=io1 \
+    -device virtio-blk-pci,drive=disk0,iothread=io1 \
+    -drive if=none,id=disk0,cache=none,format=raw,aio=threads,file=/media/hdd.img \
     -device virtio-net-pci,netdev=net0 \
     -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
     -vga virtio \
