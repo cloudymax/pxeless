@@ -1,0 +1,58 @@
+#cloud-config
+autoinstall:
+  version: 1
+  refresh-installer:  # start with an up-to-date installer
+  update: yes
+  keyboard: {layout: us, toggle: null, variant: ''}
+  locale: en_US.UTF-8
+  storage:
+    layout:
+      name: disk
+      match: {}
+  identity:  # This is section you may want to add to interactive-sections (openssl passwd -6 -stdin <<< PASSWORD)
+    hostname: ubuntu-server
+    password: "$6$W2QyYGjYsxzNworv$0ItFb7NtjJ.0V2I.c6G1oavooUwAReZbtf9sLblaYA8odHx.PlXV6CfP1xbTWCBZN55PXts3vN87PW8x.Xs/B1"
+    username: ubuntu
+  ssh:
+    allow-pw: true
+    authorized-keys: [ 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQjKPHtbK9EXqsAw33pkY6l+ad+e8sANGNuPaB/5Sp+A6K74LY1NwTd43+kJOqta4aymX3ZIy87xmPtNIZxkeklzRPFMcbf2PWBVse/r4BXrEBk5QPfjRXIetfm3l0Ki9YKSwG65A65D0aZqAEyXNfH1U29Hk1fRLp6KQjZlCaepEdPpZ6IHH8vQ/XqBSkSiguU8iO8mZ47DLWxj5huQdSkj61xG7zoW0/MPgmNsbNWjFkG68bjUj8ZJwbKMAISlEBwHf0IZutUG/EfPpVxxmR+nm/bGVUHC0l0Sp+SLCmTWtwK6wMCS4/tC5zJ/VqvCLg7aGeYrqYzWSCa9cXMZyd max@flat-bradley', 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCSnINrRZHG9thvflJhBp6FYuGGnu5T287NL2HFS7t8vx6USa1ZGeogD0Rumx7PnBa1GB3nDBIdV5b+kyWvej9MAwgjmhdALmtqkGma2Vg7d4gg0cx2CDYQ9mtd2DydV665A50FkPHd7Z8IijmUv/cOo5cEY2ky50pjH0mcOpl71Y5097Wx94yzMURNKEL1KjB0xmlBZ2IPhD5ArQSS1plhOFgpNhTliraAJO2omU01B41pGPTfUB8Xpx2Cv/lxdXxl7gSGupSR7n/cVCbetojs1Okhu5FcW7mcpwWBbv4KxB/pbGdFRYXHkaNT6RCDIMiFvQngwvraABfSPl97E9Ram5EW5F0eSKy8+FPyAIm61Frv1lxlVRnnh9QOxZ7vZ01LI/kmM5v8OyDP8TF/SSpmlvP3A9BDCZXoOAwNzZBi1BJtvOZRQnTaf0HxNtxitXWlOzScfDjaEicKG76ONsjChiF6RYizSZ+qLP+kmej5Z0DpvITA8LuHiWwRgk2hUwk= vmadmin' ]
+    install-server: true
+  packages: 
+    - qemu-kvm 
+    - bridge-utils 
+    - virtinst 
+    - ovmf 
+    - qemu-utils 
+    - cloud-image-utils
+    - docker.io
+  package_update: true
+  package_upgrade: true
+  late-commands:
+    # Changing from networkd to NetworkManager
+    # move existing config out of the way
+    - find /target/etc/netplan/ -name "*.yaml" -exec sh -c 'mv "$1" "$1-orig"' _ {} \;
+    # Create a new netplan and enable it
+    - |
+      cat <<EOF | sudo tee /target/etc/netplan/01-netcfg.yaml
+      network:
+        version: 2
+        renderer: NetworkManager
+      EOF
+    - curtin in-target --target /target netplan generate
+    - curtin in-target --target /target netplan apply
+    - curtin in-target --target /target systemctl enable NetworkManager.service
+  user-data: # Commands here run during first boot (cannot be interactive)
+    runcmd:
+      - [apt-get, update]
+      - [apt-get, dist-upgrade, --yes]
+      - [apt, autoremove, --yes]
+    users:
+      - name: user1
+        gecos: first user
+        groups: users, admin, docker, sudo
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        shell: /bin/bash
+        lock_passwd: false
+        passwd: "$6$exDY1mhS4KUYCE/2$zmn9ToZwTKLhCw.b4/b.ZRTIZM30JZ4QrOQ2aOXJ8yk96xpcCof0kxKwuX1kqLG/ygbJ1f8wxED22bTL4F46P0"
+        ssh_import_id:
+          - gh:user1
