@@ -1,0 +1,97 @@
+---
+# File manipulation role for creating, destroying, moving, extracting etc o the remote client 
+- name: gather data
+  set_fact:
+    data: "{{ hostvars['localhost'].profile_json['Files'] }}"
+    ansible_user: "{{ hostvars['localhost'].ansible_user }}"
+
+- name: displaying tasks from config
+  debug:
+    msg: "{{ item }}"
+  with_items: "{{ data }}"
+
+- name: Creates directory
+  file:
+    path: "{{ item.Path }}"
+    state: "{{ item.State }}"
+    recurse: "{{ item.Recurse }}"
+  with_items: "{{ data }}"
+  become: yes
+  become_user: root
+  become_method: sudo
+  when:
+    - item.State == "directory"
+
+- name: Deletes directory
+  file:
+    path: "{{ item.Path }}"
+    state: "{{ item.State }}"
+  with_items: "{{ data }}"
+  become: yes
+  become_user: root
+  become_method: sudo
+  when:
+    - item.State == "absent"
+
+- name: Unarchive a file
+  ansible.builtin.unarchive:
+    src: "{{ item.Archive }}"
+    dest: "{{ item.Dest }}"
+    remote_src: yes
+  with_items: "{{ data }}"
+  become: yes
+  become_user: root
+  become_method: sudo
+  when:
+    - item.State == "extract"
+
+- name: Change file ownership, group and permissions
+  ansible.builtin.file:
+    path: "{{ item.Path }}"
+    owner: "{{ item.Owner }}"
+    group: "{{ item.Group }}"
+    mode: "{{ item.Mode }}"
+  with_items: "{{ data }}"
+  become: yes
+  become_user: root
+  become_method: sudo
+  when:
+    - item.State == "permissions"
+
+- name: Copies files inside the client
+  ansible.builtin.copy:
+    src: "{{ item.Source }}"
+    dest: "{{ item.Dest }}"
+    owner: "{{ ansible_user }}"
+    mode: "{{ item.Mode }}"
+    remote_src: "{{ item.Remote }}"
+  with_items: "{{ data }}"
+  become: yes
+  become_user: root
+  become_method: sudo
+  when:
+    - item.State == "copy"
+
+- name: Copy file with owner and permissions
+  ansible.builtin.copy:
+    src: "{{ item.Source }}"
+    dest: "{{ item.Dest }}"
+  with_items: "{{ data }}"
+  become: yes
+  become_user: root
+  become_method: sudo
+  when:
+    - item.State == "transfer"
+
+- name: Creates simlinks
+  file:
+    src: "{{ item.Source }}"
+    dest: "{{ item.Dest }}"
+    state: "{{ item.State }}"
+    force: yes
+  with_items: "{{ data }}"
+  become: yes
+  become_user: root
+  become_method: sudo
+  when:
+    - item.State == "link"

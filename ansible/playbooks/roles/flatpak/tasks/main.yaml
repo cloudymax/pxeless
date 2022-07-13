@@ -1,0 +1,17 @@
+# Role to manage flatpack packages
+---
+- name: gather data
+  set_fact:
+    data: "{{ hostvars['localhost'].profile_json['Flatpak'] }}"
+
+- name: displaying tasks from config
+  debug:
+    msg: "{{ item }}"
+  with_items: "{{ data }}"
+
+- name: Manage flatpak packages
+  community.general.flatpak:
+    name: "{{ item.Name }}"
+    state: "{{ item.State }}"
+    method: "{{ item.Method }}"
+  with_items: "{{ data }}"

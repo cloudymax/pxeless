@@ -1,0 +1,31 @@
+---
+# WiP role to add aliases 
+- name: Path section
+  set_fact:
+    section: "{{ hostvars['localhost'].profile_json['Path'] }}"
+    ansible_user: "{{ hostvars['localhost'].ansible_user }}"
+
+- name: add a new alias line to bashrc
+  lineinfile:
+    path: .bashrc
+    line: "alias {{ item.alias }}"
+    create: yes
+  with_items: "{{ section }}"
+  become: yes
+  become_user: "{{ ansible_user }}"
+  become_method: sudo
+
+- name: add a new alias line to bashrc
+  lineinfile:
+    path: .bashrc
+    line: "{{ item.alias }}"
+    create: yes
+  with_items: "{{ section }}"
+  become: yes
+  become_user: "{{ ansible_user }}"
+  become_method: sudo
+
+- name: run a s source bashrc to relead aliases
+  shell: source ~/.bashrc && source ~/.bashrc
+  args:
+     executable: /bin/bash

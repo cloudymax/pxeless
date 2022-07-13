@@ -1,0 +1,20 @@
+Package_Update:
+  - Update: true
+    Autoremove: true
+Apt_Pass_1:
+  - Name: flatpak
+    State: present
+  - Name: gnome-software-plugin-flatpak
+    State: present
+Flatpak_Remote:
+  - Name: flathub
+    State: present
+    URL: https://dl.flathub.org/repo/flathub.flatpakrepo
+    Method: user
+Flatpak:
+  - Name: freetube
+    State: present
+    Method: user
+  - Name: keepassx
+    State: present
+    Method: user

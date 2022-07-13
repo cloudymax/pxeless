@@ -1,0 +1,25 @@
+---
+# Install and manage pip packages
+- name: Pip section
+  set_fact:
+    section: "{{ hostvars['localhost'].profile_json['Pip'] }}"
+
+- name: Pip section
+  debug:
+    msg: "{{ item.Name }}"
+  with_items: "{{ section }}"
+
+- name: Install pip packages
+  pip:
+    name: "{{ item.Name }}"
+  with_items: "{{ section }}"
+  when:
+      - item.Version is not defined
+
+- name: Install pip packages w/ version
+  pip:
+    name: "{{ item.Name }}"
+    version: "{{ item.Version }}"
+  with_items: "{{ section }}"
+  when:
+    - item.Version is defined

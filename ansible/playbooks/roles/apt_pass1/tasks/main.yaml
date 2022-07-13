@@ -1,0 +1,81 @@
+# Ansible linters will hate the state expansion here because they don't catch that im passing a string as a constant.
+# This ansible role will install apt packages on linux hosts. It is optimized to use squash (installing all packages 
+# with a single apt call vs an apt call for_each package), and is able to manage package life cycles by specifying, 
+# locking, holding packages with apt 
+---
+- name: gather data
+  set_fact:
+    key_data: "{{ hostvars['localhost'].profile_json['Apt_Pass_1'] }}"
+    debug: "{{ hostvars['localhost'].debug }}"
+    squash: "{{ hostvars['localhost'].squash }}"
+
+- name: "Generate optimized name list"
+  set_fact:
+    package_list: "{{ package_list + [ item.Name ] }}"
+  with_items:
+  - "{{ hostvars['localhost'].profile_json['Apt_Pass_1'] }}"
+  vars:
+    package_list: []
+
+- name: displaying apt packages to install from config file
+  debug:
+    msg: "{{ item }}"
+  with_items: 
+  - "{{ hostvars['localhost'].profile_json['Apt_Pass_1'] }}"
+
+- name: squash install
+  apt:
+    name: "{{ package_list }}"
+    state: present
+    install_recommends: yes
+    autoclean: yes
+    allow_unauthenticated: yes
+    force_apt_get: yes
+  become: yes
+  become_user: root
+  become_method: sudo
+  when:
+     - squash | bool
+
+- name: Manage package
+  apt:
+    name: "{{ item.Name }}"
+    state: "{{ item.State | default('present') }}"
+    autoclean: yes
+    install_recommends: yes
+    autoclean: yes
+  with_items: "{{ key_data }}"
+  become: yes
+  become_user: root
+  become_method: sudo
+  when:
+     - item.Version is undefined
+
+- name: Manage versioned package
+  apt:
+    name: "{{ '='.join((item.Name, item.Version)) }}"
+    state: "{{ item.State }}"
+    autoclean: yes
+    install_recommends: yes
+    autoclean: yes
+  with_items: "{{ key_data }}"
+  become: yes
+  become_user: root
+  become_method: sudo
+  when:
+     - item.Version is defined
+
+- name: mark packages to be held
+  dpkg_selections:
+    name: "{{ item.Name }}"
+    selection: hold
+    install_recommends: yes
+    autoclean: yes
+  with_items: "{{ key_data }}"
+  become: yes
+  become_user: root
+  become_method: sudo
+  when:
+    - item.Version is defined
+    - item.Hold | bool
+    - not squash

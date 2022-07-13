@@ -1,0 +1,34 @@
+# adds apt repos for installing apt packages
+---
+- name: gather data
+  set_fact:
+    data: "{{ hostvars['localhost'].profile_json['Apt_Repos'] }}"
+
+- name: displaying apt-repos from config file
+  debug:
+    msg: "{{ item }}"
+  with_items: "{{ data }}"
+
+- name: add from url "{{ item.Name }}"
+  apt_repository:
+    repo: "{{ item.URL }}"
+    state: present
+
+  with_items: "{{ data }}"
+  become: yes
+  become_user: root
+  become_method: sudo
+  when:
+    - item.URL is defined
+
+- name: add from ppa "{{ item.Name }}"
+  ansible.builtin.apt_repository:
+    repo: "{{ item.Repo }}"
+    codename: "{{ item.Codename }}"
+  with_items: "{{ data }}"
+  become: yes
+  become_user: root
+  become_method: sudo
+  when:
+    - item.Repo is defined
+    - item.Codename is defined

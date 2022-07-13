@@ -1,0 +1,45 @@
+---
+Brew_Path: ~/.linuxbrew/Homebrew/bin/
+Brew:
+  - Name: dos2unix
+    State: present
+  - Name: tfenv
+    State: present
+  - Name: azure-cli
+    State: present
+  - Name: dos2unix
+    State: present
+  - Name: awscli
+    State: present
+  - Name: ag
+    State: present
+  - Name: colordiff
+    State: present
+  - Name: docker
+    State: present
+  - Name: fluxctl
+    State: present
+  - Name: helm
+    State: present
+  - Name: jq
+    State: present
+  - Name: kops
+    State: present
+  - Name: kubectl
+    State: present
+  - Name: lynx
+    State: present
+  - Name: npm
+    State: present
+  - Name: openssl
+    State: present
+  - Name: pandoc
+    State: present
+  - Name: terraform
+    State: present
+  - Name: tfenv
+    State: present
+  - Name: tree
+    State: present
+  - Name: wget
+    State: present

@@ -1,0 +1,43 @@
+---
+# WIP role to handle basic SQLite functions
+- name: Sqlite section
+  set_fact:
+    section: "{{ hostvars['localhost'].profile_json['Sqlite'] }}"
+
+- debug:
+    msg: "{{ section }}"
+
+- name: Sqlite insert
+  debug:
+    msg: "sudo sqlite3 {{ item.0.Database }} 'insert into {{ item.0.Table }} ({{ item.0.Columns }}) VALUES ({{ item.1 }}, 1, none)'"
+  loop: "{{ section|subelements('Values') }}"
+  when:
+    - item.0.Type == "insert"
+
+- name: Sqlite select
+  debug:
+    msg: "sudo sqlite3 {{ item.0.Database }} 'insert into {{ item.0.Table }} ({{ item.0.Columns }}) VALUES ({{ item.1 }}, 1, none)'"
+  loop: "{{ section|subelements('Values') }}"
+  when:
+    - item.0.Type == "select"
+
+- name: Sqlite delete
+  debug:
+    msg: "sudo sqlite3 {{ item.0.Database }} 'insert into {{ item.0.Table }} ({{ item.0.Columns }}) VALUES ({{ item.1 }}, 1, none)'"
+  loop: "{{ section|subelements('Values') }}"
+  when:
+    - item.0.Type == "delete"
+
+- name: Create Table
+  debug:
+    msg: "sudo sqlite3 {{ item.0.Database }} 'create table [if not exists] {{ item.0.Table }} ({{ item.1.Name }} {{ item.1.Type }} {{ item.1.Constraint }}'"
+  loop: "{{ section|subelements('Schema') }}"
+  when:
+    - item.0.Type == "create_table"
+
+- name: Drop table
+  debug:
+    msg: "sudo sqlite3 {{ item.0.Database }} 'drop table [if exists] {{ item.0.Table }};'"
+  loop: "{{ section|subelements('Values') }}"
+  when:
+    - item.0.Type == "drop_table"

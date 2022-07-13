@@ -1,0 +1,3 @@
+Apt_Pass_1:
+  - Name: ubuntu-minimal
+    State: present

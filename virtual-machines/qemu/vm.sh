@@ -151,7 +151,7 @@ create_virtual_disk(){
   #  -F qcow2 \
   #  -b "$CLOUD_IMAGE_NAME"_base.qcow2 \
   #  hdd.qcow2 "$DISK_SIZE"
-  qemu-img create -f raw /media/hdd.img $DISK_SIZE
+  qemu-img create -f qcow2 /media/hdd.img $DISK_SIZE
 }
 
 # Generate an ISO image
@@ -225,7 +225,7 @@ create_vm_from_iso(){
     -cdrom $ISO_FILE \
     -object iothread,id=io1 \
     -device virtio-blk-pci,drive=disk0,iothread=io1 \
-    -drive if=none,id=disk0,cache=none,format=raw,aio=threads,file=/media/hdd.img \
+    -drive if=none,id=disk0,cache=none,format=qcow2,aio=threads,file=/media/hdd.img \
     -device virtio-net-pci,netdev=net0 \
     -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
     -vga virtio \
@@ -242,7 +242,7 @@ boot_vm_from_iso(){
     -m "$MEMORY" \
     -object iothread,id=io1 \
     -device virtio-blk-pci,drive=disk0,iothread=io1 \
-    -drive if=none,id=disk0,cache=none,format=raw,aio=threads,file=/media/hdd.img \
+    -drive if=none,id=disk0,cache=none,format=qcow2,aio=threads,file=/media/hdd.img \
     -device virtio-net-pci,netdev=net0 \
     -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
     -vga virtio \

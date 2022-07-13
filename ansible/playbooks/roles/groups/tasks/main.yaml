@@ -1,0 +1,19 @@
+---
+# This role manages groups on the client
+- name: gather data
+  set_fact:
+    data: "{{ hostvars['localhost'].profile_json['Groups'] }}"
+
+- name: Displaying Groups to be created from config file
+  debug:
+    msg: "{{ item }}"
+  with_items: "{{ data }}"
+
+- name: managing the groups
+  group:
+      name: "{{ item.Name }}"
+      state: "{{ item.State }}"
+  with_items: "{{ data }}"
+  become: yes
+  become_user: root
+  become_method: sudo
