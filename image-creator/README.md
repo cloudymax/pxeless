@@ -1,6 +1,8 @@
 # Ubuntu Autoinstall Generator
 
-A script to generate a fully-automated ISO image for installing Ubuntu onto a machine without human interaction. This uses the new **autoinstall** method, replaces the [now depricated isolinux + MBR](https://archive.org/details/ubuntukylin2104-201214-daily) with [eltorito + GPT to enable support for Ubuntu 20.10 and newer](https://askubuntu.com/questions/1289400/remaster-installation-image-for-ubuntu-20-10).
+Based on [covertsh/ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator), which generates a customized, fully-automated ISO image for installing Ubuntu onto a machine without human interaction using [cloud-init](https://cloudinit.readthedocs.io/en/latest/) and the new **autoinstall** feature of Ubuntu's Ubiquity installer. 
+
+This spin-off project adds support for [eltorito + GPT images required for Ubuntu 20.10 and newer](https://askubuntu.com/questions/1289400/remaster-installation-image-for-ubuntu-20-10). It also keeps support for the [now depricated isolinux + MBR](https://archive.org/details/ubuntukylin2104-201214-daily) image type. In addition, the process is dockerized to make it possible to run on Mac/Windows hosts in addition to Linux.
 
 ## Behavior
 
@@ -9,31 +11,54 @@ The basic idea is:
  - download it, 
  - extract it, 
  - add some kernel command line parameters, 
- - repack the data into a new ISO. 
+ - add out custom cloid-init config,
+ - repack the data into a new ISO.
+ - createa bootable USB drive (Optional)
  
- This is needed for full automation because the ```autoinstall``` parameter must be present on the kernel command line, otherwise the installer will wait for a human to confirm. This script automates the process of creating an ISO with this built-in.
+ This allows end-to-end automation by adding the ```autoinstall``` parameter must be present on the kernel command line, otherwise the installer will wait for a human to confirm. 
 
 <img src="https://raw.githubusercontent.com/cloudymax/ubuntu-autoinstall-generator-dockerized/main/liveiso.drawio.svg">
 
 
-## Autoinstall Process Explanation
+## How it works
 
-Autoinstall configuration (disk layout, language etc) can be passed along with **cloud-init** data to the installer. Some minimal information is needed for
-the installer to work - see the Ubuntu documentation for an example, or use the ```user-data.example``` file in this repository (password: ubuntu). 
-This data can be passed over the network (not yet supported in this script), via an attached volume, or be baked into the ISO itself.
-
-To attach via a volume (such as a separate ISO image), see the Ubuntu autoinstall [quick start guide](https://ubuntu.com/server/docs/install/autoinstall-quickstart). It's really very easy! 
-
-To bake everything into a single ISO instead, you can use the ```-a``` flag with this script and provide a **user-dat**a file containing the autoinstall configuration and optionally cloud-init data, plus a **meta-data** file if you choose. 
-
-The **meta-data** file is optional and will be empty if it is not specified. With an 'all-in-one' ISO, you simply boot a machine using the ISO and the installer will do the rest. At the end the machine will reboot into the new OS.
-
-This script can use an existing ISO image or download the latest daily image from the Ubuntu project. Using a fresh ISO speeds things up because there won't be as many packages to update during the installation.
+First we download the ISO of your choice - a daily build, or a release. (Daily builds are faster because they don't require as many updates/upgrades)
 
 By default, the source ISO image is checked for integrity and authenticity using GPG. This can be disabled with ```-k```.
 
+We combine an `autoistall` config from the Ubuntu [Ubiquity installer](https://wiki.ubuntu.com/Ubiquity), and a [cloud-init](https://cloudinit.readthedocs.io/en/latest/) `cloud-config` / `user-data` file. Be aware that, while similar in schema, the Autoinstall and Cloud-Init portions of the file do not mix - the `user-data` value on line 44 marks the transition from autoinstall to cloud-init syntax.
+
+The resulting product is a fully-automated Ubuntu install with pre-provision capabilities for basic users, groups, packages, storage, networks etc... This serves as an easy stepping-off point to Ansible, puppet, Chef and other configuration-management tooling for enterprise users, or to personalization tools like [jessebot/onboardme](https://github.com/jessebot/onboardme) for every-day users.
+
+
+## Resources
+
+- Autoinstall configuration options and schema can be found [HERE](https://ubuntu.com/server/docs/install/autoinstall-reference).
+
+- Cloud-Init options and examples may be found [HERE](https://ubuntu.com/server/docs/install/autoinstall-reference)
+
+- You can also refer to the provided example file [HERE](image-creator/user-data.example)
+
+- 
+
+
+To build a combined `autoinstall` + `cloud-init` image, you can use the ```-a``` flag with this script and provide a **user-data** file containing the autoinstall configuration and optionally cloud-init data, and an optional **meta-data** file if you choose. The **meta-data** file is optional and will be empty if it is not specified. You may read more about providing a `meta-data` file [HERE](https://cloudinit.readthedocs.io/en/latest/topics/instancedata.html)
+
+With an 'all-in-one' ISO, you simply boot a machine using the ISO and the installer will do the rest. At the end the machine will reboot into the new OS.
+
+This script can use an existing ISO image or download the latest daily image from the Ubuntu project. Using a fresh ISO speeds things up because there won't be as many packages to update during the installation.
+
+By default, the source ISO image is checked for integrity and authenticity using GPG. This can be disabled with ```-k```. This step can cause problems with older releases.
 
 ## Usage
+
+```bash
+docker build -t iso-generator . && \
+docker run -it --mount type=bind,source="$(pwd)",target=/app iso-generator \
+ubuntu-autoinstall-generator.sh -a -u user-data.example -n jammy
+```
+
+## Command-line options
 ```
 Usage: ubuntu-autoinstall-generator.sh [-h] [-v] [-a] [-e] [-u user-data-file] [-m meta-data-file] [-k] [-c] [-r] [-s source-iso-file] [-d destination-iso-file]
 
@@ -76,15 +101,8 @@ Available options:
                         created, overwriting any existing file.
 ```
 
-### Docker
 
-```bash
-docker build -t iso-generator . && \
-docker run -it --mount type=bind,source="$(pwd)",target=/app iso-generator \
-ubuntu-autoinstall-generator.sh -a -u user-data.example -n jammy
-```
-
-### Example
+### Example output
 ```
 docker build -t iso-generator . && \
 docker run -it --mount type=bind,source="$(pwd)",target=/app iso-generator \
@@ -126,16 +144,14 @@ ubuntu-autoinstall-generator.sh -a -u user-data.example -n jammy
 [2022-06-19 14:37:54] ✅ Completed.
 ```
 
-Now you can boot your target machine using ```ubuntu-autoinstall-example.iso``` and it will automatically install Ubuntu using the configuration from ```user-data.example```.
-
-### create a bootable usb flash drive
+## Create a bootable usb flash drive
 
 ```zsh
 export IMAGE_FILE="ubuntu-autoinstall-2022-06-19.iso"
 ```
 
  ```zsh
-# disk configuration
+ # /dev/sdb is assumed for the sake of the example
 
  sudo fdisk -l |grep "Disk /dev/"
 
