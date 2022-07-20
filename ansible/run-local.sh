@@ -16,7 +16,7 @@ ansible-galaxy collection install ansible.posix
 # Profile to use for demo (absolute path)
 USER=$(whoami)
 export WORKING_DIR=$(pwd)
-export DEMO_DIR="$WORKING_DIR/ansible_profiles/basic_desktop"
+export DEMO_DIR="$WORKING_DIR/ansible_profiles/kind-host"
 export ANSIBLE_PLAYBOOK="$WORKING_DIR/playbooks/main-program.yaml"
 
 # Program verbosity
