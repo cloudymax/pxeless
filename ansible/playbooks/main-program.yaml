@@ -8,6 +8,9 @@
     debug: "{{ debug }}"
     squash: "{{ squash }}"
     ansible_user: "{{ ansible_user }}}"
+  
+  environment:
+    NONINTERACTIVE: "1" 
 
   tasks:
 
