@@ -7,10 +7,10 @@
 
 - name: add a new path
   ansible.builtin.lineinfile:
-    dest: "/etc/environment"
+    dest: "~/bashrc"
     state: present
     regexp: "^{{ item.key }}="
-    line: "{{ item.key }}={{ item.value }}"
+    line: "export {{ item.key }}={{ item.value }}"
   with_items: "{{ section }}"
   become: yes
   become_user: root
