@@ -3,7 +3,7 @@ Files:
   Path: /home/max/homebrew
   Owner: max
   Group: admin
-  Mode:  0755
+  Mode:  u=rwX,g=rX,o=rX
   State: permissions
 Path:
 - Name: brew
