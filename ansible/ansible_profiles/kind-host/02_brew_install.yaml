@@ -1,3 +1,5 @@
 Commands:
-- Name: install brew
-  Command: curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+- Name: 1
+  Command: curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh >> install.sh
+- Name: 2
+  Command: install.sh
