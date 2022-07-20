@@ -8,4 +8,4 @@ Files:
 Path:
 - Name: brew
   key: PATH
-  value: "/home/max/homebrew/bin:$PATH" 
+  value: \"/home/max/homebrew/bin:$PATH\" 
