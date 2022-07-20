@@ -6,12 +6,12 @@
     ansible_user: "{{ hostvars['localhost'].ansible_user }}"
 
 - name: add a new path
-  lineinfile:
+  lineinfile: >
     dest: /etc/environment
     state: present
     backrefs: yes
     regexp: 'PATH=(["])((?!.?{{extra_path}}).?)(["])$'
-    line: "PATH=\\1\\2:{{ item.Path }}\\3"
+    line: "PATH=\1\2:{{ item.Path }}\3"
     create: yes
   with_items: "{{ section }}"
   become: yes
