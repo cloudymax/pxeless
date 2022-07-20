@@ -15,3 +15,8 @@
   become: yes
   become_user: root
   become_method: sudo
+
+- shell: ". ~/.bashrc && echo $PATH"
+  args: 
+    executable: /bin/bash
+    register: result
