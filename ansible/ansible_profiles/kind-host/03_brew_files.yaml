@@ -1,14 +1,12 @@
 Files:
 - Name: permissions of repo
-  Path: /home/$USER/homebrew
+  Path: /home/max/homebrew
   Owner: max
   Group: max
   Mode:  0777
   State: permissions
 Commands:
 - Name: set the path etc..
-  Command: echo "PATH=$PATH:/home/$USER/homebrew/bin:/home/$USER/homebrew"
-- Name: set simlink
-  Command: 
+  Command: echo "PATH=$PATH:/home/max/homebrew/bin:/home/max/homebrew"
 - Name: update brew
   Command: brew update --force

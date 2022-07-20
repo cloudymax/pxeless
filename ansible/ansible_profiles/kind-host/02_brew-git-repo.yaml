@@ -1,6 +1,6 @@
 Repos:
   - Source: https://github.com/Homebrew/brew
-    Destination: /home/$USER/homebrew
+    Destination: /home/max/homebrew
     Branch: "master"
 Details:
   About: "brew install"
