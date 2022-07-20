@@ -1,0 +1,9 @@
+Repos:
+  - Source: https://github.com/Homebrew/brew
+    Destination: /home/$USER/homebrew
+    Branch: "master"
+Details:
+  About: "brew install"
+  Name: Base
+  Size:
+  Comment: literally just the commands needed to install brew because it's actually the worst
