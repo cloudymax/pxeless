@@ -1,0 +1,8 @@
+Commands:
+- Name: install brew
+  Command: echo "PATH=$PATH:/home/$USER/homebrew/bin:/home/$USER/homebrew"
+  Become: yes
+  Become_User: sunny
+  Become_Method: sudo
+- Name: set simlink
+  Command: 
