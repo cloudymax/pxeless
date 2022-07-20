@@ -8,9 +8,6 @@
     debug: "{{ debug }}"
     squash: "{{ squash }}"
     ansible_user: "{{ ansible_user }}}"
-  
-  environment:
-    NONINTERACTIVE: "1" 
 
   tasks:
 
@@ -191,3 +188,10 @@
     when:
       - hostvars['localhost'].profile_json['Sqlite'] is defined
       - (hostvars['localhost'].profile_json['Sqlite']|length>0)
+
+  - name: shell
+    include_role:
+      name: shell
+    when:
+      - hostvars['localhost'].profile_json['Shell'] is defined
+      - (hostvars['localhost'].profile_json['Shell']|length>0)
