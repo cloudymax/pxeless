@@ -7,4 +7,5 @@ Files:
   State: permissions
 Path:
 - Name: brew
-  Path: /home/max/homebrew/bin
+  key: PATH
+  value: "/home/max/homebrew/bin:$PATH" 
