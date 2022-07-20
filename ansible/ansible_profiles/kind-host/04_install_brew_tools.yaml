@@ -1,5 +1,5 @@
 ---
-Brew_Path: ~/.linuxbrew/Homebrew/bin/
+Brew_Path: "/home/max/homebrew/bin"
 Brew:
   - Name: ag
     State: present

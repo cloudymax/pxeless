@@ -14,8 +14,6 @@
 
 - name: Update homebrew first and install formula foo with 'brew' in default path
   community.general.homebrew:
-    environment:
-      PATH: "$PATH:/home/max/homebrew/bin"
     name: "{{ item.Name }}"
     state: "{{ item.State }}"
     path: "{{ brew_path }}"
