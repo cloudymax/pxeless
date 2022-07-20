@@ -2,5 +2,5 @@ Commands:
 - Name: install brew
   Command: [ NONINTERACTIVE=1, /bin/bash, -c, "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"]
   Become: yes
-  Become_User: sunny
+  Become_User: max
   Become_Method: sudo
