@@ -6,7 +6,7 @@
 
 - name: Shell script scetion
   debug:
-    msg: "{{ item.Shell }}"
+    msg: "{{ item.Script }}"
   with_items: "{{ section }}"
 
 - shell:
