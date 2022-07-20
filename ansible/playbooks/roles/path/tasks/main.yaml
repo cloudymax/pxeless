@@ -7,7 +7,7 @@
 
 - name: add a new path
   ansible.builtin.lineinfile:
-    dest: "~/bashrc"
+    dest: "/home/max/.bashrc"
     state: present
     regexp: "^{{ item.key }}="
     line: "export {{ item.key }}={{ item.value }}"
