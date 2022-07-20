@@ -2,11 +2,9 @@ Files:
 - Name: permissions of repo
   Path: /home/max/homebrew
   Owner: max
-  Group: max
-  Mode:  0777
+  Group: admin
+  Mode:  0755
   State: permissions
-Commands:
-- Name: set the path etc..
-  Command: echo "PATH=$PATH:/home/max/homebrew/bin:/home/max/homebrew"
-- Name: update brew
-  Command: brew update --force
+Path:
+- Name: brew
+  Path: /home/max/homebrew/bin

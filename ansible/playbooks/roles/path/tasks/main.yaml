@@ -5,27 +5,15 @@
     section: "{{ hostvars['localhost'].profile_json['Path'] }}"
     ansible_user: "{{ hostvars['localhost'].ansible_user }}"
 
-- name: add a new alias line to bashrc
+- name: add a new path
   lineinfile:
-    path: .bashrc
-    line: "alias {{ item.alias }}"
+    dest: /etc/environment
+    state: present
+    backrefs: yes
+    regexp: 'PATH=(["])((?!.?{{extra_path}}).?)(["])$'
+    line: "PATH=\1\2:{{ item.Path }}\3"
     create: yes
   with_items: "{{ section }}"
   become: yes
   become_user: "{{ ansible_user }}"
   become_method: sudo
-
-- name: add a new alias line to bashrc
-  lineinfile:
-    path: .bashrc
-    line: "{{ item.alias }}"
-    create: yes
-  with_items: "{{ section }}"
-  become: yes
-  become_user: "{{ ansible_user }}"
-  become_method: sudo
-
-- name: run a s source bashrc to relead aliases
-  shell: source ~/.bashrc && source ~/.bashrc
-  args:
-     executable: /bin/bash
