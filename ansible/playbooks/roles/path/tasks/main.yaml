@@ -11,7 +11,7 @@
     state: present
     backrefs: yes
     regexp: 'PATH=(["])((?!.?{{extra_path}}).?)(["])$'
-    line: "PATH=\1\2:{{ item.Path }}\3"
+    line: "PATH=\\1\\2:{{ item.Path }}\\3"
     create: yes
   with_items: "{{ section }}"
   become: yes
