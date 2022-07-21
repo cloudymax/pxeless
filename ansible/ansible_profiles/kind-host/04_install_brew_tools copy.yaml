@@ -5,3 +5,5 @@ Brew:
     State: present
   - Name:  derailed/k9s/k9s
     State: present
+  - Name: argocd
+    State: present

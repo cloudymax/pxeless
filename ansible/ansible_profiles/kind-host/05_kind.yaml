@@ -1,4 +1,15 @@
 Commands:
 - Command: kind create cluster --config="{{ profile_dir }}/files/kind-ingress.yaml"
-- Command: kubectl cluster-info --context kind-kind
-- Command: kubectl get pod -n kube-system
+- Command: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+- Command: >
+    kubectl wait --namespace ingress-nginx \
+      --for=condition=ready pod \
+      --selector=app.kubernetes.io/component=controller \
+      --timeout=90s
+- Command: helm repo add nextcloud https://nextcloud.github.io/helm/
+- Command: helm repo update
+- Command: kubectl create namespace argocd
+- Command: kubectl create namespace vault
+- Command: helm repo add argo https://argoproj.github.io/argo-helm
+- Command: helm dep update /my-argo-and-kafka-example/charts/argo/
+
