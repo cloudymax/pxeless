@@ -1,2 +1,2 @@
 Commands:
-- Command: chdir=/Users/max/Desktop/Repos/public-infra/ansible/ansible_profiles/kind-host/files kind create cluster --config=kind-ingress.yaml
+- Command: pwd
