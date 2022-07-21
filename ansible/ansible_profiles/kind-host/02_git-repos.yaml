@@ -4,3 +4,4 @@ Repos:
     Branch: "master"
   - Source: https://github.com/cloudymax/my-argo-and-kafka-example.git
     Destination: /my-argo-and-kafka-example
+    Branch: "main"
