@@ -7,11 +7,6 @@
     data: "{{ hostvars['localhost'].profile_json['Brew'] }}"
     brew_path: "{{ hostvars['localhost'].profile_json['Brew_Path'] }}"
 
-- name: displaying tasks from config
-  debug:
-    msg: "{{ item }}"
-  with_items: "{{ data }}"
-
 - name: Update homebrew first and install formula foo with 'brew' in default path
   community.general.homebrew:
     name: "{{ item.Name }}"

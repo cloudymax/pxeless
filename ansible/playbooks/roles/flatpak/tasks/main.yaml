@@ -4,11 +4,6 @@
   set_fact:
     data: "{{ hostvars['localhost'].profile_json['Flatpak'] }}"
 
-- name: displaying tasks from config
-  debug:
-    msg: "{{ item }}"
-  with_items: "{{ data }}"
-
 - name: Manage flatpak packages
   community.general.flatpak:
     name: "{{ item.Name }}"

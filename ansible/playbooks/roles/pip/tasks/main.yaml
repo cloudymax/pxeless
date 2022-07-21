@@ -3,12 +3,7 @@
 - name: Pip section
   set_fact:
     section: "{{ hostvars['localhost'].profile_json['Pip'] }}"
-
-- name: Pip section
-  debug:
-    msg: "{{ item.Name }}"
-  with_items: "{{ section }}"
-
+    
 - name: Install pip packages
   pip:
     name: "{{ item.Name }}"

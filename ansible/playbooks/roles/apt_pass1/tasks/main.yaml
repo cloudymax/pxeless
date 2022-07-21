@@ -17,12 +17,6 @@
   vars:
     package_list: []
 
-- name: displaying apt packages to install from config file
-  debug:
-    msg: "{{ item }}"
-  with_items: 
-  - "{{ hostvars['localhost'].profile_json['Apt_Pass_1'] }}"
-
 - name: squash install
   apt:
     name: "{{ package_list }}"

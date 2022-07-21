@@ -4,11 +4,6 @@
   set_fact:
     section: "{{ hostvars['localhost'].profile_json['Shell'] }}"
 
-- name: Shell script scetion
-  debug:
-    msg: "{{ item.Script }}"
-  with_items: "{{ section }}"
-
 - shell:
     cmd: |
       "{{ item.Script }}"

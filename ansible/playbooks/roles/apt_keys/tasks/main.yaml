@@ -4,11 +4,6 @@
   set_fact:
     data: "{{ hostvars['localhost'].profile_json['Apt_Keys'] }}"
 
-- name: displaying apt-keys from config file
-  debug:
-    msg: "{{ item }}"
-  with_items: "{{ data }}"
-
 - name: add "{{ item.Name }}"
   apt_key:
     url: "{{ item.URL }}"

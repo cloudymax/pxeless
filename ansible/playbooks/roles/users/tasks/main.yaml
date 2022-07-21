@@ -4,11 +4,6 @@
   set_fact:
     data: "{{ hostvars['localhost'].profile_json['Users'] }}"
 
-- name: Displaying Users to be created from config file
-  debug:
-    msg: "{{ item }}"
-  with_items: "{{ data }}"
-
 - name: manage the user accounts
   user:
     name: "{{ item.Name }}"

@@ -4,11 +4,6 @@
   set_fact:
     data: "{{ hostvars['localhost'].profile_json['Flatpak_Remote'] }}"
 
-- name: displaying tasks from config
-  debug:
-    msg: "{{ item }}"
-  with_items: "{{ data }}"
-
 - name: Add the flatpak repository remotes
   community.general.flatpak_remote:
     name: "{{ item.Name }}"

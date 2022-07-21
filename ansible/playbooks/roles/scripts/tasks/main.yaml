@@ -4,11 +4,6 @@
   set_fact:
     section: "{{ hostvars['localhost'].profile_json['Scripts'] }}"
 
-- name: scripts scetion
-  debug:
-    msg: "{{ item.Script }}"
-  with_items: "{{ section }}"
-
 - name: Copy a script from the host and execute it on the remote
   script: "{{ item.Script }}"
   become: "{{ item.Become }}"

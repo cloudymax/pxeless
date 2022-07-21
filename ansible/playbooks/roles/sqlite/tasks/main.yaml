@@ -4,9 +4,6 @@
   set_fact:
     section: "{{ hostvars['localhost'].profile_json['Sqlite'] }}"
 
-- debug:
-    msg: "{{ section }}"
-
 - name: Sqlite insert
   debug:
     msg: "sudo sqlite3 {{ item.0.Database }} 'insert into {{ item.0.Table }} ({{ item.0.Columns }}) VALUES ({{ item.1 }}, 1, none)'"

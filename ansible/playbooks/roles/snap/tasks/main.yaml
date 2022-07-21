@@ -4,11 +4,6 @@
   set_fact:
     section: "{{ hostvars['localhost'].profile_json['Snap'] }}"
 
-- name: Show Snap scetion
-  debug:
-    msg: "{{ item.Name }}"
-  with_items: "{{ section }}"
-
 - name: Install Snap from a specific channel
   snap:
     name: "{{ item.Name }}"

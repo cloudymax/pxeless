@@ -4,11 +4,6 @@
   set_fact:
     section: "{{ hostvars['localhost'].profile_json['Repos'] }}"
 
-- name: displaying git repos to be cloned from config file
-  debug:
-    msg: "{{ item }}"
-  with_items: "{{ section }}"
-
 - name: install git
   apt:
     name: git

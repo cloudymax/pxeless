@@ -5,11 +5,6 @@
     data: "{{ hostvars['localhost'].profile_json['Files'] }}"
     ansible_user: "{{ hostvars['localhost'].ansible_user }}"
 
-- name: displaying tasks from config
-  debug:
-    msg: "{{ item }}"
-  with_items: "{{ data }}"
-
 - name: Creates directory
   file:
     path: "{{ item.Path }}"
