@@ -20,8 +20,7 @@
     - item.Become is undefined and item.Delegated_Host is not defined
 
 - debug:
-#    msg: "user command debug: {{ user_command_output }}"
-    msg: "this is a user command {{ item }}"
+    msg: "Result: {{ user_command_output }}"
   with_items: "{{ section }}"
   when:
     - item.Become is undefined and item.Delegated_Host is not defined

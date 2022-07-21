@@ -1,2 +1,4 @@
 Commands:
 - Command: kind create cluster --config="{{ profile_dir }}/files/kind-ingress.yaml"
+- Command: kubectl cluster-info --context kind-kind
+- Command: kubectl get pod -n kube-system

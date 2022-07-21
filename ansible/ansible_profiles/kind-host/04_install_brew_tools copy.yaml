@@ -3,3 +3,5 @@ Brew_Path: "/home/max/homebrew/bin"
 Brew:
   - Name: kind
     State: present
+  - Name:  derailed/k9s/k9s
+    State: present
