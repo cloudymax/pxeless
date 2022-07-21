@@ -15,8 +15,8 @@
   - name: Setting profile as fact
     set_fact:
       profile_json: "{{ profile_json }}"
-      debug:
-        msg: "{{ profile_json }}"
+    #  debug:
+    #    msg: "{{ profile_json }}"
 
   - name: Setting the Debug boolean
     set_fact:

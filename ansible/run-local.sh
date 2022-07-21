@@ -26,7 +26,7 @@ export SQUASH="false"
 
 for file in "${DEMO_DIR}"/*.yaml
 do
-    echo "running $file ..."
+    #echo "running $file ..."
     ansible-playbook $ANSIBLE_PLAYBOOK \
         --extra-vars \
         "profile_path='${file}' \
