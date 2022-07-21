@@ -5,3 +5,6 @@ Repos:
   - Source: https://github.com/cloudymax/my-argo-and-kafka-example.git
     Destination: /home/max/my-argo-and-kafka-example
     Branch: "main"
+  - Source: https://github.com/jessebot/NextCloud-House.git
+    Destination: /home/max/NextCloud-House
+    Branch: "main"
