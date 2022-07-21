@@ -8,6 +8,7 @@ Commands:
 - Command: helm repo add argo https://argoproj.github.io/argo-helm
 - Command: helm dep update /home/max/my-argo-and-kafka-example/charts/argo/
 - Command: helm install argo-cd /home/max/my-argo-and-kafka-example/charts/argo/
-- Command: >
-    kubectl patch svc argo-cd-argocd-server -n default -p '{"spec": {"type": "LoadBalancer", "externalIPs":["192.168.50.50"]}}'
+- Command: kubectl create -n argocd -f "{{ profile_dir }}/files/argocd-ingress.yaml"
+#- Command: >
+#    kubectl patch svc argo-cd-argocd-server -n default -p '{"spec": {"type": "externalIPs":["192.168.50.50"]}}'
 
