@@ -11,5 +11,5 @@ Commands:
 - Command: kubectl create namespace argocd
 - Command: kubectl create namespace vault
 - Command: helm repo add argo https://argoproj.github.io/argo-helm
-- Command: helm dep update /my-argo-and-kafka-example/charts/argo/
+- Command: helm dep update /home/max/my-argo-and-kafka-example/charts/argo/
 

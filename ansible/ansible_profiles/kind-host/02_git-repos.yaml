@@ -3,5 +3,5 @@ Repos:
     Destination: /home/max/homebrew
     Branch: "master"
   - Source: https://github.com/cloudymax/my-argo-and-kafka-example.git
-    Destination: /my-argo-and-kafka-example
+    Destination: /home/max/my-argo-and-kafka-example
     Branch: "main"
