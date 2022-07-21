@@ -5,11 +5,13 @@ Commands:
 - Command: helm repo update
 - Command: kubectl create namespace argocd
 - Command: kubectl create namespace vault
+- Command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.12.1/manifests/namespace.yaml
+- Command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.12.1/manifests/metallb.yaml
 - Command: helm repo add argo https://argoproj.github.io/argo-helm
 - Command: helm dep update /home/max/my-argo-and-kafka-example/charts/argo/
 - Command: helm install argo-cd /home/max/my-argo-and-kafka-example/charts/argo/
 - Command: kubectl create -n argocd -f "{{ profile_dir }}/files/argo-ingress.yaml"
 - Command: kubectl apply -f "{{ profile_dir }}/files/metallb-configmap.yaml"
-#- Command: >
-#    kubectl patch svc argo-cd-argocd-server -n default -p '{"spec": {"type": "externalIPs":["192.168.50.50"]}}'
+- Command: >
+    kubectl patch svc argo-cd-argocd-server -n default -p '{"spec": {"type": "LoadBalancer"}}'
 
