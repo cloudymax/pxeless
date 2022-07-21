@@ -30,6 +30,7 @@ do
     ansible-playbook $ANSIBLE_PLAYBOOK \
         --extra-vars \
         "profile_path='${file}' \
+        profile_dir='${DEMO_DIR}' \
         ansible_user='$USER' \
         squash='${SQUASH}' \
         debug_output='${DEBUG}' \

@@ -8,6 +8,7 @@
     debug: "{{ debug }}"
     squash: "{{ squash }}"
     ansible_user: "{{ ansible_user }}}"
+    profile_dir: "{{ profile_dir }}"
 
   tasks:
 
@@ -28,6 +29,10 @@
   - name: enable squash optimization
     set_fact:
       squash: "{{ squash }}"
+
+  - name: profile path
+    set_fact:
+      profile_dir: "{{ profile_dir }}"
 
 - hosts: localhost
   gather_facts: yes

@@ -1,2 +1,2 @@
 Commands:
-- Command: pwd
+- Command: chdir="{{ files }}" kind create cluster --config=kind-ingress.yaml

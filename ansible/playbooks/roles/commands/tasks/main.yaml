@@ -6,6 +6,7 @@
   set_fact:
     section: "{{ hostvars['localhost'].profile_json['Commands'] }}"
     ansible_user: "{{ hostvars['localhost'].ansible_user }}"
+    files: "{{ hostvars['localhost'].profile_dir/files }}"
 
 - name: displaying commands to be run from the config file
   debug:
