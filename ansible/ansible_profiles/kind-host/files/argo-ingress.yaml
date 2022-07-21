@@ -1,5 +1,5 @@
 apiVersion: argoproj.io/v1alpha1
-kind: ArgoCD
+kind: argocd
 metadata:
   name: argocd
   labels:
