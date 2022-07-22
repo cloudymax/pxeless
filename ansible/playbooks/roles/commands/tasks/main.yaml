@@ -8,13 +8,15 @@
     ansible_user: "{{ hostvars['localhost'].ansible_user }}"
     profile_dir: "{{ hostvars['localhost'].profile_dir }}"
 
-- name: displaying commands to be run from the config file
-  debug:
-    msg: "{{ section }}"
-
-- name: running user commands
+- name: this run user commands
   command: "{{ item.Command }}"
   register: user_command_output
+  with_items: "{{ section }}"
+  when:
+    - item.Become is undefined and item.Delegated_Host is not defined
+
+- debug:
+    msg: "Command Result: {{ user_command_output }}"
   with_items: "{{ section }}"
   when:
     - item.Become is undefined and item.Delegated_Host is not defined
@@ -30,6 +32,12 @@
     - item.Become is defined and item.Delegated_Host is not defined
     - item.Become | bool
 
+- debug:
+    msg: "root command debug: {{ root_command_output }}"
+  when:
+    - item.Become is defined and item.Delegated_Host is not defined
+    - item.Become | bool
+
 - name: delegated command
   command: "{{ item.Command }}"
   delegate_to: "{{ item.Delegated_Host }}"
@@ -38,6 +46,12 @@
   become: "{{ item.Become }}"
   become_user: "{{ item.Become_User }}"
   become_method: "{{ item.Become_Method }}"
+  when:
+    - item.Delegated_Host is defined 
+    - item.Delegated_Host | string
+
+- debug:
+    msg: "Delegated command debug: {{ delegated_command_output }}"
   when:
     - item.Delegated_Host is defined 
     - item.Delegated_Host | string

@@ -1,23 +1,9 @@
 ---
-Brew_Path: ~/.linuxbrew/Homebrew/bin/
+Brew_Path: "/home/max/homebrew/bin"
 Brew:
-  - Name: ag
+  - Name: kind
     State: present
-  - Name: colordiff
+  - Name:  derailed/k9s/k9s
     State: present
-  - Name: fluxctl
-    State: present
-  - Name: helm
-    State: present
-  - Name: jq
-    State: present
-  - Name: kops
-    State: present
-  - Name: npm
-    State: present
-  - Name: openssl
-    State: present
-  - Name: tfenv
-    State: present
-  - Name: tree
+  - Name: argocd
     State: present

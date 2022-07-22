@@ -1,26 +1,20 @@
 # Ansible
-## Ansible Automated Installation (Under Construction)
-  1. `cd onboardme/ansible`
-  2. `bash demo.sh create`
-  3. When you see a login prompt press "ctrl + b" then "d" to detach from the tmux session
-  4. `bash demo.sh provision`
-  5. `bash demo.sh ssh_to_vm`
 
-## Ansible Manual Installation
+Ansible roles that execute actions defined in a yaml file.
 
-1. Select or Create a profile
+## Provision localhost
 
-    - Existing profiles/templates can be found in the [ansible_profiles](onboardme/configs/ansible_profiles) directoy
+  1. Clone this repo.
+  2. `cd public-infra/ansible`
+  3. `bash provision.sh`
 
-    - Follow the instructions [HERE](onboardme/configs/ansible_profiles/README.md) to customize or create a profile
+## Ansible Profiles
 
-2. Create an Ansible inventory file for the client
+  - Existing profiles can be found in the [ansible_profiles](public-infra/ansible/ansible_profiles) directory
 
-    - Create an inventory file for your target machine. See [demo.sh add_vm_to_inventory](/home/max/onboardme/ansible/demo.sh) for an automated example
+  - Create your own profile [HERE](onboardme/configs/ansible_profiles/README.md)
 
-3. Provision the client by running a playbook
 
-    - Run an ansible playbook to gether facts, run a single step, or a full profile against the target host. See [demo.sh](/home/max/onboardme/ansible/demo.sh) for automated examples.
 
 
  
