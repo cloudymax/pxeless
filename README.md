@@ -1,13 +1,12 @@
 # **PXEless**
 
-PXEless is a provisioning tool for environments where PXE is not an option. 
+PXEless is single-machine imaging and provisioning tool for environments where PXE is not an option or are not an option *yet*. 
 
-It delivers PXE-like experience without a server by chaining together Cloud-Init, Ubiquity, and Ansible.
+It delivers a PXE-like imaging experience without the PXE-server by chaining together Cloud-Init, Ubiquity, and Ansible.
 
-It is a single-machine bootstrapper that provisions metal hosts using a customized Live USB
-instead of a network connection.
+In this way, PXEless builds the "paved-road" upon which to deploy further applications and infrastructure.
 
-## **Some uses for PXEless:**
+## **Some uses for PXEless**
 
 - Re-image a personal computer when combined with tools like [Onboardme!](https://github.com/jessebot/onboardme)
 - Securely provision an IOT device.
@@ -22,8 +21,7 @@ or [Metal3](https://metal3.io/).
 ### **1. The Image Creator**
 
 The Image Creator generates a customized Ubuntu/Debian cloud-image or Live image using Cloud-init and Ubiquity. 
-These images can be mounted to a USB drive to re-image a metal host. 
-They can also be used to boot Virtual Machines.
+These images can be mounted to a USB drive to re-image a metal host. They can also be used to boot Virtual Machines.
 
 
 ### **2. The Virtual Machines**
