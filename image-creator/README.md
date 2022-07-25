@@ -1,4 +1,4 @@
-# Ubuntu Autoinstall Generator
+# Image Creator
 
 Based on [covertsh/ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator), which generates a customized, fully-automated ISO image for installing Ubuntu onto a machine without human interaction using [cloud-init](https://cloudinit.readthedocs.io/en/latest/) and the new **autoinstall** feature of Ubuntu's Ubiquity installer. 
 
