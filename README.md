@@ -13,7 +13,7 @@ In this way, PXEless builds the "paved-road" upon which to deploy further applic
 - Bootstrap your initial host for tools like [Tinkerbell](https://github.com/tinkerbell), [Metal-As-A-Service](https://maas.io/) 
 or [Metal3](https://metal3.io/).
 - Deploy a self-hosted github/gitlab runner on metal or in a VM.
-- Create a GPU-enabled Kubernetes Cluster 
+- Create a GPU-enabled VM Host/Kubernetes Node 
 - Build a fully hyper-converged stack using your customized images and QEMU/KVM.
 
 ## **Components**
