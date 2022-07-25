@@ -1,0 +1,15 @@
+Groups:
+  - Name: adm
+    State: present
+  - Name: cdrom
+    State: present
+  - Name: sudo
+    State: present
+  - Name: dip
+    State: present
+  - Name: plugdev
+    State: present
+  - Name: lxd
+    State: present
+  - Name: docker
+    State: present

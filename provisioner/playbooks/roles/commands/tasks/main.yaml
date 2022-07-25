@@ -1,0 +1,68 @@
+# This modulle is for when there just isnt a good option to automate something already usable as an ansible module.
+# It is better to consider using this module as a workaround until a  module can be developed
+# with that said, this role will execute both user and root commands and provide debug output from the client.
+---
+- name: commands section
+  set_fact:
+    section: "{{ hostvars['localhost'].profile_json['Commands'] }}"
+    ansible_user: "{{ hostvars['localhost'].ansible_user }}"
+    profile_dir: "{{ hostvars['localhost'].profile_dir }}"
+
+- name: this run user commands
+  command: "{{ item.Command }}"
+  register: user_command_output
+  with_items: "{{ section }}"
+  when:
+    - item.Become is undefined and item.Delegated_Host is not defined
+
+- debug:
+    msg: "Command Result: {{ user_command_output }}"
+  with_items: "{{ section }}"
+  when:
+    - item.Become is undefined and item.Delegated_Host is not defined
+
+- name: running root commands
+  command: "{{ item.Command }}"
+  register: root_command_output
+  with_items: "{{ section }}"
+  become: "{{ item.Become }}"
+  become_user: "{{ item.Become_User }}"
+  become_method: "{{ item.Become_Method }}"
+  when:
+    - item.Become is defined and item.Delegated_Host is not defined
+    - item.Become | bool
+
+- debug:
+    msg: "root command debug: {{ root_command_output }}"
+  when:
+    - item.Become is defined and item.Delegated_Host is not defined
+    - item.Become | bool
+
+- name: delegated command
+  command: "{{ item.Command }}"
+  delegate_to: "{{ item.Delegated_Host }}"
+  register: delegated_command_output
+  with_items: "{{ section }}"
+  become: "{{ item.Become }}"
+  become_user: "{{ item.Become_User }}"
+  become_method: "{{ item.Become_Method }}"
+  when:
+    - item.Delegated_Host is defined 
+    - item.Delegated_Host | string
+
+- debug:
+    msg: "Delegated command debug: {{ delegated_command_output }}"
+  when:
+    - item.Delegated_Host is defined 
+    - item.Delegated_Host | string
+
+- name: delegated command to ansible runner localhost
+  command: "{{ item.Command }}"
+  delegate_to: localhost
+  register: command_output
+  with_items: "{{ section }}"
+  become: yes
+  become_user: "{{ item.Become_User }}"
+  become_method: "{{ item.Become_Method }}"
+  when:
+    - item.Delegate is defined

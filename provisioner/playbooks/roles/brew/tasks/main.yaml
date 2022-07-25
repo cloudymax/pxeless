@@ -1,0 +1,16 @@
+# Brew is a pain in the ass to install properly on linux through ansible. 
+# the only way I have found to make it work in a production-level way
+# is to download the git repo, change the permissions, set up a simlink
+---
+- name: gather data
+  set_fact:
+    data: "{{ hostvars['localhost'].profile_json['Brew'] }}"
+    brew_path: "{{ hostvars['localhost'].profile_json['Brew_Path'] }}"
+
+- name: Update homebrew first and install formula foo with 'brew' in default path
+  community.general.homebrew:
+    name: "{{ item.Name }}"
+    state: "{{ item.State }}"
+    path: "{{ brew_path }}"
+    update_homebrew: yes
+  with_items: "{{ data }}"

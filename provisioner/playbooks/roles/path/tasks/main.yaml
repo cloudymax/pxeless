@@ -1,0 +1,17 @@
+---
+# WiP role to add aliases 
+- name: Path section
+  set_fact:
+    section: "{{ hostvars['localhost'].profile_json['Path'] }}"
+    ansible_user: "{{ hostvars['localhost'].ansible_user }}"
+
+- name: add a new path
+  ansible.builtin.lineinfile:
+    dest: "/home/max/.bashrc"
+    state: present
+    regexp: "^{{ item.key }}="
+    line: "export {{ item.key }}={{ item.value }}"
+  with_items: "{{ section }}"
+  become: yes
+  become_user: root
+  become_method: sudo

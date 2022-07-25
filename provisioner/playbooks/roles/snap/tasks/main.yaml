@@ -1,0 +1,41 @@
+---
+# Ansible role to manage snap packages
+- name: Snap section
+  set_fact:
+    section: "{{ hostvars['localhost'].profile_json['Snap'] }}"
+
+- name: Install Snap from a specific channel
+  snap:
+    name: "{{ item.Name }}"
+    channel: "{{ item.Channel }}"
+  with_items: "{{ section }}"
+  when:
+    - item.Channel is defined
+  become: yes
+  become_user: root
+  become_method: sudo
+
+- name: Install snap with the 'classic option'
+  snap:
+    name: "{{ item.Name }}"
+    classic: "{{ item.Classic }}"
+  with_items: "{{ section }}"
+  when:
+    - item.Classic is defined
+    - item.Classic | bool
+  become: yes
+  become_user: root
+  become_method: sudo
+
+- name: Install/uninstall package with state flag
+  snap:
+    name: "{{ item.Name }}"
+    state: "{{ item.State }}"
+  with_items: "{{ section }}"
+  when:
+    - item.Classic is not defined
+    - item.Channel is not defined
+    - item.State is defined
+  become: yes
+  become_user: root
+  become_method: sudo

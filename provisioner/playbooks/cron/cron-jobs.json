@@ -1,0 +1,40 @@
+{
+  "cron_config": {
+    "Path": [
+      {
+        "user": "<some-user>",
+        "name": "PATH",
+        "env": "yes",
+        "job": "<some-PATH>"
+      }
+    ],
+    "Shell": [
+      {
+        "user": "<some-user>",
+        "name": "SHELL",
+        "env": "yes",
+        "job": "/bin/sh"
+      }
+    ],
+    "jobs": [
+      {
+        "user": "<some-user>",
+        "name": "my-automated-thing",
+        "hour": "1-22",
+        "minute": "15,45",
+        "job": "bash /home/<some-user>/update/my-automated-thing.sh",
+        "state": "present",
+        "tags": "cronjob"
+      },
+      {
+        "user": "<some-user>",
+        "name": "restart the-thing",
+        "hour": "8",
+        "minute": "*",
+        "job": "sudo systemctl restart the-thing",
+        "state": "present",
+        "tags": "cronjob"
+      }
+    ]
+  }
+}

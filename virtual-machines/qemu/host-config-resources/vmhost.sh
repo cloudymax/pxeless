@@ -29,9 +29,9 @@ get_iommu_ids(){
         # Regex Explanation:
         # 1. search the data for lines onctaining VENDOR_NAME
         #    echo "$LIST" |grep $1
-        # 2. find the seocnd to last field of the line
+        # 2. find the second-to-last field of the line
         #    awk '{print $(NF-2)}'
-        # 3. Show only the current ietm in the itteration
+        # 3. Show only the current item in the itteration
         #    head -$i |tail -1
         # 4. cut off bracktes from the resulting value
         #    sed 's/[][]//g'

@@ -1,0 +1,17 @@
+---
+# upgrade a kernel version on a ubuntu host
+- name: package update
+  set_fact:
+    data: "{{ hostvars['localhost'].profile_json['Kernel_Upgrade'] }}"
+
+- name: Update all packages to the latest version
+  apt:
+    upgrade: "{{ item.Method }}"
+    update_cache: yes
+    cache_valid_time: 0
+  become: yes
+  become_user: root
+  become_method: sudo
+  with_items: "{{ data }}"
+  when:
+    - item.Method is defined

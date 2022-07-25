@@ -1,0 +1,7 @@
+
+Package_Upgrade:
+  - Method: "dist"
+    Comments: "choices are 'dist' 'full', 'no', 'safe', 'yes'"
+Package_Update:
+  - Update: true
+    Autoremove: true

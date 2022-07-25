@@ -1,5 +1,6 @@
 *.iso
 user-data.yaml
+user-data-bradley.yaml
 **.key**
 **.pem**
 **.pub**

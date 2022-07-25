@@ -1,0 +1,15 @@
+- name: Reboot Host
+  shell: sleep 5 && shutdown -r now "Reboot triggered by Ansible script"
+  async: 1
+  poll: 0
+  become: yes
+
+- name: Wait for host reboot
+  local_action:
+    module: wait_for
+      host={{ ansible_ssh_host }}
+      port={{ ansible_port }}
+      delay=15
+      timeout=120
+      state=started
+  become: no

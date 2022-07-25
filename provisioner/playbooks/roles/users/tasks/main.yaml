@@ -1,0 +1,39 @@
+---
+# Ansible role to manage user accounts on linux
+- name: gather data
+  set_fact:
+    data: "{{ hostvars['localhost'].profile_json['Users'] }}"
+
+- name: manage the user accounts
+  user:
+    name: "{{ item.Name }}"
+    shell: "{{ item.Shell }}"
+    groups:  [ "{{ item.Groups }}" ]
+    append: no
+    create_home: yes
+    generate_ssh_key: "{{ item.SSH_Key_file }}"
+    password: "{{ item.Password }}"
+    state: "{{ item.State }}"
+    system: "{{ item.System }}"
+    force: yes
+  with_items: "{{ data }}"
+  become: yes
+
+- name: Deploy SSH Key to the user
+  openssh_keypair:
+    path: "~/.ssh/id_rsa.pub"
+    type: rsa
+    size: 4096
+    state: present
+    force: yes
+  with_items: "{{ data }}"
+  when: item.SSH_Key_file | bool
+
+- name: Add system users to the sudoers group
+  copy:
+       dest: "/etc/sudoers.d/{{ item.Name }}"
+       content: "{{ item.Name }}  ALL=(ALL)  NOPASSWD: ALL"
+  with_items: "{{ data }}"
+  when: item.System | bool
+  become: yes
+

@@ -1,0 +1,22 @@
+---
+# This role ensures git is installed and clones a remote repository to the client
+- name: git section
+  set_fact:
+    section: "{{ hostvars['localhost'].profile_json['Repos'] }}"
+
+- name: install git
+  apt:
+    name: git
+    state: present
+    update_cache: yes
+  become: yes
+  become_user: root
+  become_method: sudo
+
+- name: clone of a single branch
+  ansible.builtin.git:
+    repo: "{{ item.Source }}"
+    dest: "{{ item.Destination }}"
+    single_branch: yes
+    version: "{{ item.Branch }}"
+  with_items: "{{ section }}"
