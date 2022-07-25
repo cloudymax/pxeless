@@ -160,24 +160,5 @@ export IMAGE_FILE="ubuntu-autoinstall-2022-06-19.iso"
  sudo dd bs=4M if=$IMAGE_FILE of="$DISK_NAME" status=progress oflag=sync
 ```
 
-```shell
-ubuntu@ubuntu-server:~$ uname -r
-5.15.0-39-generic
-ubuntu@ubuntu-server:~$ lsb_release -a
-No LSB modules are available.
-Distributor ID: Ubuntu
-Description:    Ubuntu 22.04 LTS
-Release:        22.04
-Codename:       jammy
-ubuntu@ubuntu-server:~$ 
-```
-
-### Testing
-
-Flags to use to build images:
-
-- `--code-name focal`
-- `--code-name jammy`
-
 ### License
 MIT license.
