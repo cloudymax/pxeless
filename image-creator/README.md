@@ -6,16 +6,14 @@ This spin-off project adds support for [eltorito + GPT images required for Ubunt
 
 ## Behavior
 
-The basic idea is:
- - find an unmodified Ubuntu ISO image, 
- - download it, 
- - extract it, 
- - add some kernel command line parameters, 
- - add out custom cloid-init config,
- - repack the data into a new ISO.
- - createa bootable USB drive (Optional)
+ - Find an unmodified Ubuntu ISO image, 
+ - Download it, 
+ - Extract it, 
+ - Add some kernel command line parameters, 
+ - Add our custom cloud-init config,
+ - Repack the data into a new ISO.
+ - Create a bootable USB drive (Optional)
  
- This allows end-to-end automation by adding the ```autoinstall``` parameter must be present on the kernel command line, otherwise the installer will wait for a human to confirm. 
 
 <img src="https://raw.githubusercontent.com/cloudymax/ubuntu-autoinstall-generator-dockerized/main/liveiso.drawio.svg">
 
@@ -26,31 +24,31 @@ First we download the ISO of your choice - a daily build, or a release. (Daily b
 
 By default, the source ISO image is checked for integrity and authenticity using GPG. This can be disabled with ```-k```.
 
-We combine an `autoistall` config from the Ubuntu [Ubiquity installer](https://wiki.ubuntu.com/Ubiquity), and a [cloud-init](https://cloudinit.readthedocs.io/en/latest/) `cloud-config` / `user-data` file. Be aware that, while similar in schema, the Autoinstall and Cloud-Init portions of the file do not mix - the `user-data` value on line 44 marks the transition from autoinstall to cloud-init syntax.
+We combine an `autoistall` config from the Ubuntu [Ubiquity installer](https://wiki.ubuntu.com/Ubiquity), and a [cloud-init](https://cloudinit.readthedocs.io/en/latest/) `cloud-config` / `user-data` file. 
 
 The resulting product is a fully-automated Ubuntu install with pre-provision capabilities for basic users, groups, packages, storage, networks etc... This serves as an easy stepping-off point to Ansible, puppet, Chef and other configuration-management tooling for enterprise users, or to personalization tools like [jessebot/onboardme](https://github.com/jessebot/onboardme) for every-day users.
 
+> Be aware that, while similar in schema, the Autoinstall and Cloud-Init portions of the file do not mix - the `user-data` value on line 44 marks the transition from autoinstall to cloud-init syntax.
 
-## Resources
+## References
 
 - Autoinstall configuration options and schema can be found [HERE](https://ubuntu.com/server/docs/install/autoinstall-reference).
 
-- Cloud-Init options and examples may be found [HERE](https://ubuntu.com/server/docs/install/autoinstall-reference)
+- Cloud-Init options and examples may be found [HERE](https://cloudinit.readthedocs.io/en/latest/index.html)
 
 - You can also refer to the provided example file [HERE](image-creator/user-data.example)
 
-- 
+## **Usage**
 
+- Build a combined `autoinstall` + `cloud-init` image by using the ```-a``` flag and providing a **user-data** file containing the autoinstall configuration and cloud-init data.
+A **meta-data** file may be included if you choose. The file will be empty if it is not specified. You may read more about providing a `meta-data` file [HERE](https://cloudinit.readthedocs.io/en/latest/topics/instancedata.html)
 
-To build a combined `autoinstall` + `cloud-init` image, you can use the ```-a``` flag with this script and provide a **user-data** file containing the autoinstall configuration and optionally cloud-init data, and an optional **meta-data** file if you choose. The **meta-data** file is optional and will be empty if it is not specified. You may read more about providing a `meta-data` file [HERE](https://cloudinit.readthedocs.io/en/latest/topics/instancedata.html)
+- With an 'all-in-one' ISO, you simply boot a machine using the ISO and the installer will do the rest.
 
-With an 'all-in-one' ISO, you simply boot a machine using the ISO and the installer will do the rest. At the end the machine will reboot into the new OS.
+- This script can use an existing ISO image or download the latest daily image from the Ubuntu project. 
+Using a fresh ISO speeds things up because there won't be as many packages to update during the installation.
 
-This script can use an existing ISO image or download the latest daily image from the Ubuntu project. Using a fresh ISO speeds things up because there won't be as many packages to update during the installation.
-
-By default, the source ISO image is checked for integrity and authenticity using GPG. This can be disabled with ```-k```. This step can cause problems with older releases.
-
-## Usage
+- By default, the source ISO image is checked for integrity and authenticity using GPG. This can be disabled with `-k`.
 
 ```bash
 docker build -t iso-generator . && \
@@ -178,19 +176,8 @@ ubuntu@ubuntu-server:~$
 
 Flags to use to build images:
 
-- `--code-name trusty -r -k`
-- `--code-name xenial -r`
-- `--code-name bionic -r`
-- `--code-name focal -r`
-- `--code-name focal -r`
 - `--code-name focal`
-- `--code-name jammy -r`
 - `--code-name jammy`
-
-## Thanks
-This script is based on [this](https://betterdev.blog/minimal-safe-bash-script-template/) minimal safe bash template, and steps found in [this](https://discourse.ubuntu.com/t/please-test-autoinstalls-for-20-04/15250) discussion thread (particularly [this](https://gist.github.com/s3rj1k/55b10cd20f31542046018fcce32f103e) script).
-The somewhat outdated Ubuntu documentation [here](https://help.ubuntu.com/community/LiveCDCustomization#Assembling_the_file_system) was also useful.
-
 
 ### License
 MIT license.
