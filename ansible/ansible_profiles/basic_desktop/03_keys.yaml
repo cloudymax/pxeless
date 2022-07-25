@@ -1,7 +1,0 @@
-Apt_Keys:
-  - Name: Docker
-    URL: https://download.docker.com/linux/ubuntu/gpg
-  - Name: Kubectl
-    URL: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-  - Name: Helm
-    URL: https://baltocdn.com/helm/signing.asc
