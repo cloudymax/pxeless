@@ -132,6 +132,15 @@ users:
     passwd: "\$6\$rounds=4096\$VgM.5FWkzKe2.xhz\$eEUE6.dmeh8Z1bWfrct72DzntG1SjysiVGZ8nBvwjBt5ztFGC9G2iB8JoQwxhXodMrXrEkj647vNKm/uJU/wQ/"
     ssh_import_id:
       - gh:cloudymax
+  - name: jesse
+    gecos: Jesse H.
+    groups: users, admin, docker, sudo
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    lock_passwd: false
+    passwd: "\$6\$rounds=4096\$iyzgS481lBTJsRFi\$TrOLK2ygk6WZ.hjFnew/YyGzX1OMEm.1s2azpuZnMQeNIeRKxegV1/iRo1XatGbr/ms6qBwRkumb63z7pOtvx."
+    ssh_import_id:
+      - gh:jessebot
   - name: bradley
     gecos: system acct
     groups: users, admin, docker, sudo
@@ -163,9 +172,7 @@ packages:
   - ubuntu-drivers-common
   - xinit
   - xterm
-  - xfce4 
-  - x11vnc
-  - xfce4-goodies 
+  - ubuntu-desktop
 runcmd:
   - mkdir -p /new_kernel
   - wget -O /new_kernel/linux-headers-5.18.0-051800-generic_5.18.0-051800.202205222030_amd64.deb https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.18/amd64/linux-headers-5.18.0-051800-generic_5.18.0-051800.202205222030_amd64.deb
