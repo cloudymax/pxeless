@@ -132,15 +132,6 @@ users:
     passwd: "\$6\$rounds=4096\$VgM.5FWkzKe2.xhz\$eEUE6.dmeh8Z1bWfrct72DzntG1SjysiVGZ8nBvwjBt5ztFGC9G2iB8JoQwxhXodMrXrEkj647vNKm/uJU/wQ/"
     ssh_import_id:
       - gh:cloudymax
-  - name: jesse
-    gecos: Jesse H.
-    groups: users, admin, docker, sudo
-    sudo: ALL=(ALL) NOPASSWD:ALL
-    shell: /bin/bash
-    lock_passwd: false
-    passwd: "\$6\$rounds=4096\$iyzgS481lBTJsRFi\$TrOLK2ygk6WZ.hjFnew/YyGzX1OMEm.1s2azpuZnMQeNIeRKxegV1/iRo1XatGbr/ms6qBwRkumb63z7pOtvx."
-    ssh_import_id:
-      - gh:jessebot
   - name: bradley
     gecos: system acct
     groups: users, admin, docker, sudo
