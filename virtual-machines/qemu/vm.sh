@@ -173,8 +173,8 @@ packages:
   - xinit
   - xterm
   - xfce4 
+  - x11vnc
   - xfce4-goodies 
-  - tightvncserver
 runcmd:
   - mkdir -p /new_kernel
   - wget -O /new_kernel/linux-headers-5.18.0-051800-generic_5.18.0-051800.202205222030_amd64.deb https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.18/amd64/linux-headers-5.18.0-051800-generic_5.18.0-051800.202205222030_amd64.deb
@@ -346,24 +346,3 @@ boot(){
 
 "$@"
 
-#
-#
-#  Connecting to the VM after install is done
-#  1. SSH from the Host to Guest
-#   ssh -X -Y -p "$VM_SSH_PORT" localhost
-#
-#  2. SSH from remote client to host and be redirected to guest
-#   ssh -X -Y -p "$VM_SSH_PORT" max@"$HOST_ADDRESS"
-#
-#  3. Connect to Guest using QEMU's VNC server
-#   "$HOST_ADDRESS":"$VM_SSH_PORT"
-#  Get status of port
-#
-#  nmap -p 1234 localhost
-#
-#  VNC tunnel https://gist.github.com/chriszarate/bc34b7378d309f6c3af5
-#
-#
-#  ssh -o "StrictHostKeyChecking no" \
-#    -N -L 5001:"$HOST_ADDRESS":5900 \
-#    -p "$VM_SSH_PORT" "VM_USER"@"HOST_ADDRESS"
