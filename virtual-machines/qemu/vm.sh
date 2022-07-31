@@ -52,14 +52,15 @@ export_metatdata(){
   export VM_KEY_FILE="$VM_USER"
   export UUID="none"
   export PASSWD="\$6\$saltsaltlettuce\$ua5R/p0ntvbHjz.RpRPLi7yx9Q731MsYUlxpUTojnjI8..EUtcoLF6HYEI0YrxKybdzfWIneiK6WH0uhH0FP01"
-  export GPU_ACCEL="false"
+  export GPU_ACCEL="true"
 
   # set graphics options based on gpu presence.
   if [[ "$GPU_ACCEL" == "false" ]]; then
     export VGA_OPT="-nographic \\"
+    export PCI_GPU="\\"
   else
     export PCI_GPU="-device vfio-pci,host=02:00.0,multifunction=on,x-vga=on \\"
-    export VGA_OPT="-vga none -nographic -serial none -parallel none \\"
+    export VGA_OPT="-serial none -parallel none -parallel none \\"
   fi
 }
 
@@ -120,28 +121,69 @@ cat > user-data <<EOF
 hostname: ${VM_NAME}
 fqdn: ${VM_NAME}
 manage_etc_hosts: false
-
-cloud_config_modules:
- - runcmd
-
-cloud_final_modules:
- - [users-groups, always]
- - [scripts-user, once-per-instance]
-
-groups:
-  - docker
-
-ssh_pwauth: true
 disable_root: false
 users:
-  - name: ${VM_USER}
-    groups: docker, admin, sudo, users
+  - name: max
+    gecos: Max R.
+    groups: users, admin, docker, sudo
+    sudo: ALL=(ALL) NOPASSWD:ALL
     shell: /bin/bash
-    sudo: [ "ALL=(ALL) NOPASSWD:ALL" ]
     lock_passwd: false
-    passwd: ${PASSWD}
-    ssh-authorized-keys:
-      - ${VM_KEY}
+    passwd: "\$6\$rounds=4096\$VgM.5FWkzKe2.xhz\$eEUE6.dmeh8Z1bWfrct72DzntG1SjysiVGZ8nBvwjBt5ztFGC9G2iB8JoQwxhXodMrXrEkj647vNKm/uJU/wQ/"
+    ssh_import_id:
+      - gh:cloudymax
+  - name: jesse
+    gecos: Jesse H.
+    groups: users, admin, docker, sudo
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    lock_passwd: false
+    passwd: "\$6\$rounds=4096\$iyzgS481lBTJsRFi\$TrOLK2ygk6WZ.hjFnew/YyGzX1OMEm.1s2azpuZnMQeNIeRKxegV1/iRo1XatGbr/ms6qBwRkumb63z7pOtvx."
+    ssh_import_id:
+      - gh:jessebot
+  - name: bradley
+    gecos: system acct
+    groups: users, admin, docker, sudo
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    lock_passwd: false
+    passwd: "\$6\$rounds=4096\$9VgQ5dNMNB9DhP09\$zDdZaDx43CfNVFMLMblKTsYLl0P0I0Krh3FZsUVWh2pSv.h40pFAc4wo1sGqsdF2Ayn0Ro5Eai1gWan6uF2Q80"
+apt:
+  primary:
+    - arches: [default]
+      uri: http://us.archive.ubuntu.com/ubuntu/
+  sources:
+    kubectl.list:
+      source: deb [arch=amd64] https://apt.kubernetes.io/ kubernetes-xenial main
+      keyid: 59FE0256827269DC81578F928B57C5C2836F4BEB
+    helm.list:
+      source: deb https://baltocdn.com/helm/stable/debian/ all main
+      keyid: 81BF832E2F19CD2AA0471959294AC4827C1A168A
+package_update: true
+package_upgrade: true
+packages:
+  - kubectl
+  - helm
+  - htop
+  - docker.io
+  - build-essential 
+  - procps 
+  - file
+  - ubuntu-drivers-common
+  - xinit
+  - xterm
+  - xfce4 
+  - xfce4-goodies 
+  - tightvncserver
+runcmd:
+  - mkdir -p /new_kernel
+  - wget -O /new_kernel/linux-headers-5.18.0-051800-generic_5.18.0-051800.202205222030_amd64.deb https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.18/amd64/linux-headers-5.18.0-051800-generic_5.18.0-051800.202205222030_amd64.deb
+  - wget -O /new_kernel/linux-headers-5.18.0-051800_5.18.0-051800.202205222030_all.deb https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.18/amd64/linux-headers-5.18.0-051800_5.18.0-051800.202205222030_all.deb
+  - wget -O /new_kernel/linux-image-unsigned-5.18.0-051800-generic_5.18.0-051800.202205222030_amd64.deb https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.18/amd64/linux-image-unsigned-5.18.0-051800-generic_5.18.0-051800.202205222030_amd64.deb
+  - wget -O /new_kernel/linux-modules-5.18.0-051800-generic_5.18.0-051800.202205222030_amd64.deb https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.18/amd64/linux-modules-5.18.0-051800-generic_5.18.0-051800.202205222030_amd64.deb
+  - dpkg -i /new_kernel/*
+  - ubuntu-drivers autoinstall
+  - reboot now
 EOF
 }
 
@@ -151,7 +193,7 @@ create_virtual_disk(){
   #  -F qcow2 \
   #  -b "$CLOUD_IMAGE_NAME"_base.qcow2 \
   #  hdd.qcow2 "$DISK_SIZE"
-  qemu-img create -f qcow2 /media/hdd.img $DISK_SIZE
+  qemu-img create -f qcow2 hdd.img $DISK_SIZE
 }
 
 # Generate an ISO image
@@ -161,37 +203,50 @@ generate_seed_iso(){
 
 # Boot exisiting cloud-init backed VM
 boot_ubuntu_cloud_vm(){
-  tmux new-session -d -s "${VM_NAME}_session"
-  tmux send-keys -t "${VM_NAME}_session" "sudo qemu-system-x86_64  \
-    -machine accel=kvm,type=q35 \
-    -cpu host,kvm="off",hv_vendor_id=null  \
-    -smp sockets="$SOCKETS",cores="$PHYSICAL_CORES",threads="$THREADS" \
-    -m "$MEMORY" \
-    $VGA_OPT
-    $PCI_GPU
-    -device virtio-net-pci,netdev=net0 \
-    -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
-    -drive if=virtio,format=qcow2,file="$CLOUD_IMAGE_NAME"-new.img \
-    -vnc :0 \
-    $@" ENTER
+  if tmux has-session -t "${VM_NAME}_session" 2>/dev/null; then
+    echo "session exists"
+  else
+    tmux new-session -d -s "${VM_NAME}_session"
+    tmux send-keys -t "${VM_NAME}_session" "sudo qemu-system-x86_64  \
+      -machine accel=kvm,type=q35 \
+      -cpu host,kvm="off",hv_vendor_id=null  \
+      -smp sockets="$SOCKETS",cores="$PHYSICAL_CORES",threads="$THREADS" \
+      -m "$MEMORY" \
+      $VGA_OPT
+      $PCI_GPU
+      -device virtio-net-pci,netdev=net0 \
+      -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
+      -drive if=virtio,format=qcow2,file="$CLOUD_IMAGE_NAME"-new.img \
+      -bios /usr/share/ovmf/OVMF.fd \
+      -usbdevice tablet \
+      -vnc :0 \
+      $@" ENTER
+  fi
 }
 
 # start the cloud-init backed VM
 create_ubuntu_cloud_vm(){
-  tmux new-session -d -s "${VM_NAME}_session"
-  tmux send-keys -t "${VM_NAME}_session" "sudo qemu-system-x86_64  \
-    -machine accel=kvm,type=q35 \
-    -cpu host,kvm="off",hv_vendor_id="null" \
-    -smp sockets="$SOCKETS",cores="$PHYSICAL_CORES",threads="$THREADS" \
-    -m "$MEMORY" \
-    $VGA_OPT
-    $PCI_GPU
-    -device virtio-net-pci,netdev=net0 \
-    -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
-    -drive if=virtio,format=qcow2,file="$CLOUD_IMAGE_NAME"-new.img \
-    -drive if=virtio,format=raw,file=seed.img \
-    -vnc :0 \
-    $@" ENTER
+  if tmux has-session -t "${VM_NAME}_session" 2>/dev/null; then
+    echo "session exists"
+  else
+    tmux new-session -d -s "${VM_NAME}_session"
+    tmux send-keys -t "${VM_NAME}_session" "sudo qemu-system-x86_64  \
+      -machine accel=kvm,type=q35 \
+      -cpu host,kvm="off",hv_vendor_id="null" \
+      -smp sockets="$SOCKETS",cores="$PHYSICAL_CORES",threads="$THREADS" \
+      -m "$MEMORY" \
+      $VGA_OPT
+      $PCI_GPU
+      -device virtio-net-pci,netdev=net0 \
+      -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
+      -drive if=virtio,format=qcow2,file="$CLOUD_IMAGE_NAME"-new.img \
+      -drive if=virtio,format=raw,file=seed.img \
+      -bios /usr/share/ovmf/OVMF.fd \
+      -usbdevice tablet \
+      -vnc :0 \
+      $@" ENTER
+  fi
+
 }
 
 attach_to_vm_tmux(){
@@ -205,6 +260,14 @@ ssh_to_vm(){
   ssh -o "StrictHostKeyChecking no" \
     -X \
     -i "$VM_NAME"/"$VM_USER" \
+    -p "$VM_SSH_PORT" "$VM_USER"@"$HOST_ADDRESS"
+}
+
+vnc_tunnel(){
+  export_metatdata
+  ssh -o "StrictHostKeyChecking no" \
+    -N -L 5001:"$HOST_ADDRESS":5900 \
+    -i "/home/max/pxeless/virtual-machines/qemu/testvm/vmadmin" \
     -p "$VM_SSH_PORT" "$VM_USER"@"$HOST_ADDRESS"
 }
 
@@ -225,10 +288,12 @@ create_vm_from_iso(){
     -cdrom $ISO_FILE \
     -object iothread,id=io1 \
     -device virtio-blk-pci,drive=disk0,iothread=io1 \
-    -drive if=none,id=disk0,cache=none,format=qcow2,aio=threads,file=/media/hdd.img \
+    -drive if=none,id=disk0,cache=none,format=qcow2,aio=threads,file=hdd.img \
     -device virtio-net-pci,netdev=net0 \
     -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
+    -bios /usr/share/ovmf/OVMF.fd \
     -vga virtio \
+    -usbdevice tablet \
     -vnc :0 \
     $@" ENTER
 }
@@ -242,10 +307,12 @@ boot_vm_from_iso(){
     -m "$MEMORY" \
     -object iothread,id=io1 \
     -device virtio-blk-pci,drive=disk0,iothread=io1 \
-    -drive if=none,id=disk0,cache=none,format=qcow2,aio=threads,file=/media/hdd.img \
+    -drive if=none,id=disk0,cache=none,format=qcow2,aio=threads,file=hdd.img \
     -device virtio-net-pci,netdev=net0 \
     -netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \
+    -bios /usr/share/ovmf/OVMF.fd \
     -vga virtio \
+    -usbdevice tablet \
     -vnc :0 \
     $@" ENTER
 }
@@ -253,14 +320,14 @@ boot_vm_from_iso(){
 create(){
   export_metatdata
   create_dir
-  #download_cloud_image
-  #expand_cloud_image
-  #create_ssh_key
-  #create_user_data
-  #generate_seed_iso
+  download_cloud_image
+  expand_cloud_image
+  create_ssh_key
+  create_user_data
+  generate_seed_iso
   create_virtual_disk
-  create_vm_from_iso
-  #create_ubuntu_cloud_vm
+  #create_vm_from_iso
+  create_ubuntu_cloud_vm
   attach_to_vm_tmux
 }
 
@@ -272,8 +339,8 @@ boot(){
   #create_ssh_key
   #create_user_data
   #generate_seed_iso
-  #boot_ubuntu_cloud_vm
-  boot_vm_from_iso
+  boot_ubuntu_cloud_vm
+  #boot_vm_from_iso
   attach_to_vm_tmux
 }
 
