@@ -4,7 +4,7 @@ network:
       dhcp4: no
       dhcp6: no
       interfaces: [enp4s0]
-      addresses: [192.168.50.100/24]
+      addresses: [192.168.50.101/24]
       routes:
         - to: default
           via: 192.168.50.1
