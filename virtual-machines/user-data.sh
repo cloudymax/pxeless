@@ -231,7 +231,7 @@ die() {
 main(){
 create_ssh_key
 
-if [ $SLIM ]; then
+if [ "$SLIM" == "true" ]; then
   create_slim_user_data
 else
   create_full_user_data

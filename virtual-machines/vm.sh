@@ -12,10 +12,10 @@ export_metatdata(){
   export GITHUB_USER="cloudymax"
   export USER="max"
   export DISK_NAME="boot.img"
-  export DISK_SIZE="20G"
-  export MEMORY="8G"
+  export DISK_SIZE="40G"
+  export MEMORY="16G"
   export SOCKETS="1"
-  export PHYSICAL_CORES="2"
+  export PHYSICAL_CORES="4"
   export THREADS="2"
   export VM_KEY=""
   export VM_KEY_FILE="$VM_USER"
@@ -341,8 +341,7 @@ create_user_data(){
     --password "${PASSWD}" \
     --github-username "$GITHUB_USER" \
     --username "$USER" \
-    --vm-name "$VM_NAME" \
-    --slim
+    --vm-name "$VM_NAME"
 }
 
 create_windows(){
