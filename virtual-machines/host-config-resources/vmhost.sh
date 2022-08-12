@@ -3,6 +3,16 @@
 set -o pipefail
 set -o errexit
 
+deps(){
+    sudo apt-get -y install \
+      qemu-kvm \
+      bridge-utils \
+      virtinst \
+      ovmf \
+      qemu-utils \
+      cloud-image-utils
+}
+
 # credit goes to leduccc for this stanza.
 # source: https://leduccc.medium.com/simple-dgpu-passthrough-on-a-dell-precision-7450-ebe65b2e648e
 get_iommu_data(){
@@ -77,7 +87,8 @@ write_grub(){
         sudo cp /etc/default/grub /etc/default/grub.bak
     fi
     sleep 1
-    sudo sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"\"/$GRUB_CMDLINE_LINUX_DEFAULT/g" /etc/default/grub
+    sudo sed "s/.*GRUB_CMDLINE_LINUX_DEFAULT=.*/${GRUB_CMDLINE_LINUX_DEFAULT}/" /etc/default/grub
+
 }
 
 # reset grub to a blank defaults line
@@ -117,6 +128,7 @@ full_run(){
       exit
     fi
     
+    deps
     generate_kernel_params $1
     write_grub
     make_configs
