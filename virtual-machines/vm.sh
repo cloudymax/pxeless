@@ -23,8 +23,11 @@ export_metatdata(){
   export MAC_ADDR=$(printf 'AC:AB:13:12:%02X:%02X\n' $((RANDOM%256)) $((RANDOM%256)))
   export PASSWD=$(mkpasswd -m sha-512 --rounds=4096 "password" -s "saltsaltlettuce")
   export GPU_ACCEL="false"
+}
 
-  # Set network options
+# set network options
+set_network(){
+  log "📞 Setting networking options."
   export STATIC_IP="false"
   export HOST_ADDRESS="192.168.50.100"
   export HOST_SSH_PORT="22"
@@ -32,9 +35,11 @@ export_metatdata(){
   export VNC_PORT="0"
 
   if [[ "$STATIC_IP" == "true" ]]; then
+    log "- 📍🗺 Static IP selected."
     export NETDEV="-netdev bridge,br=br0,id=net0 \\"
     export DEVICE="-device virtio-net-pci,netdev=net0,mac=$MAC_ADDR \\"
   else
+    log "- 🚏🗺 Port Forwarding selected."
     export NETDEV="-device virtio-net-pci,netdev=net0 \\"
     export DEVICE="-netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \\"
   fi
@@ -42,43 +47,44 @@ export_metatdata(){
 
 # set gpu acceleration options
 set_gpu(){
-  log "Set graphics options based on gpu presence."
+  log "🖥 Set graphics options based on gpu presence."
   if [[ "$GPU_ACCEL" == "false" ]]; then
     export VGA_OPT="-nographic \\"
     export PCI_GPU="\\"
-    log "GPU not attached"
+    log "- ❌ GPU not attached"
   else
     export VGA_OPT="-serial stdio -parallel none \\"
     export PCI_GPU="-device vfio-pci,host=02:00.0,multifunction=on,x-vga=on \\"
-    log "GPU attached"
+    log "- ✅ GPU attached"
   fi
 }
 
 # select a cloud image to download
 select_image(){
-  log "Selecting a cloud image to download"
+  log "🌧 Selecting a cloud image to download"
   export ISO_FILE="/home/${USER}/pxeless/virtual-machines/qemu/debian-live-11.3.0-amd64-cinnamon.iso"
   export UBUNTU_CODENAME="jammy"
   export CLOUD_IMAGE_NAME="${UBUNTU_CODENAME}-server-cloudimg-amd64"
   export CLOUD_IMAGE_URL="https://cloud-images.ubuntu.com/jammy/current"
+  log "- ✅ Done!"
 }
 
 # create a directory to hold the VM assets
 create_dir(){
-  log "Creating VM directory."
+  log "📂 Creating VM directory."
   mkdir -p "$VM_NAME"
   cd "$VM_NAME"
   export UUID=$(uuidgen)
+  log "- ✅ Done!"
 }
 
 # download a cloud image as .img
 download_cloud_image(){
 
+  log "⬇️ Downloading cloud image..."
   if [ -f "$CLOUD_IMAGE_NAME.img" ]; then
-    log "image already present"
+    log "- ⛔️ image already present"
   else
-    log "Downloading cloud image"
-
     tmux kill-session -t "download" || true
     tmux new-session -d -s "download"
     tmux send-keys -t "download" "wget -c -O "$CLOUD_IMAGE_NAME".img \
@@ -95,44 +101,49 @@ monitor_download(){
       DONE=$(tmux capture-pane -t "download" -p |tac |grep -ai -c "saved" )
   done
   printf "\n"
-  log "Done!"
+  log "- ✅ Done!"
 }
 
 # Create and expanded image
 expand_cloud_image(){
-  log "Expanding image"
+  log "📈 Expanding image"
   qemu-img create -b ${CLOUD_IMAGE_NAME}.img -f qcow2 \
   	-F qcow2 ${CLOUD_IMAGE_NAME}-new.img \
   	"$DISK_SIZE" 1> /dev/null
+  log "- ✅ Done!"
 }
 
 # convert the .img to qcow2 to use as base layer
 img_to_qcow(){
-  log "Converting img to qcow2"
+  log "🐄 Converting img to qcow2"
   qemu-img convert -f raw \
     -O qcow2 "$CLOUD_IMAGE_NAME"_original.img \
     "$CLOUD_IMAGE_NAME".qcow2
+  log "- ✅ Done!"
 }
 
 # create the next layer on the image
 create_qcow_image(){
-  log "Creating qcow2 image"
+  log "🐄 Creating qcow2 image"
   qemu-img create -f qcow2 \
     -F qcow2 \
     -o backing_file="$CLOUD_IMAGE_NAME"_base.qcow2 \
     "$VM_NAME".qcow2
+  log "- ✅ Done!"
 }
 
 # create a disk
 create_virtual_disk(){
-  log "Creating virtual disk"
+  log "💾 Creating virtual disk"
   qemu-img create -f qcow2 hdd.img $DISK_SIZE &>/dev/null
+  log "- ✅ Done!"
 }
 
 # Generate an ISO image
 generate_seed_iso(){
-  log "Generating seed iso containing user-data"
+  log "🌱 Generating seed iso containing user-data"
   cloud-localds seed.img user-data
+  log "- ✅ Done!"
 }
 
 tmux_to_vm(){
@@ -148,7 +159,7 @@ tmux_stream(){
       printf '\r'"$(tmux capture-pane -t "${VM_NAME}_session" -p | tail -1)"
   done
   printf "\n"
-  log "Done!"
+  log "- ✅ Done!"
 }
 
 ssh_to_vm(){
@@ -187,7 +198,7 @@ vnc_tunnel(){
 
 # luanch the VM to install from ISO to Disk
 create_vm_from_iso(){
-  log "Creating VM from iso file"
+  log "💿 Creating VM from iso file"
   tmux new-session -d -s "${VM_NAME}_session"
   tmux send-keys -t "${VM_NAME}_session" "sudo qemu-system-x86_64 \
     -machine accel=kvm,type=q35 \
@@ -209,7 +220,7 @@ create_vm_from_iso(){
 }
 
 boot_vm_from_iso(){
-  log "Booting VM"
+  log "🥾 Booting VM"
   tmux new-session -d -s "${VM_NAME}_session"
   tmux send-keys -t "${VM_NAME}_session" "sudo qemu-system-x86_64 \
     -machine accel=kvm,type=q35 \
@@ -231,7 +242,7 @@ boot_vm_from_iso(){
 
 # start the cloud-init backed VM
 create_ubuntu_cloud_vm(){
-  log "Creating cloud-image based VM"
+  log "🌥 Creating cloud-image based VM"
   if tmux has-session -t "${VM_NAME}_session" 2>/dev/null; then
     echo "session exists"
   else
@@ -256,7 +267,7 @@ create_ubuntu_cloud_vm(){
 }
 
 boot_ubuntu_cloud_vm(){
-  log "Booting VM"
+  log "🥾 Booting VM"
   if tmux has-session -t "${VM_NAME}_session" 2>/dev/null; then
     echo "session exists"
   else
@@ -281,7 +292,7 @@ boot_ubuntu_cloud_vm(){
 
 # create a windows vm
 create_windows_vm(){
-  log "Creating Windows VM"
+  log "📎 Looks like you're creating a Windows VM"
   tmux new-session -d -s "${VM_NAME}_session"
   tmux send-keys -t "${VM_NAME}_session" "sudo qemu-system-x86_64 \
     -machine accel=kvm,type=q35 \
@@ -303,7 +314,7 @@ create_windows_vm(){
 }
 
 boot_windows_vm(){
-  log "Booting VM"
+  log "🥾 Booting VM"
   tmux new-session -d -s "${VM_NAME}_session"
   tmux send-keys -t "${VM_NAME}_session" "sudo qemu-system-x86_64 \
     -machine accel=kvm,type=q35 \
@@ -325,7 +336,7 @@ boot_windows_vm(){
 }
 
 create_user_data(){
-  log "Generating user data"
+  log "👤 Generating user data"
   bash /home/max/pxeless/virtual-machines/user-data.sh --update --upgrade \
     --password "${PASSWD}" \
     --github-username "$GITHUB_USER" \
@@ -336,25 +347,28 @@ create_user_data(){
 
 create_windows(){
   export_metatdata
+  set_network
   select_image
   set_gpu
   create_dir
   create_virtual_disk
   create_windows_vm
-  #attach_to_vm_tmux
+  tmux_to_vm
 }
 
 boot_windows(){
   export_metatdata
+  set_network
   select_image
   set_gpu
   create_dir
   boot_windows_vm
-  #attach_to_vm_tmux
+  tmux_to_vm
 }
 
 create(){
   export_metatdata
+  set_network
   select_image
   set_gpu
   create_dir
@@ -365,18 +379,18 @@ create(){
   create_virtual_disk
   #create_vm_from_iso
   create_ubuntu_cloud_vm
-  #attach_to_vm_tmux
   #ssh_to_vm
 }
 
 boot(){
   export_metatdata
+  set_network
   select_image
   set_gpu
   create_dir
   boot_ubuntu_cloud_vm
   #boot_vm_from_iso
-  #attach_to_vm_tmux
+  tmux_to_vm
 }
 
 "$@"

@@ -49,8 +49,6 @@ parse_params() {
             export SLIM="false"
         fi
 
-        log "⏱  Starting up..."
-
         return 0
 }
 
