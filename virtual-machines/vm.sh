@@ -1,5 +1,4 @@
 #!/bin/bash
-set -Eeuo pipefail
 
 log() {
     echo >&2 -e "[$(date +"%Y-%m-%d %H:%M:%S")] ${1-}"
@@ -74,9 +73,29 @@ create_dir(){
 
 # download a cloud image as .img
 download_cloud_image(){
-  log "Downloading cloud image"
-  wget -c -O "$CLOUD_IMAGE_NAME".img \
-  "$CLOUD_IMAGE_URL"/"$CLOUD_IMAGE_NAME".img 2> /dev/null
+
+  if [ -f "$CLOUD_IMAGE_NAME.img" ]; then
+    log "image already present"
+  else
+    log "Downloading cloud image"
+
+    tmux kill-session -t "download" || true
+    tmux new-session -d -s "download"
+    tmux send-keys -t "download" "wget -c -O "$CLOUD_IMAGE_NAME".img \
+    "$CLOUD_IMAGE_URL"/"$CLOUD_IMAGE_NAME".img" ENTER
+    monitor_download
+  fi 
+}
+
+monitor_download(){
+  DONE=$(tmux capture-pane -t "download" -p |tac |grep -ai -c "saved" )
+  while [[ "$DONE" != "1" ]]; do
+      printf '\r%s' "  " "$(tmux capture-pane -t "download" -p |tac | grep -v "^$" | head -1)"
+      sleep .1 
+      DONE=$(tmux capture-pane -t "download" -p |tac |grep -ai -c "saved" )
+  done
+  printf "\n"
+  log "Done!"
 }
 
 # Create and expanded image
@@ -107,7 +126,7 @@ create_qcow_image(){
 # create a disk
 create_virtual_disk(){
   log "Creating virtual disk"
-  qemu-img create -f qcow2 hdd.img $DISK_SIZE
+  qemu-img create -f qcow2 hdd.img $DISK_SIZE &>/dev/null
 }
 
 # Generate an ISO image
@@ -116,16 +135,20 @@ generate_seed_iso(){
   cloud-localds seed.img user-data
 }
 
-attach_to_vm_tmux(){
+tmux_to_vm(){
   export_metatdata
   tmux attach-session -t "${VM_NAME}_session"
 }
 
 # tail out a remote tmux window
-tmux_screenshot(){
-  export_metatdata
-  SCREEN=$(tmux capture-pane -t "${VM_NAME}_session" -p)
-  echo "$SCREEN" |tail -5
+tmux_stream(){
+  DONE=$(tmux capture-pane -t "${VM_NAME}_session" -p |grep -ai -c "${VM_NAME} Login:" )
+  while [[ "$DONE" != "1" ]]; do
+      DONE=$(tmux capture-pane -t "${VM_NAME}_session" -p |grep -ai -c "${VM_NAME} Login:" )
+      printf '\r'"$(tmux capture-pane -t "${VM_NAME}_session" -p | tail -1)"
+  done
+  printf "\n"
+  log "Done!"
 }
 
 ssh_to_vm(){
@@ -182,6 +205,7 @@ create_vm_from_iso(){
     -usbdevice tablet \
     -vnc $HOST_ADDRESS:$VNC_PORT \
     $@" ENTER
+    tmux_stream
 }
 
 boot_vm_from_iso(){
@@ -202,6 +226,7 @@ boot_vm_from_iso(){
     -usbdevice tablet \
     -vnc $HOST_ADDRESS:$VNC_PORT \
     $@" ENTER
+    tmux_stream
 }
 
 # start the cloud-init backed VM
@@ -226,6 +251,7 @@ create_ubuntu_cloud_vm(){
       -usbdevice tablet \
       -vnc $HOST_ADDRESS:$VNC_PORT \
       $@" ENTER
+      tmux_stream
   fi
 }
 
@@ -249,6 +275,7 @@ boot_ubuntu_cloud_vm(){
       -usbdevice tablet \
       -vnc $HOST_ADDRESS:$VNC_PORT \
       $@" ENTER
+      tmux_stream
   fi
 }
 
@@ -269,8 +296,8 @@ create_windows_vm(){
     -parallel none \
     -bios /usr/share/ovmf/OVMF.fd \
     -usbdevice tablet \
-    -netdev bridge,br=br0,id=net0 \
-    -device virtio-net-pci,netdev=net0,mac=$MAC_ADDR \
+    $NETDEV
+    $DEVICE
     -vnc $HOST_ADDRESS:$VNC_PORT \
     $@" ENTER
 }
@@ -291,8 +318,8 @@ boot_windows_vm(){
     -parallel none \
     $PCI_GPU
     -bios /usr/share/ovmf/OVMF.fd \
-    -netdev bridge,br=br0,id=net0 \
-    -device virtio-net-pci,netdev=net0,mac=$MAC_ADDR\
+    $NETDEV
+    $DEVICE
     -vnc $HOST_ADDRESS:$VNC_PORT \
     $@" ENTER
 }
@@ -334,12 +361,12 @@ create(){
   download_cloud_image
   expand_cloud_image
   create_user_data
-  sleep 2
   generate_seed_iso
   create_virtual_disk
   #create_vm_from_iso
-  #create_ubuntu_cloud_vm
+  create_ubuntu_cloud_vm
   #attach_to_vm_tmux
+  #ssh_to_vm
 }
 
 boot(){
