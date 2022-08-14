@@ -157,7 +157,9 @@ tmux_stream(){
   STAGE_DONE=$(tmux capture-pane -t "${VM_NAME}_session" -p |grep -ai -c "${VM_NAME} Login:" )
   while [[ "$STAGE" != "2" ]]; do
       STAGE_DONE=$(tmux capture-pane -t "${VM_NAME}_session" -p |grep -ai -c "${VM_NAME} Login:" )
-      printf '\r'"$(tmux capture-pane -t "${VM_NAME}_session" -p |tail -2 |head -1)"
+      LINE=$(tmux capture-pane -t "${VM_NAME}_session" -p |tail -2 |head -1)
+      LOG=$(log "$LINE")
+      printf '\r'$LOG
       if [[ $STAGE_DONE == "1" ]]; then
         let "++$STAGE"
       fi
