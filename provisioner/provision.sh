@@ -122,7 +122,7 @@ deps() {
     if [[ ! -x "$(command -v ansible)" ]]; then
         log "💥 ansible is not installed. Installing..."
         sleep 1
-        sudo apt install-get ansible-core
+        sudo apt-get install ansible-core
     else
         log "✅ ansible is installed."
     fi
