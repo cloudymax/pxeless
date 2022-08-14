@@ -1,9 +1,9 @@
 Files:
 - Name: permissions of repo
-  Path: /usr/local//homebrew
+  Path: /usr/local/homebrew
   Owner: max
   Group: admin
-  Mode:  u=rwX,g=rX,o=rX
+  Mode:  0644
   State: permissions
 Path:
 - Name: brew
