@@ -160,6 +160,7 @@ tmux_stream(){
       LINE=$(tmux capture-pane -t "${VM_NAME}_session" -p |tail -2 |head -1)
       LOG=$(log "$LINE")
       printf '\r'$LOG
+      sleep 1
       if [[ $STAGE_DONE == "1" ]]; then
         let "++$STAGE"
       fi
