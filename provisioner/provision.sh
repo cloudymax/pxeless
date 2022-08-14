@@ -122,7 +122,8 @@ deps() {
     if [[ ! -x "$(command -v ansible)" ]]; then
         log "💥 ansible is not installed. Installing..."
         sleep 1
-        DEBIAN_FRONTEND=noninteractive sudo apt-get -y install ansible-core
+        umask 022
+        pip3 install --system ansible-core
     else
         log "✅ ansible is installed."
     fi
