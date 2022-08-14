@@ -6,6 +6,7 @@
   set_fact:
     data: "{{ hostvars['localhost'].profile_json['Brew'] }}"
     brew_path: "{{ hostvars['localhost'].profile_json['Brew_Path'] }}"
+    brew_user: "{{ hostvars['localhost'].profile_json['Brew_User'] }}"
 
 - name: Update homebrew first and install formula foo with 'brew' in default path
   community.general.homebrew:
@@ -14,3 +15,6 @@
     path: "{{ brew_path }}"
     update_homebrew: yes
   with_items: "{{ data }}"
+  become: yes
+  become_user: "{{ brew_user }}"
+  become_method: sudo

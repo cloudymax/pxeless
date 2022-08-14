@@ -1,5 +1,6 @@
 ---
 Brew_Path: "/home/max/homebrew/bin"
+Brew_User: "max"
 Brew:
   - Name: kind
     State: present
