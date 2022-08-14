@@ -173,6 +173,8 @@ die() {
 }
 
 main() {
+    deps
+    parse_params "$@"
     export PATH="$HOME/.local/bin:$PATH"
 
     # Profile to use for demo (absolute path)
@@ -200,5 +202,4 @@ main() {
     done
 }
 
-parse_params "$@"
-#deps
+main "$@"
