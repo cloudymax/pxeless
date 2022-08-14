@@ -142,7 +142,7 @@ packages:
 runcmd:
   - sudo -u ${VM_USER} echo "export PATH=\"/home/${VM_USER}/.local/bin:\$PATH\"" >> /home/${VM_USER}/.profile 
   - git clone https://github.com/cloudymax/pxeless.git
-  - sudo -u max env "PATH=$PATH:/home/max/homebrew/bin/" /pxeless/provisioner/provision.sh --ansible-user max --profile jax --cows random
+  - sudo -u max env "PATH=$PATH:/usr/local/homebrew/bin/" /pxeless/provisioner/provision.sh --ansible-user max --profile jax --cows random
 EOF
 
 log " - Done."
