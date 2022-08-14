@@ -1,7 +1,7 @@
 Commands:
-- Command: pip3 install -r /home/max/smol_k8s_homelab/deps/requirements.txt
-- Command: mv /home/max/smol_k8s_homelab/config_sample.yml /home/max/smol_k8s_homelab/config.yml
-- Command: python3 /home/max/smol_k8s_homelab/smol-k8s-homelab.py --k8s k3s -f /home/max/smol_k8s_homelab/config.yml
+- Command: pip3 install -r /usr/local/smol_k8s_homelab/deps/requirements.txt
+- Command: mv /usr/local/smol_k8s_homelab/config_sample.yml /usr/local/smol_k8s_homelab/config.yml
+- Command: python3 /usr/local/smol_k8s_homelab/smol-k8s-homelab.py --k8s k3s -f /usr/local/smol_k8s_homelab/config.yml
   Become: yes
   Become_User: "max"
   Become_Method: sudo

@@ -1,10 +1,10 @@
 Commands:
-  - Command: git config --global --add safe.directory /smol_k8s_homelab
-  - Command: git config --global --add safe.directory /home/max/homebrew
+  - Command: git config --global --add safe.directory /usr/local/smol_k8s_homelab
+  - Command: git config --global --add safe.directory /usr/local/homebrew
 Repos:
   - Source: https://github.com/Homebrew/brew
-    Destination: /home/max/homebrew
+    Destination: /usr/local/homebrew
     Branch: "master"
   - Source: https://github.com/jessebot/smol_k8s_homelab.git
-    Destination: /home/max/smol_k8s_homelab
+    Destination: /usr/local/smol_k8s_homelab
     Branch: "main"
