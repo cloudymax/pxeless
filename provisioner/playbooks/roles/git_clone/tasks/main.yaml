@@ -20,3 +20,6 @@
     single_branch: yes
     version: "{{ item.Branch }}"
   with_items: "{{ section }}"
+  become: yes
+  become_user: root
+  become_method: sudo
