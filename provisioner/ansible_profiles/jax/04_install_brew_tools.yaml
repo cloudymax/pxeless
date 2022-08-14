@@ -1,5 +1,5 @@
 ---
-Brew_Path: "/home/.linuxbrew/homebrew/bin"
+Brew_Path: "/home/max/homebrew/bin"
 Brew_User: "max"
 Brew:
   - Name: kind
