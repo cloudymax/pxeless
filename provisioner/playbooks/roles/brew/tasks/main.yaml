@@ -19,7 +19,8 @@
   become_user: "{{ brew_user }}"
   become_method: sudo
   when:
-    - item.BundlePath not defined
+    - item.BundlePath is undefined
+
 
 - name: Install a brew bundle
   command:  "{{ brew_path }}/brew bundle --file={{ item.BundlePath }}"
@@ -29,10 +30,13 @@
   become_user: "{{ brew_user }}"
   become_method: sudo
   when:
-    - item.BundlePath is defined
+    - item.BundlePath is defined 
+    - item.BundlePath | string
 
 - debug:
     msg: "Command Result: {{ user_command_output }}"
   with_items: "{{ section }}"
   when:
-    - item.BundlePath is defined
+    - item.BundlePath is defined 
+    - item.BundlePath | string
+
