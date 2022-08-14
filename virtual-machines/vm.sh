@@ -164,6 +164,7 @@ tmux_stream(){
   done
   printf "\n"
   log " - Done!"
+  tmux_to_vm
 }
 
 ssh_to_vm(){
