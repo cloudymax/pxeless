@@ -60,9 +60,7 @@ get_iommu_ids(){
 # create config files in local dir then move into place
 make_configs(){
 
-if [ ! -d "/etc/initram-fs" ]; then
-    sudo mkdir "/etc/initram-fs"
-fi
+sudo mkdir "/etc/initram-fs"
 
 cat > $(pwd)/modules <<EOF    
 vfio
