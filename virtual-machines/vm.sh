@@ -12,7 +12,7 @@ export_metatdata(){
   export GITHUB_USER="cloudymax"
   export USER="max"
   export DISK_NAME="boot.img"
-  export DISK_SIZE="15G"
+  export DISK_SIZE="16G"
   export MEMORY="4G"
   export SOCKETS="1"
   export PHYSICAL_CORES="1"
@@ -153,10 +153,14 @@ tmux_to_vm(){
 
 # tail out a remote tmux window
 tmux_stream(){
-  DONE=$(tmux capture-pane -t "${VM_NAME}_session" -p |grep -ai -c "${VM_NAME} Login:" )
-  while [[ "$DONE" != "1" ]]; do
-      DONE=$(tmux capture-pane -t "${VM_NAME}_session" -p |grep -ai -c "${VM_NAME} Login:" )
+  STAGE=1
+  STAGE_DONE=$(tmux capture-pane -t "${VM_NAME}_session" -p |grep -ai -c "${VM_NAME} Login:" )
+  while [[ "$STAGE" != "2" ]]; do
+      STAGE_DONE=$(tmux capture-pane -t "${VM_NAME}_session" -p |grep -ai -c "${VM_NAME} Login:" )
       printf '\r'"$(tmux capture-pane -t "${VM_NAME}_session" -p | tail -1)"
+      if [[ $STAGE_DONE == "1" ]]; then
+        let "++$STAGE"
+      fi
   done
   printf "\n"
   log " - Done!"
