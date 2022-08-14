@@ -12,10 +12,10 @@ export_metatdata(){
   export GITHUB_USER="cloudymax"
   export USER="max"
   export DISK_NAME="boot.img"
-  export DISK_SIZE="16G"
-  export MEMORY="4G"
+  export DISK_SIZE="32G"
+  export MEMORY="8G"
   export SOCKETS="1"
-  export PHYSICAL_CORES="1"
+  export PHYSICAL_CORES="2"
   export THREADS="2"
   export VM_KEY=""
   export VM_KEY_FILE="$VM_USER"
@@ -155,7 +155,7 @@ tmux_to_vm(){
 tmux_stream(){
   STAGE=1
   STAGE_DONE=$(tmux capture-pane -t "${VM_NAME}_session" -p |grep -ai -c "${VM_NAME} Login:" )
-  while [[ "$STAGE" != "2" ]]; do
+  while [[ "$STAGE" != "1" ]]; do
       STAGE_DONE=$(tmux capture-pane -t "${VM_NAME}_session" -p |grep -ai -c "${VM_NAME} Login:" )
       printf '\r%s' "  " "$(tmux capture-pane -t "${VM_NAME}_session" -p |tail -2 |head -1)"
       if [[ $STAGE_DONE == "1" ]]; then
