@@ -6,5 +6,5 @@ Repos:
     Destination: /home/max/homebrew
     Branch: "master"
   - Source: https://github.com/jessebot/smol_k8s_homelab.git
-    Destination: /smol_k8s_homelab
+    Destination: /home/max/smol_k8s_homelab
     Branch: "main"
