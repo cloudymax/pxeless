@@ -179,9 +179,9 @@ main() {
 
     # Profile to use for demo (absolute path)
     USER=$(whoami)
-    export WORKING_DIR=$(pwd)
-    export DEMO_DIR="$WORKING_DIR/ansible_profiles/$PROFILE"
-    export ANSIBLE_PLAYBOOK="$WORKING_DIR/playbooks/main-program.yaml"
+    export WORKING_DIR=$(sudo find / -name "pxeless" -type d)
+    export DEMO_DIR="$WORKING_DIR/provisioner/ansible_profiles/$PROFILE"
+    export ANSIBLE_PLAYBOOK="$WORKING_DIR/provisioner/playbooks/main-program.yaml"
 
     # Program verbosity
     export VERBOSITY=""

@@ -12,10 +12,10 @@ export_metatdata(){
   export GITHUB_USER="cloudymax"
   export USER="max"
   export DISK_NAME="boot.img"
-  export DISK_SIZE="40G"
-  export MEMORY="16G"
+  export DISK_SIZE="15G"
+  export MEMORY="4G"
   export SOCKETS="1"
-  export PHYSICAL_CORES="4"
+  export PHYSICAL_CORES="1"
   export THREADS="2"
   export VM_KEY=""
   export VM_KEY_FILE="$VM_USER"
@@ -35,13 +35,13 @@ set_network(){
   export VNC_PORT="0"
 
   if [[ "$STATIC_IP" == "true" ]]; then
-    log "- 📍🗺 Static IP selected."
+    log " - Static IP selected."
     export NETDEV="-netdev bridge,br=br0,id=net0 \\"
     export DEVICE="-device virtio-net-pci,netdev=net0,mac=$MAC_ADDR \\"
   else
-    log "- 🚏🗺 Port Forwarding selected."
+    log " - Port Forwarding selected."
     export NETDEV="-device virtio-net-pci,netdev=net0 \\"
-    export DEVICE="-netdev user,id=net0,hostfwd=tcp::"$VM_SSH_PORT"-:"$HOST_SSH_PORT" \\"
+    export DEVICE="-netdev user,id=net0,hostfwd=tcp::"${VM_SSH_PORT}"-:"${HOST_SSH_PORT}" \\"
   fi
 }
 
@@ -51,11 +51,11 @@ set_gpu(){
   if [[ "$GPU_ACCEL" == "false" ]]; then
     export VGA_OPT="-nographic \\"
     export PCI_GPU="\\"
-    log "- ❌ GPU not attached"
+    log " - GPU not attached"
   else
     export VGA_OPT="-serial stdio -parallel none \\"
     export PCI_GPU="-device vfio-pci,host=02:00.0,multifunction=on,x-vga=on \\"
-    log "- ✅ GPU attached"
+    log " - GPU attached"
   fi
 }
 
@@ -66,7 +66,7 @@ select_image(){
   export UBUNTU_CODENAME="jammy"
   export CLOUD_IMAGE_NAME="${UBUNTU_CODENAME}-server-cloudimg-amd64"
   export CLOUD_IMAGE_URL="https://cloud-images.ubuntu.com/jammy/current"
-  log "- ✅ Done!"
+  log " - Done!"
 }
 
 # create a directory to hold the VM assets
@@ -75,7 +75,7 @@ create_dir(){
   mkdir -p "$VM_NAME"
   cd "$VM_NAME"
   export UUID=$(uuidgen)
-  log "- ✅ Done!"
+  log " - Done!"
 }
 
 # download a cloud image as .img
@@ -101,7 +101,7 @@ monitor_download(){
       DONE=$(tmux capture-pane -t "download" -p |tac |grep -ai -c "saved" )
   done
   printf "\n"
-  log "- ✅ Done!"
+  log " - Done!"
 }
 
 # Create and expanded image
@@ -110,7 +110,7 @@ expand_cloud_image(){
   qemu-img create -b ${CLOUD_IMAGE_NAME}.img -f qcow2 \
   	-F qcow2 ${CLOUD_IMAGE_NAME}-new.img \
   	"$DISK_SIZE" 1> /dev/null
-  log "- ✅ Done!"
+  log " - Done!"
 }
 
 # convert the .img to qcow2 to use as base layer
@@ -119,7 +119,7 @@ img_to_qcow(){
   qemu-img convert -f raw \
     -O qcow2 "$CLOUD_IMAGE_NAME"_original.img \
     "$CLOUD_IMAGE_NAME".qcow2
-  log "- ✅ Done!"
+  log " - Done!"
 }
 
 # create the next layer on the image
@@ -129,21 +129,21 @@ create_qcow_image(){
     -F qcow2 \
     -o backing_file="$CLOUD_IMAGE_NAME"_base.qcow2 \
     "$VM_NAME".qcow2
-  log "- ✅ Done!"
+  log " - Done!"
 }
 
 # create a disk
 create_virtual_disk(){
   log "💾 Creating virtual disk"
   qemu-img create -f qcow2 hdd.img $DISK_SIZE &>/dev/null
-  log "- ✅ Done!"
+  log " - Done!"
 }
 
 # Generate an ISO image
 generate_seed_iso(){
   log "🌱 Generating seed iso containing user-data"
   cloud-localds seed.img user-data
-  log "- ✅ Done!"
+  log " - Done!"
 }
 
 tmux_to_vm(){
@@ -159,11 +159,12 @@ tmux_stream(){
       printf '\r'"$(tmux capture-pane -t "${VM_NAME}_session" -p | tail -1)"
   done
   printf "\n"
-  log "- ✅ Done!"
+  log " - Done!"
 }
 
 ssh_to_vm(){
   export_metatdata
+  set_network
     # clear known_hosts and connect to the ip
     if [[ "$STATIC_IP" == "true" ]]; then
       if [ -f "/home/${USER}/.ssh/known_hosts" ]; then
@@ -184,7 +185,7 @@ ssh_to_vm(){
       ssh -o "StrictHostKeyChecking no" \
         -X \
         -i "$VM_NAME"/"$VM_USER" \
-        -p "$VM_SSH_PORT" "$VM_USER"@"$HOST_ADDRESS"
+        -p"${VM_SSH_PORT}" "${VM_USER}"@"${HOST_ADDRESS}" 
     fi
 }
 
