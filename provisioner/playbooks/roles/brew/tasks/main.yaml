@@ -18,6 +18,8 @@
   become: yes
   become_user: "{{ brew_user }}"
   become_method: sudo
+  when:
+    - item.BundlePath not defined
 
 - name: Install a brew bundle
   command:  "{{ brew_path }}/brew bundle --file={{ item.BundlePath }}"

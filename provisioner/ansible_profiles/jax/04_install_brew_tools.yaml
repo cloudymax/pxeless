@@ -9,6 +9,6 @@ Brew:
   - Name: argocd
     State: present
   - Name: bundle
-    BundlePath: /home/max/smol_k8s_homelab/deps/Brewfile
+    BundlePath: "/home/max/smol_k8s_homelab/deps/Brewfile"
     State: present
 
