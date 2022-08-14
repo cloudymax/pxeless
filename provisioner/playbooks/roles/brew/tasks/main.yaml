@@ -19,7 +19,7 @@
   become_user: "{{ brew_user }}"
   become_method: sudo
 
-  - name: Install a brew bundle
+- name: Install a brew bundle
   command:  "{{ brew_path }}/brew bundle --file={{ item.BundlePath }}"
   register: user_command_output
   with_items: "{{ data }}"
