@@ -1,4 +1,4 @@
-- Commands:
+Commands:
   - Command: git config --global --add safe.directory /smol_k8s_homelab
   - Command: git config --global --add safe.directory /home/max/homebrew
 Repos:
