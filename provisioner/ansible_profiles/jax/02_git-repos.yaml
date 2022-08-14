@@ -1,0 +1,7 @@
+Repos:
+  - Source: https://github.com/Homebrew/brew
+    Destination: /home/max/homebrew
+    Branch: "master"
+  - Source: https://github.com/jessebot/smol_k8s_homelab.git
+    Destination: /home/max/smol_k8s_homelab
+    Branch: "main"

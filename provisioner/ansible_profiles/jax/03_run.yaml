@@ -1,0 +1,4 @@
+Commands:
+- Command: pip3 install -r /home/max/smol_k8s_homelab/deps/requirements.txt
+- Command: mv /home/max/smol_k8s_homelab/config_sample.yml /home/max/smol_k8s_homelab/config.yml
+- Command: python3 /home/max/smol_k8s_homelab/smol-k8s-homelab.py

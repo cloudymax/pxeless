@@ -40,6 +40,7 @@ Apt_Pass_1:
   - Name: lynx
   - Name: gnome-software-plugin-flatpak
   - Name: snapd
+  - Name: ruby-full
 Details:
   About: "dependancies + user"
   Name: Base
