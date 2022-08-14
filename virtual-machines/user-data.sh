@@ -142,7 +142,7 @@ packages:
 runcmd:
   - sudo -u ${VM_USER} echo "export PATH=\"/home/${VM_USER}/.local/bin:\$PATH\"" >> /home/${VM_USER}/.profile 
   - git clone https://github.com/cloudymax/pxeless.git
-  - pxeless/provisioner/provision.sh --ansible-user ${VM_USER}
+  - pxeless/provisioner/provision.sh --ansible-user max
 EOF
 
 log " - Done."
