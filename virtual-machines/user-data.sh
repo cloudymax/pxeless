@@ -141,8 +141,8 @@ packages:
   - python3-pip
 runcmd:
   - sudo -u ${VM_USER} echo "export PATH=\"/home/${VM_USER}/.local/bin:\$PATH\"" >> /home/${VM_USER}/.profile 
-  - sudo -u ${VM_USER} git clone https://github.com/cloudymax/pxeless.git
-  - sudo -u ${VM_USER} pxeless/provisioner/provision.sh deps
+  - git clone https://github.com/cloudymax/pxeless.git
+  - pxeless/provisioner/provision.sh
 EOF
 
 log " - Done."
