@@ -73,12 +73,7 @@ parse_params() {
            log "   $GREEN  ➡️ Defaulting to 'basic_desktop' $NC"
            export PROFILE="basic_desktop"
         else
-            if [[ -d "$PROFILE" ]]; then
-                log "✅ $PROFILE exists. Continuing."
-            else
-                log "💥 $PROFILE does not exist."
-                exit
-            fi
+           export PROFILE="$PROFILE"
         fi
         
         if [[ "none" == "$ANSIBLE_COW_SELECTION" ]]; then
