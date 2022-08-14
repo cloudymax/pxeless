@@ -95,14 +95,57 @@ create_ssh_key(){
   export VM_KEY_FILE=$(find "$(cd ..; pwd)" -name "${VM_NAME}admin")
   export VM_KEY=$(cat "${VM_NAME}admin".pub)
 
-  log "✅ Done."
+  log " - Done."
 
 }
 
 verify_deps(){
     log "🔎 Checking for required utilities..."
     [[ ! -x "$(command -v whois)" ]] && die "💥 whois is not installed. On Ubuntu, install  the 'whois' package."
-    log "✅ All required utilities are installed."
+    log " - All required utilities are installed."
+}
+
+create_ansible_user_data(){
+log "📝 Create a minimal user-data file"
+
+cat > user-data <<EOF
+#cloud-config
+hostname: ${VM_NAME}
+fqdn: ${VM_NAME}
+disable_root: false
+users:
+  - name: ${USER}
+    groups: users, admin, docker, sudo
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    lock_passwd: false
+    passwd: "${PASSWD}"
+    ssh_import_id:
+      - gh:${GITHUB_USER}
+  - name: ${VM_USER}
+    gecos: system acct
+    groups: users, admin, docker, sudo
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    lock_passwd: false
+    passwd: ${PASSWD}
+    ssh_authorized_keys:
+      - ${VM_KEY}
+package_update: ${UPDATE}
+package_upgrade: ${UPGRADE}
+packages:
+  - wget
+  - curl
+  - git
+  - build-essential
+runcmd:
+  - sudo -u ${VM_USER} echo "export PATH=\"/home/${VM_USER}/.local/bin:\$PATH\"" >> ~/..profile 
+  - source /home/${VM_USER}/.profile
+  - git clone https://github.com/cloudymax/pxeless.git
+  - sudo -u ${VM_USER} pxeless/provisioner/provision.sh deps
+EOF
+
+log " - Done."
 }
 
 create_slim_user_data(){
@@ -133,7 +176,7 @@ users:
       - ${VM_KEY}
 EOF
 
-log "✅ Done."
+log " - Done."
 }
 
 create_full_user_data(){
@@ -177,6 +220,7 @@ apt:
 package_update: ${UPDATE}
 package_upgrade: ${UPGRADE}
 packages:
+  - neofetch
   - kubectl
   - wget
   - helm
@@ -209,11 +253,13 @@ runcmd:
   - sudo -u ${VM_USER} NONINTERACTIVE=1 /bin/bash /install.sh
   - sudo -u ${VM_USER} /home/linuxbrew/.linuxbrew/bin/brew shellenv >> /home/${VM_USER}/.profile
   - sudo -u max /home/linuxbrew/.linuxbrew/bin/brew shellenv >> /home/max/.profile
+  - sudo -u max /home/linuxbrew/.linuxbrew/bin/brew install gotop krew
+  - sudo -u max echo "export PATH=\"${PATH}:${HOME}/.krew/bin\"" > /home/max/.bashrc 
   - reboot now
 final_message: "Installation Completed."
 EOF
 
-log "✅ Done."
+log " - Done."
 }
 
 log() {
@@ -234,7 +280,8 @@ create_ssh_key
 if [ "$SLIM" == "true" ]; then
   create_slim_user_data
 else
-  create_full_user_data
+  create_ansible_user_data
+  #create_full_user_data
 fi
 }
 
