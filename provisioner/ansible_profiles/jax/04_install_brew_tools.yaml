@@ -10,4 +10,5 @@ Brew:
     State: present
   - Name: bundle
     BundlePath: /home/max/smol_k8s_homelab/deps/Brewfile
+    State: present
 
