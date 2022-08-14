@@ -1,5 +1,5 @@
 ---
-Brew_Path: "/usr/local/homebrew/bin"
+Brew_Path: "/home/{{ ansible_user }}/homebrew/bin"
 Brew_User: "max"
 Brew:
   - Name: kind
@@ -9,6 +9,6 @@ Brew:
   - Name: argocd
     State: present
   - Name: bundle
-    BundlePath: "/usr/local/smol_k8s_homelab/deps/Brewfile"
+    BundlePath: "/home/{{ ansible_user }}/smol_k8s_homelab/deps/Brewfile"
     State: present
 

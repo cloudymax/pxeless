@@ -1,6 +1,6 @@
 Files:
 - Name: permissions of repo
-  Path: /usr/local/homebrew
+  Path: /home/{{ ansible_user }}/homebrew
   Owner: max
   Group: admin
   Mode:  0644
@@ -8,4 +8,4 @@ Files:
 Path:
 - Name: brew
   key: PATH
-  value: '"/usr/local/homebrew/bin:/bin:/usr/bin:$PATH"'
+  value: '"/home/{{ ansible_user }}/homebrew/bin:/bin:/usr/bin:$PATH"'
