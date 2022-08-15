@@ -1,11 +1,15 @@
+Downloads:
+- Name: download homebrew install script
+  URL: https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+  Destination: "/install.sh"
 Files:
 - Name: permissions of repo
-  Path: /home/{{ ansible_user }}/homebrew
+  Path: /install.sh
   Owner: max
   Group: admin
-  Mode:  0644
+  Mode: '1777'
   State: permissions
 Path:
 - Name: brew
   key: PATH
-  value: '"/home/{{ ansible_user }}/homebrew/bin:/bin:/usr/bin:$PATH"'
+  value: '"/home/linuxbrew/.linuxbrew/bin/brew:/bin:/usr/bin:$PATH"'

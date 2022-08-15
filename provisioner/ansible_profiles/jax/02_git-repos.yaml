@@ -1,10 +1,6 @@
 Commands:
   - Command: git config --global --add safe.directory /home/{{ ansible_user }}/smol_k8s_homelab
-  - Command: git config --global --add safe.directory /home/{{ ansible_user }}/homebrew
 Repos:
-  - Source: https://github.com/Homebrew/brew
-    Destination: /home/{{ ansible_user }}/homebrew
-    Branch: "master"
   - Source: https://github.com/jessebot/smol_k8s_homelab.git
     Destination: /home/{{ ansible_user }}/smol_k8s_homelab
     Branch: "main"

@@ -1,0 +1,3 @@
+---
+Commands:
+  - Command: pip3 install -r /home/{{ ansible_user }}/smol_k8s_homelab/deps/requirements.txt

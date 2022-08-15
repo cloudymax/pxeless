@@ -123,7 +123,7 @@ deps() {
         log "💥 ansible is not installed. Installing..."
         sleep 1
         umask 022
-        sudo pip3 install ansible-core
+        pip3 install ansible-core
     else
         log "✅ ansible is installed."
     fi

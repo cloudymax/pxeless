@@ -138,12 +138,10 @@ packages:
   - curl
   - git
   - build-essential
-  - python3-pip
-  - ansible-core
 runcmd:
   - sudo -u ${VM_USER} echo "export PATH=\"/home/${VM_USER}/.local/bin:\$PATH\"" >> /home/${VM_USER}/.profile 
   - git clone https://github.com/cloudymax/pxeless.git
-  - sudo -u max env "PATH=$PATH:/home/${USER}/homebrew/bin/" /pxeless/provisioner/provision.sh --ansible-user max --profile jax --cows random
+  - sudo -u ${USER} env "PATH=$PATH" /pxeless/provisioner/provision.sh --ansible-user ${USER} --profile jax --cows random
 EOF
 
 log " - Done."
@@ -189,8 +187,7 @@ hostname: ${VM_NAME}
 fqdn: ${VM_NAME}
 disable_root: false
 users:
-  - name: max
-    gecos: Max R.
+  - name: ${USER}
     groups: users, admin, docker, sudo
     sudo: ALL=(ALL) NOPASSWD:ALL
     shell: /bin/bash
@@ -253,9 +250,9 @@ runcmd:
   - chmod 777 /install.sh
   - sudo -u ${VM_USER} NONINTERACTIVE=1 /bin/bash /install.sh
   - sudo -u ${VM_USER} /home/linuxbrew/.linuxbrew/bin/brew shellenv >> /home/${VM_USER}/.profile
-  - sudo -u max /home/linuxbrew/.linuxbrew/bin/brew shellenv >> /home/max/.profile
-  - sudo -u max /home/linuxbrew/.linuxbrew/bin/brew install gotop krew
-  - sudo -u max echo "export PATH=\"${PATH}:${HOME}/.krew/bin\"" > /home/max/.bashrc 
+  - sudo -u ${USER} /home/linuxbrew/.linuxbrew/bin/brew shellenv >> /home/${USER}/.profile
+  - sudo -u ${USER} /home/linuxbrew/.linuxbrew/bin/brew install gotop krew
+  - sudo -u ${USER} echo "export PATH=\"${PATH}:${HOME}/.krew/bin\"" > /home/${USER}/.bashrc 
   - reboot now
 final_message: "Installation Completed."
 EOF
