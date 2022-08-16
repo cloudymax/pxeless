@@ -3,7 +3,7 @@ Files:
   Path: /home/{{ ansible_user }}/install.sh
   Owner: "{{ ansible_user }}"
   Group: admin
-  Mode: '0777'
+  Mode: '1777'
   State: permissions
 Path:
 - Name: brew
