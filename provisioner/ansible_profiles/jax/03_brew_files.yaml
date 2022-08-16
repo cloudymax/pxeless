@@ -1,7 +1,3 @@
-Downloads:
-- Name: download homebrew install script
-  URL: https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
-  Destination: "/install.sh"
 Files:
 - Name: permissions of repo
   Path: /install.sh

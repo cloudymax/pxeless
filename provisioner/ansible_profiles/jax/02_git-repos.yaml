@@ -4,3 +4,7 @@ Repos:
   - Source: https://github.com/jessebot/smol_k8s_homelab.git
     Destination: /home/{{ ansible_user }}/smol_k8s_homelab
     Branch: "main"
+Downloads:
+- Name: download homebrew install script
+  URL: https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+  Destination: "/install.sh"
