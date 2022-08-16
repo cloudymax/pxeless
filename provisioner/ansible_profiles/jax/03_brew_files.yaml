@@ -1,11 +1,4 @@
 ---
-Files:
-- Name: permissions of repo
-  Path: /home/{{ ansible_user }}/install.sh
-  Owner: "{{ ansible_user }}"
-  Group: admin
-  Mode: '1777'
-  State: permissions
 Path:
 - Name: brew
   key: PATH
