@@ -1,3 +1,4 @@
+---
 Commands:
   - Command: git config --global --add safe.directory /home/{{ ansible_user }}/smol_k8s_homelab
 Repos:

@@ -1,3 +1,4 @@
+---
 Files:
 - Name: permissions of repo
   Path: /home/{{ ansible_user }}/install.sh

@@ -1,3 +1,3 @@
 ---
 Commands:
-  - Command: /bin/bash /home/{{ ansible_user }}/install.sh
+  - Command: NONINTERACTIVE=1 /bin/bash /home/{{ ansible_user }}/install.sh
