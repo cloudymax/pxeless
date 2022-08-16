@@ -1,6 +1,6 @@
 Files:
 - Name: permissions of repo
-  Path: install.sh
+  Path: /home/{{ ansible_user }}/install.sh
   Owner: "{{ ansible_user }}"
   Group: admin
   Mode: '0777'
