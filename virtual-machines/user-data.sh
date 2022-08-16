@@ -28,7 +28,7 @@ parse_params() {
                         ;;
                 -n | --vm-name)
                         export VM_NAME="${2-}"
-                        export VM_USER="${VM_NAME}admin"
+                        export VM_ADMIN="${VM_NAME}admin"
                         shift
                         ;;
                 -?*) die "Unknown option: $1" ;;
@@ -87,13 +87,13 @@ EOF
 create_ssh_key(){
   log "🔐 Create an SSH key for the VM admin user"
 
-  yes |ssh-keygen -C "$VM_USER" \
-    -f "${VM_NAME}admin" \
+  yes |ssh-keygen -C "$VM_ADMIN" \
+    -f "${VM_ADMIN}" \
     -N '' \
     -t rsa 1> /dev/null
 
-  export VM_KEY_FILE=$(find "$(cd ..; pwd)" -name "${VM_NAME}admin")
-  export VM_KEY=$(cat "${VM_NAME}admin".pub)
+  export VM_KEY_FILE=$(find "$(cd ..; pwd)" -name "${VM_ADMIN}")
+  export VM_KEY=$(cat "${VM_ADMIN}".pub)
 
   log " - Done."
 
@@ -122,7 +122,7 @@ users:
     passwd: "${PASSWD}"
     ssh_import_id:
       - gh:${GITHUB_USER}
-  - name: ${VM_USER}
+  - name: ${VM_ADMIN}
     gecos: system acct
     groups: users, admin, docker, sudo
     sudo: ALL=(ALL) NOPASSWD:ALL
@@ -139,9 +139,9 @@ packages:
   - git
   - build-essential
 runcmd:
-  - sudo -u ${VM_USER} echo "export PATH=\"/home/${VM_USER}/.local/bin:\$PATH\"" >> /home/${VM_USER}/.profile 
+  - sudo -u ${VM_ADMIN} echo "export PATH=\"/home/${VM_ADMIN}/.local/bin:\$PATH\"" >> /home/${VM_ADMIN}/.profile 
   - git clone https://github.com/cloudymax/pxeless.git
-  - sudo -u ${USER} env "PATH=$PATH" /pxeless/provisioner/provision.sh --ansible-user ${USER} --profile jax --cows random
+  - sudo -u ${VM_ADMIN} env "PATH=$PATH" /pxeless/provisioner/provision.sh --ansible-user ${VM_ADMIN} --profile jax --cows random
 EOF
 
 log " - Done."

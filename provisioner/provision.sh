@@ -186,7 +186,7 @@ main() {
     for file in "${DEMO_DIR}"/*.yaml
     do
         #echo "running $file ..."
-        /home/$USER/.local/bin/ansible-playbook $ANSIBLE_PLAYBOOK \
+        /home/$ANSIBLE_USER/.local/bin/ansible-playbook $ANSIBLE_PLAYBOOK \
             --extra-vars \
             "profile_path='${file}' \
             profile_dir='${DEMO_DIR}' \
