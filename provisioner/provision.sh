@@ -83,6 +83,7 @@ parse_params() {
         else
            ANSIBLE_NOCOWS=0
         fi
+        main
 }
 
 # help text
@@ -170,7 +171,6 @@ die() {
 
 main() {
     deps
-    parse_params "$@"
 
     # Profile to use for demo (absolute path)
     USER=$(whoami)
@@ -197,4 +197,4 @@ main() {
     done
 }
 
-main "$@"
+parse_params "$@"
