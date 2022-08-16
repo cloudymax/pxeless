@@ -3,4 +3,4 @@ Commands:
   - Command: NONINTERACTIVE=1 /bin/bash /home/{{ ansible_user }}/install.sh
     Become: yes
     Become_User: "{{ ansible_user }}"
-    Become_method: sudo
+    Become_Method: sudo
