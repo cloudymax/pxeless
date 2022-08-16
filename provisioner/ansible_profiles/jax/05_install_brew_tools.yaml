@@ -1,6 +1,4 @@
 ---
-Commands:
-  - Command: pip3 install -r /home/{{ ansible_user }}/smol_k8s_homelab/deps/requirements.txt
 Brew_Path: "/home/linuxbrew/.linuxbrew/bin/brew"
 Brew_User: "{{ ansible_user }}"
 Brew:
