@@ -128,7 +128,7 @@ deps() {
         log "✅ ansible is installed."
     fi
 
-    if [[ "0" == "$(ansible-galaxy collection list |grep -c community.general)" ]]; then
+    if [[ "0" == "$(/home/$USER/.local/bin/ansible-galaxy collection list |grep -c community.general)" ]]; then
         log "💥 collection community.general is not installed. Installing..."
         sleep 1
         /home/$USER/.local/bin/ansible-galaxy collection install community.general
@@ -136,7 +136,7 @@ deps() {
         log "✅ collection community.general installed."
     fi
     
-    if [[ "0" == "$(ansible-galaxy collection list |grep -c community.crypto)" ]]; then
+    if [[ "0" == "$(/home/$USER/.local/bin/ansible-galaxy collection list |grep -c community.crypto)" ]]; then
         log "💥 collection community.crypto is not installed. Installing..."
         sleep 1
         /home/$USER/.local/bin/ansible-galaxy collection install community.crypto
@@ -144,7 +144,7 @@ deps() {
         log "✅ collection community.crypto installed."
     fi
 
-    if [[ "0" == "$(ansible-galaxy collection list |grep -c ansible.posix)" ]]; then
+    if [[ "0" == "$(/home/$USER/.local/bin/ansible-galaxy collection list |grep -c ansible.posix)" ]]; then
         log "💥 collection ansible.posix. Installing..."
         sleep 1
         /home/$USER/.local/bin/ansible-galaxy collection install ansible.posix
