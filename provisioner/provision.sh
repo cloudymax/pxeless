@@ -45,12 +45,12 @@ parse_params() {
         log "⏰ Starting up..."
         log "📋 Setting variables"
 
-        if [[ "false" == "$DEBUG" ]]; then
+        if [[ "$DEBUG" == "false" ]]; then
            log "🔎 DEBUG not set." 
            log "   $GREEN  ➡️ Defaulting to 'False' $NC"
         fi
 
-        if [[ "none" == "$INVENTORY" ]]; then
+        if [[ "$INVENTORY" == "none" ]]; then
            log "🔎 No inventory specified"
            log "   $GREEN  ➡️ asumming localhost. $NC"
         else
@@ -62,12 +62,12 @@ parse_params() {
             fi
         fi
 
-        if [[ "none" ==  "$ANSIBLE_USER" ]]; then
+        if [[ "$ANSIBLE_USER" == "none" ]]; then
            log "💥 No ansible user specified"
            exit
         fi
         
-        if [[ "none" == "$PROFILE" ]]; then
+        if [[ "$PROFILE" == "none" ]]; then
            log "🔎 No profile selected."
            log "   $GREEN  ➡️ Defaulting to 'basic_desktop' $NC"
            export PROFILE="basic_desktop"
