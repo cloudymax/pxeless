@@ -1,5 +1,5 @@
 ---
-Brew_Path: "/home/linuxbrew/.linuxbrew/bin/brew"
+Brew_Path: "/home/linuxbrew/.linuxbrew/bin"
 Brew_User: "{{ ansible_user }}"
 Brew:
   - Name: kind
