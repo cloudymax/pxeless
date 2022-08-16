@@ -45,12 +45,12 @@ parse_params() {
         log "⏰ Starting up..."
         log "📋 Setting variables"
 
-        if [[ "$DEBUG" == "false" ]]; then
+        if [ "$DEBUG" == "false" ]; then
            log "🔎 DEBUG not set." 
            log "   $GREEN  ➡️ Defaulting to 'False' $NC"
         fi
 
-        if [[ "$INVENTORY" == "none" ]]; then
+        if [ "$INVENTORY" == "none" ]; then
            log "🔎 No inventory specified"
            log "   $GREEN  ➡️ asumming localhost. $NC"
         else
@@ -62,12 +62,12 @@ parse_params() {
             fi
         fi
 
-        if [[ "$ANSIBLE_USER" == "none" ]]; then
+        if [ "$ANSIBLE_USER" == "none" ]; then
            log "💥 No ansible user specified"
            exit
         fi
         
-        if [[ "$PROFILE" == "none" ]]; then
+        if [ "$PROFILE" == "none" ]; then
            log "🔎 No profile selected."
            log "   $GREEN  ➡️ Defaulting to 'basic_desktop' $NC"
            export PROFILE="basic_desktop"
@@ -75,7 +75,7 @@ parse_params() {
            export PROFILE="$PROFILE"
         fi
         
-        if [[ "none" == "$ANSIBLE_COW_SELECTION" ]]; then
+        if [ "$ANSIBLE_COW_SELECTION" == "none" ]; then
            log "🐄 No cowsay charcter specified"
            log "   $RED  ➡️ disabling cows. $NC"
            ANSIBLE_NOCOWS=1
