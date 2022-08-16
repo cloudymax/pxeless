@@ -64,7 +64,8 @@ parse_params() {
 
         if [ "$ANSIBLE_USER" == "none" ]; then
            log "💥 No ansible user specified"
-           exit
+           export ANSIBLE_USER="$USER"
+           log "   $GREEN  ➡️ set ansible user to $ANSIBLE_USER. $NC"
         fi
         
         if [ "$PROFILE" == "none" ]; then
@@ -182,18 +183,18 @@ main() {
     export DEBUG="false"
     export SQUASH="false"
 
-    for file in "${DEMO_DIR}"/*.yaml
-    do
-        #echo "running $file ..."
-        /home/${ANSIBLE_USER}/.local/bin/ansible-playbook $ANSIBLE_PLAYBOOK \
-            --extra-vars \
-            "profile_path='${file}' \
-            profile_dir='${DEMO_DIR}' \
-            ansible_user='${ANSIBLE_USER}' \
-            squash='${SQUASH}' \
-            debug_output='${DEBUG}' \
-            $VERBOSITY"
-    done
+    #for file in "${DEMO_DIR}"/*.yaml
+    #do
+    #    #echo "running $file ..."
+    #    /home/${ANSIBLE_USER}/.local/bin/ansible-playbook $ANSIBLE_PLAYBOOK \
+    #        --extra-vars \
+    #        "profile_path='${file}' \
+    #        profile_dir='${DEMO_DIR}' \
+    #        ansible_user='${ANSIBLE_USER}' \
+    #        squash='${SQUASH}' \
+    #        debug_output='${DEBUG}' \
+    #        $VERBOSITY"
+    #done
 }
 
-main "$@"
+parse_params "$@"
