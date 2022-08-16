@@ -128,26 +128,26 @@ deps() {
         log "✅ ansible is installed."
     fi
 
-    if [[ "0" == "$(/home/$USER/.local/bin/ansible-galaxy collection list |grep -c community.general)" ]]; then
+    if [[ "0" == "$(/home/$ANSIBLE_USER/.local/bin/ansible-galaxy collection list |grep -c community.general)" ]]; then
         log "💥 collection community.general is not installed. Installing..."
         sleep 1
-        /home/$USER/.local/bin/ansible-galaxy collection install community.general
+        /home/$ANSIBLE_USER/.local/bin/ansible-galaxy collection install community.general
     else
         log "✅ collection community.general installed."
     fi
     
-    if [[ "0" == "$(/home/$USER/.local/bin/ansible-galaxy collection list |grep -c community.crypto)" ]]; then
+    if [[ "0" == "$(/home/$ANSIBLE_USER/.local/bin/ansible-galaxy collection list |grep -c community.crypto)" ]]; then
         log "💥 collection community.crypto is not installed. Installing..."
         sleep 1
-        /home/$USER/.local/bin/ansible-galaxy collection install community.crypto
+        /home/$ANSIBLE_USER/.local/bin/ansible-galaxy collection install community.crypto
     else
         log "✅ collection community.crypto installed."
     fi
 
-    if [[ "0" == "$(/home/$USER/.local/bin/ansible-galaxy collection list |grep -c ansible.posix)" ]]; then
+    if [[ "0" == "$(/home/$ANSIBLE_USER/.local/bin/ansible-galaxy collection list |grep -c ansible.posix)" ]]; then
         log "💥 collection ansible.posix. Installing..."
         sleep 1
-        /home/$USER/.local/bin/ansible-galaxy collection install ansible.posix
+        /home/$ANSIBLE_USER/.local/bin/ansible-galaxy collection install ansible.posix
     else
         log "✅ collection ansible.posix installed."
     fi
@@ -190,7 +190,7 @@ main() {
             --extra-vars \
             "profile_path='${file}' \
             profile_dir='${DEMO_DIR}' \
-            ansible_user='$USER' \
+            ansible_user='$ANSIBLE_USER' \
             squash='${SQUASH}' \
             debug_output='${DEBUG}' \
             $VERBOSITY"
