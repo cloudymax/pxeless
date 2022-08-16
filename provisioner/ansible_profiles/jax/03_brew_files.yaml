@@ -1,9 +1,9 @@
 Files:
 - Name: permissions of repo
-  Path: /install.sh
-  Owner: max
+  Path: install.sh
+  Owner: "{{ ansible_user }}"
   Group: admin
-  Mode: '1777'
+  Mode: '0777'
   State: permissions
 Path:
 - Name: brew

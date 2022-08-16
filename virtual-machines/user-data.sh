@@ -141,7 +141,7 @@ packages:
 runcmd:
   - sudo -u ${VM_ADMIN} echo "export PATH=\"/home/${VM_ADMIN}/.local/bin:\$PATH\"" >> /home/${VM_ADMIN}/.profile 
   - git clone https://github.com/cloudymax/pxeless.git
-  - sudo -u ${VM_ADMIN} env "PATH=$PATH" /pxeless/provisioner/provision.sh --ansible-user ${VM_ADMIN} --profile jax --cows random
+  - sudo -u ${VM_ADMIN} env "PATH=$PATH:/home/$VM_ADMIN/.local/bin" /pxeless/provisioner/provision.sh --ansible-user ${VM_ADMIN} --profile jax --cows random
 EOF
 
 log " - Done."
