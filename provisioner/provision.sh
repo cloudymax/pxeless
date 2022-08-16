@@ -65,7 +65,7 @@ parse_params() {
         if [ "$ANSIBLE_USER" == "none" ]; then
            log "💥 No ansible user specified"
            export ANSIBLE_USER="$USER"
-           log "   $GREEN  ➡️ set ansible user to $ANSIBLE_USER. $NC"
+           #log "   $GREEN  ➡️ set ansible user to $ANSIBLE_USER. $NC"
         fi
         
         if [ "$PROFILE" == "none" ]; then
