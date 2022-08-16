@@ -3,3 +3,6 @@ Path:
 - Name: brew
   key: PATH
   value: '"/home/linuxbrew/.linuxbrew/bin/brew:/bin:/usr/bin:$PATH"'
+- Name: kubeconfig
+  key: KUBECONFIG
+  value: '"/etc/rancher/k3s/k3s.yaml"'
