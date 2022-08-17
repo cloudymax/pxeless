@@ -1,6 +1,0 @@
----
-Commands:
-- Command: python3 /home/{{ ansible_user }}/smol_k8s_homelab/smol-k8s-homelab.py --k8s k3s -f /home/{{ ansible_user }}/smol_k8s_homelab/config.yml
-  Become: yes
-  Become_User: root
-  Become_Method: sudo
