@@ -112,15 +112,6 @@ EOF
 
 # check and install dependancies
 deps() {
-    log "🔎 Checking for required utilities..."
-    if [[ ! -x "$(command -v pip3)" ]]; then
-       log "💥 python3-pip is not installed. Installing"
-       sudo apt --fix-broken install -y
-       sudo apt-get install -y python3-wheel python3-pip
-    else    
-       log "✅ python3-pip installed."
-    fi
-    
     if [[ ! -x "$(command -v ansible)" ]]; then
         log "💥 ansible is not installed. Installing..."
         sleep 1
