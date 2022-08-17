@@ -4,8 +4,10 @@
   set_fact:
     section: "{{ hostvars['localhost'].profile_json['Shell'] }}"
 
-- shell:
-    cmd: |
-      "{{ item.Script }}"
+- name: run command in shell
+    shell: bash -ilc "{{ item.Script }}"
   with_items: "{{ section }}"
+  become: "{{ item.Become }}"
+  become_user: "{{ item.Become_User }}"
+  become_method: "{{ item.Become_Method }}"
 
