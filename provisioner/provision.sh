@@ -115,7 +115,7 @@ deps() {
     log "🔎 Checking for required utilities..."
     if [[ ! -x "$(command -v pip3)" ]]; then
        log "💥 python3-pip is not installed. Installing"
-       sudo apt --fix-broken install
+       sudo apt --fix-broken install -y
        sudo apt-get install -y python3-wheel python3-pip
     else    
        log "✅ python3-pip installed."
