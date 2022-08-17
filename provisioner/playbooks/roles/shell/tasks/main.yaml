@@ -5,7 +5,7 @@
     section: "{{ hostvars['localhost'].profile_json['Shell'] }}"
 
 - name: run command in shell
-    shell: bash -ilc "{{ item.Script }}"
+  shell: bash -ilc "{{ item.Script }}"
   with_items: "{{ section }}"
   become: "{{ item.Become }}"
   become_user: "{{ item.Become_User }}"
