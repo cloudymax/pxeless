@@ -19,6 +19,7 @@
     dest: "{{ item.Destination }}"
     single_branch: yes
     version: "{{ item.Branch }}"
+    force: yes
   with_items: "{{ section }}"
   become: yes
   become_user: "{{ ansible_user }}"
