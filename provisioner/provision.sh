@@ -115,7 +115,7 @@ deps() {
     log "🔎 Checking for required utilities..."
     if [[ ! -x "$(command -v pip3)" ]]; then
        log "💥 python3-pip is not installed. Installing"
-       sudo apt-get install --yes python3-pip
+       sudo apt-get install python3-pip
     else    
        log "✅ python3-pip installed."
     fi
