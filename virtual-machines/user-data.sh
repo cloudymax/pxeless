@@ -138,6 +138,7 @@ packages:
   - curl
   - git
   - build-essential
+  - python3-pip
 runcmd:
   - sudo -u ${VM_ADMIN} echo "export PATH=\"/home/${VM_ADMIN}/.local/bin:\$PATH\"" >> /home/${VM_ADMIN}/.profile 
   - git clone https://github.com/cloudymax/pxeless.git
