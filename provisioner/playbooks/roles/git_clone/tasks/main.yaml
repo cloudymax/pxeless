@@ -22,5 +22,5 @@
     force: yes
   with_items: "{{ section }}"
   become: yes
-  become_user: "{{ ansible_user }}"
+  become_user: root
   become_method: sudo
