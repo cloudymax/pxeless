@@ -1,8 +1,23 @@
 ---
 Path:
-- Name: brew
+- Name: path
   key: PATH
-  value: '"/home/linuxbrew/.linuxbrew/bin/brew:/bin:/usr/bin:$PATH"'
+  value: '"/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin${PATH+:$PATH}"'
 - Name: kubeconfig
   key: KUBECONFIG
   value: '"/etc/rancher/k3s/k3s.yaml"'
+- Name: homebrew-prefix
+  key: HOMEBREW_PREFIX
+  value: '"/home/linuxbrew/.linuxbrew"'
+- Name: homebrew-cellar
+  key: HOMEBREW_CELLAR
+  value: '"/home/linuxbrew/.linuxbrew/Cellar"'
+- Name: homebrew-repo
+  key: HOMEBREW_REPOSITORY
+  value: '"/home/linuxbrew/.linuxbrew/Homebrew"'
+- Name: homebrew-manpath
+  key: MANPATH
+  value: '"/home/linuxbrew/.linuxbrew/share/man${MANPATH+:$MANPATH}:"'
+- Name: homebrew-prefix
+  key: INFOPATH
+  value: '"/home/linuxbrew/.linuxbrew/share/info:${INFOPATH:-}"'
