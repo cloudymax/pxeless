@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
     
 jobs:
-  build:
+  build-basic:
     runs-on: ubuntu-latest
 
     steps:
