@@ -15,4 +15,4 @@ jobs:
 
       - name: test
         run: |
-          ./image-create.sh -a -u user-data.example -n jammy
+          ./image-create.sh -a -u user-data.example -n jammy -v
