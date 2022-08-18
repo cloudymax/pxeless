@@ -23,3 +23,6 @@ jobs:
           push: true
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
+          cache: true
+          cache-repository: ${{ steps.ecr-cache.outputs.repository-uri }}
+
