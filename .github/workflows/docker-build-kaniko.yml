@@ -21,6 +21,6 @@ jobs:
       - uses: int128/kaniko-action@v1
         with:
           push: true
-          tags: deserializeme/pxeless:latest
+          tags: deserializeme/pxeless:kaniko
           labels: ${{ steps.metadata.outputs.labels }}
 
