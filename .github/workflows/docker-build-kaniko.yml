@@ -25,4 +25,5 @@ jobs:
           labels: ${{ steps.metadata.outputs.labels }}
           cache: true
           cache-repository: ${{ steps.ecr-cache.outputs.repository-uri }}
+          destination: deserializeme/pxeless:latest
 
