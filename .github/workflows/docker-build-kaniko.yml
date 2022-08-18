@@ -1,0 +1,26 @@
+name: build-kaniko
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-kaniko:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          
+      - uses: int128/kaniko-action@v1
+        with:
+          push: true
+          tags: deserializeme/pxeless:kaniko
+          labels: ${{ steps.metadata.outputs.labels }}
+
