@@ -1,4 +1,4 @@
-name: CI
+name: build-kaniko
 
 on:
   push:
