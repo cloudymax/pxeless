@@ -10,9 +10,34 @@ jobs:
     container: deserializeme/pxeless:latest
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
       - name: test
         run: |
           ./image-create.sh -a -u user-data.example -n jammy -k
+          
+      - name: version
+        run: echo "::set-output name=version::$(date)"
+        id: version
+    
+      - name: release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: false
+          prerelease: false
+          release_name: ${{ steps.version.outputs.version }}
+          tag_name: ${{ github.ref }}
+          body_path: CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          
+      - name: upload linux artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: .
+          asset_name: ubuntu-autoinstall.iso
+          asset_content_type: application/gzip
