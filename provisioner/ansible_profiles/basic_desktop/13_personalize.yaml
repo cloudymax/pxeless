@@ -1,4 +1,0 @@
-Sync:
-  - name: Transfer files/folder from Host to a destination path on the client (Dest)
-    Source: .
-    Dest: ~/

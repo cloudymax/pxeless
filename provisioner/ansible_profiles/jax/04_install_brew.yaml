@@ -1,6 +1,0 @@
----
-Commands:
-  - Command: /bin/bash /home/{{ ansible_user }}/install.sh
-    Become: yes
-    Become_User: "{{ ansible_user }}"
-    Become_Method: sudo

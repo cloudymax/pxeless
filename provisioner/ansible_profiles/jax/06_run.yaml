@@ -1,5 +1,0 @@
----
-Commands:
-- Command: pip3 install -r /home/{{ ansible_user }}/smol_k8s_homelab/deps/requirements.txt
-- Command: sudo mv /home/{{ ansible_user }}/smol_k8s_homelab/config_sample.yml /home/{{ ansible_user }}/smol_k8s_homelab/config.yml
-

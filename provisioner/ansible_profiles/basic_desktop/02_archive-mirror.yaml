@@ -1,6 +1,0 @@
-Commands:
-- Command: "sudo sed -i 's|http://nl.|http://archive.|g' /etc/apt/sources.list"
-  Comment: "nl ubuntu mirror is unstable and unreachable half of the time"
-  Become: yes
-  Become_User: root
-  Become_Method: sudo

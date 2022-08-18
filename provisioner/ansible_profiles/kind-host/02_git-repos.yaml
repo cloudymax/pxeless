@@ -1,7 +1,0 @@
-Repos:
-  - Source: https://github.com/Homebrew/brew
-    Destination: /home/max/homebrew
-    Branch: "master"
-  - Source: https://github.com/cloudymax/my-argo-and-kafka-example.git
-    Destination: /home/max/my-argo-and-kafka-example
-    Branch: "main"
