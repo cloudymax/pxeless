@@ -2,7 +2,7 @@ name: Build Image Iso
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "develop" ]
     tags:
       - "v*.*.*"
       
