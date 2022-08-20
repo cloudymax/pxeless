@@ -15,6 +15,9 @@ jobs:
       - name: test
         run: |
           ./image-create.sh -a -u user-data.example -n jammy -k
+          ls -R
+          ls -hal
+          tree
           
       - name: version
         run: echo "::set-output name=version::$(date)"
