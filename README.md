@@ -145,7 +145,7 @@ image-create.sh -a -u user-data.example -n jammy
 ## Create a bootable usb flash drive
 
 ```zsh
-export IMAGE_FILE="ubuntu-autoinstall-2022-06-19.iso"
+export IMAGE_FILE="ubuntu-autoinstall.iso"
 ```
 
  ```zsh
