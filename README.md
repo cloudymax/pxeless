@@ -2,7 +2,9 @@
 
 An automated system install tool for when PXE is not an option, or is not an option *yet*.
 
-Pxeless is based on [covertsh/ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator), and generates a customized Ubuntu auto-intstall ISO using [cloud-init](https://cloudinit.readthedocs.io/en/latest/) and the new **autoinstall** feature of Ubuntu's Ubiquity installer. The credentials for the included example user-data.basic are `vmadmin`, and `password`.
+Pxeless is based on [covertsh/ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator), and generates a customized Ubuntu auto-intstall ISO using [cloud-init](https://cloudinit.readthedocs.io/en/latest/) and the new **autoinstall** feature of Ubuntu's Ubiquity installer. 
+
+The credentials for the included example user-data.basic are `usn: vmadmin`, and `pwd: password`.
 
 ## Behavior
 
