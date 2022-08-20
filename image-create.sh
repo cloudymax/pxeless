@@ -18,7 +18,7 @@ export_metadata(){
         export EFI_IMAGE="ubuntu-original-$TODAY.efi"
         export MBR_IMAGE="ubuntu-original-$TODAY.mbr"
         export SOURCE_ISO="${SCRIPT_DIR}/${ORIGINAL_ISO}"
-        export DESTINATION_ISO="ubuntu-autoinstall-$TODAY.iso"
+        export DESTINATION_ISO="ubuntu-autoinstall.iso"
         export SHA_SUFFIX="${TODAY}"
         export UBUNTU_GPG_KEY_ID="843938DF228D22F7B3742BC0D94AA3F0EFE21092"
         export GPG_VERIFY=1
