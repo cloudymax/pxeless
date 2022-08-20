@@ -16,7 +16,7 @@ jobs:
 
       - name: Build Iso
         run: |
-          ./image-create.sh -a -u user-data.example -n jammy -k
+          ./image-create.sh -a -u user-data.basic -n jammy -k
           ls -hal
 
       - name: version
