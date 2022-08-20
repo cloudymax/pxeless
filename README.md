@@ -1,8 +1,8 @@
-# Image Creator
+# Pxeless
 
-Based on [covertsh/ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator), which generates a customized, fully-automated ISO image for installing Ubuntu onto a machine without human interaction using [cloud-init](https://cloudinit.readthedocs.io/en/latest/) and the new **autoinstall** feature of Ubuntu's Ubiquity installer. 
+An auotomated system install tool for when PXE is not an option, or is not an option *yet*.
 
-This spin-off project adds support for [eltorito + GPT images required for Ubuntu 20.10 and newer](https://askubuntu.com/questions/1289400/remaster-installation-image-for-ubuntu-20-10). It also keeps support for the [now depricated isolinux + MBR](https://archive.org/details/ubuntukylin2104-201214-daily) image type. In addition, the process is dockerized to make it possible to run on Mac/Windows hosts in addition to Linux.
+Pxeless is based on [covertsh/ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator), and generates a customized Ubuntu auto-intstall ISO using [cloud-init](https://cloudinit.readthedocs.io/en/latest/) and the new **autoinstall** feature of Ubuntu's Ubiquity installer. 
 
 ## Behavior
 
@@ -162,3 +162,5 @@ export IMAGE_FILE="ubuntu-autoinstall-2022-06-19.iso"
 
 ### License
 MIT license.
+
+This spin-off project adds support for [eltorito + GPT images required for Ubuntu 20.10 and newer](https://askubuntu.com/questions/1289400/remaster-installation-image-for-ubuntu-20-10). It also keeps support for the [now depricated isolinux + MBR](https://archive.org/details/ubuntukylin2104-201214-daily) image type. In addition, the process is dockerized to make it possible to run on Mac/Windows hosts in addition to Linux. Automated builds via github actions have also been created.
