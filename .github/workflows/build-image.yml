@@ -3,6 +3,8 @@ name: Create Image
 on:
   push:
     branches: [ "main" ]
+    tags:
+      - "v*.*.*"
 
 jobs:
   build-image:
@@ -12,10 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: test
+      - name: Build Iso
         run: |
           ./image-create.sh -a -u user-data.example -n jammy -k
-          
+          ls -hal
+
       - name: version
         run: echo "::set-output name=version::$(date)"
         id: version
@@ -33,5 +36,6 @@ jobs:
           
       - name: upload linux artifact
         uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: ubuntu-autoinstall.iso
