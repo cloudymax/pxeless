@@ -19,7 +19,7 @@ jobs:
           ./image-create.sh -a -u user-data.basic -n jammy -k
 
       - name: version
-        run: echo "::set-output name=version::${GITHUB_REF/refs\/tags\//}"
+        run: echo "::set-output name=version::${{ github.ref_name }}"
         id: version
     
       - name: release
