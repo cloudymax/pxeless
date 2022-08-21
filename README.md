@@ -17,7 +17,7 @@ The credentials for the included example user-data.basic are `usn: vmadmin`, and
  - Create a bootable USB drive (Optional)
  
 
-<img src="https://raw.githubusercontent.com/cloudymax/ubuntu-autoinstall-generator-dockerized/main/liveiso.drawio.svg">
+<img src="https://raw.githubusercontent.com/cloudymax/pxeless/develop/liveiso.drawio.svg">
 
 
 ## How it works
