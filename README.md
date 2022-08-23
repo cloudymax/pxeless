@@ -30,7 +30,7 @@ We combine an `autoistall` config from the Ubuntu [Ubiquity installer](https://w
 
 The resulting product is a fully-automated Ubuntu install with pre-provision capabilities for basic users, groups, packages, storage, networks etc... This serves as an easy stepping-off point to Ansible, puppet, Chef and other configuration-management tooling for enterprise users, or to personalization tools like [jessebot/onboardme](https://github.com/jessebot/onboardme) for every-day users.
 
-> Be aware that, while similar in schema, the Autoinstall and Cloud-Init portions of the file do not mix - the `user-data` value on line 44 marks the transition from autoinstall to cloud-init syntax.
+> Be aware that, while similar in schema, the Autoinstall and Cloud-Init portions of the file do not mix - the `user-data` key marks the transition from autoinstall to cloud-init syntax.
 
 ## References
 
