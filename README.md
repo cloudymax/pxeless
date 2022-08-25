@@ -57,7 +57,7 @@ Using a fresh ISO speeds things up because there won't be as many packages to up
 ```bash
 docker build -t iso-generator . && \
 docker run -it --mount type=bind,source="$(pwd)",target=/app iso-generator \
-image-create.sh -a -u user-data.example -n jammy
+image-create.sh -a -u user-data.basic -n jammy
 ```
 
 ## Command-line options
