@@ -52,7 +52,7 @@ Using a fresh ISO speeds things up because there won't be as many packages to up
 
 - By default, the source ISO image is checked for integrity and authenticity using GPG. This can be disabled with `-k`.
 
-- the newly added `-n`, `--code-name` flag allows you to specify an Ubuntu code-name instead of an exact version ie: `jammy`, `focal`, `bionic`
+- the newly added `-n`, `--code-name` flag allows you to specify an Ubuntu code-name instead of an exact version ie: `jammy`, `focal`
 
 ```bash
 docker build -t iso-generator . && \
