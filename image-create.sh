@@ -39,35 +39,44 @@ export_metadata(){
 # help text
 usage() {
         cat <<EOF
-Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-a] [-e] [-u user-data-file] [-m meta-data-file] [-k] [-c] [-r] [-s source-iso-file] [-d destination-iso-file]
+Usage: image-create.sh [-h] [-v] [-n] [-a] [-e] [-u user-data-file] [-m meta-data-file] [-k] [-c] [-r] [-s source-iso-file] [-d destination-iso-file]
 
-💁 This script will create fully-automated Ubuntu 20.04 Focal Fossa installation media.
+💁 This script will create fully-automated Ubuntu installation media.
 
 Available options:
 
 -h, --help              Print this help and exit
+
 -v, --verbose           Print script debug info
+
 -n, --code-name         The Code Name of the Ubuntu release to download (bionic, focal, jammy etc...)
+
 -a, --all-in-one        Bake user-data and meta-data into the generated ISO. By default you will
                         need to boot systems with a CIDATA volume attached containing your
                         autoinstall user-data and meta-data files.
                         For more information see: https://ubuntu.com/server/docs/install/autoinstall-quickstart
+
 -e, --use-hwe-kernel    Force the generated ISO to boot using the hardware enablement (HWE) kernel. Not supported
                         by early Ubuntu 20.04 release ISOs.
+
 -u, --user-data         Path to user-data file. Required if using -a
+
 -m, --meta-data         Path to meta-data file. Will be an empty file if not specified and using -a
--k, --no-verify         Disable GPG verification of the source ISO file. By default SHA256SUMS-${TODAY} and
-                        SHA256SUMS-$TODAY.gpg in ${TMP_DIR} will be used to verify the authenticity and integrity
+
+-k, --no-verify         Disable GPG verification of the source ISO file. By default SHA256SUMS-<current date> and
+                        SHA256SUMS-<current date>.gpg files in the script directory will be used to verify the authenticity and integrity
                         of the source ISO file. If they are not present the latest daily SHA256SUMS will be
-                        downloaded and saved in ${TMP_DIR}. The Ubuntu signing key will be downloaded and
-                        saved in a new keyring in ${TMP_DIR}
--c, --no-md5            Disable MD5 checksum on boot
+                        downloaded and saved in the script directory. The Ubuntu signing key will be downloaded and
+                        saved in a new keyring in the script directory.
+
 -r, --use-release-iso   Use the current release ISO instead of the daily ISO. The file will be used if it already
                         exists.
+
 -s, --source            Source ISO file. By default the latest daily ISO for Ubuntu 20.04 will be downloaded
-                        and saved as ${SCRIPT_DIR}/ubuntu-original-${TODAY}.iso
+                        and saved as <script directory>/ubuntu-original-<current date>.iso
                         That file will be used by default if it already exists.
--d, --destination       Destination ISO file. By default ${SCRIPT_DIR}/ubuntu-autoinstall-${TODAY}.iso will be
+
+-d, --destination       Destination ISO file. By default <script directory>/ubuntu-autoinstall-<current date>.iso will be
                         created, overwriting any existing file.
 EOF
         exit
