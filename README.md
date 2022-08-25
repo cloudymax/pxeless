@@ -57,12 +57,12 @@ Using a fresh ISO speeds things up because there won't be as many packages to up
 ```bash
 docker build -t iso-generator . && \
 docker run -it --mount type=bind,source="$(pwd)",target=/app iso-generator \
-ubuntu-autoinstall-generator.sh -a -u user-data.example -n jammy
+image-create.sh -a -u user-data.example -n jammy
 ```
 
 ## Command-line options
 ```
-Usage: ubuntu-autoinstall-generator.sh [-h] [-v] [-n] [-a] [-e] [-u user-data-file] [-m meta-data-file] [-k] [-c] [-r] [-s source-iso-file] [-d destination-iso-file]
+Usage: image-create.sh [-h] [-v] [-n] [-a] [-e] [-u user-data-file] [-m meta-data-file] [-k] [-c] [-r] [-s source-iso-file] [-d destination-iso-file]
 
 💁 This script will create fully-automated Ubuntu installation media.
 
