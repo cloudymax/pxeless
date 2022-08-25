@@ -52,6 +52,8 @@ Using a fresh ISO speeds things up because there won't be as many packages to up
 
 - By default, the source ISO image is checked for integrity and authenticity using GPG. This can be disabled with `-k`.
 
+- the newly added `-n`, `--code-name` flag allows you to specify an Ubuntu code-name instead of an exact version ie: `jammy`, `focal`, `bionic`
+
 ```bash
 docker build -t iso-generator . && \
 docker run -it --mount type=bind,source="$(pwd)",target=/app iso-generator \
@@ -60,7 +62,7 @@ ubuntu-autoinstall-generator.sh -a -u user-data.example -n jammy
 
 ## Command-line options
 ```
-Usage: ubuntu-autoinstall-generator.sh [-h] [-v] [-a] [-e] [-u user-data-file] [-m meta-data-file] [-k] [-c] [-r] [-s source-iso-file] [-d destination-iso-file]
+Usage: ubuntu-autoinstall-generator.sh [-h] [-v] [-n] [-a] [-e] [-u user-data-file] [-m meta-data-file] [-k] [-c] [-r] [-s source-iso-file] [-d destination-iso-file]
 
 💁 This script will create fully-automated Ubuntu installation media.
 
