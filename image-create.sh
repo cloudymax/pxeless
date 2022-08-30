@@ -72,9 +72,12 @@ Available options:
 -r, --use-release-iso   Use the current release ISO instead of the daily ISO. The file will be used if it already
                         exists.
 
--s, --source            Source ISO file. By default the latest daily ISO for Ubuntu 20.04 will be downloaded
+-s, --source            Source ISO file path. By default the latest daily ISO for Ubuntu server will be downloaded
                         and saved as <script directory>/ubuntu-original-<current date>.iso
                         That file will be used by default if it already exists.
+
+-l, --legacy            When using the -s, --source flags you must specify the --legacy flag if the source image is based on isolinux.
+                        Otherwise, eltorito usage is assumed 
 
 -d, --destination       Destination ISO file. By default <script directory>/ubuntu-autoinstall-<current date>.iso will be
                         created, overwriting any existing file.
@@ -93,6 +96,7 @@ parse_params() {
                 -c | --no-md5) MD5_CHECKSUM=0 ;;
                 -k | --no-verify) GPG_VERIFY=0 ;;
                 -r | --use-release-iso) USE_RELEASE_ISO=1 ;;
+                -l | --legacy) LEGACY_OVERRIDE="true" ;;
                 -u | --user-data)
                         USER_DATA_FILE="${2-}"
                         shift
@@ -149,15 +153,16 @@ create_tmp_dirs(){
 }
 
 # Determine if the requested ISO will be based on legacy Isolinux
-# or current eltorito image base 
+# or current eltorito image base. 
 check_legacy(){
-
-        if $(dpkg --compare-versions "${CURRENT_RELEASE}" "lt" "20.10"); then 
-                log "❗ ${CURRENT_RELEASE} is lower than 20.10. Marking image as legacy."
-                export LEGACY_IMAGE=1
-        else
-                log "✅ ${CURRENT_RELEASE} is greater than 20.10. Not a legacy image."
-                export LEGACY_IMAGE=0
+        if [ ! -f "${SOURCE_ISO}" ] ; then
+                if $(dpkg --compare-versions "${CURRENT_RELEASE}" "lt" "20.10"); then 
+                        log "❗ ${CURRENT_RELEASE} is lower than 20.10. Marking image as legacy."
+                        export LEGACY_IMAGE=1
+                else
+                        log "✅ ${CURRENT_RELEASE} is greater than 20.10. Not a legacy image."
+                        export LEGACY_IMAGE=0
+                fi
         fi
 }
 
@@ -210,7 +215,8 @@ download_iso(){
                 log "☑️ Using existing ${SOURCE_ISO} file."
                 if [ ${GPG_VERIFY} -eq 1 ]; then
                         if [ "${SOURCE_ISO}" != "${SCRIPT_DIR}/${ORIGINAL_ISO}" ]; then
-                                log "⚠️ Automatic GPG verification is enabled. If the source ISO file is not the latest daily or release image, verification will fail!"
+                                export GPG_VERIFY=0
+                                log "⚠️ Automatic GPG verification disabled. When the source ISO file is not the latest daily or release image verification cannot be performed."
                         fi
                 fi
         fi
@@ -290,7 +296,8 @@ set_hwe_kernel(){
                         sed -i -e 's|/casper/vmlinuz|/casper/hwe-vmlinuz|g' "${TMP_DIR}/boot/grub/loopback.cfg"
                         sed -i -e 's|/casper/initrd|/casper/hwe-initrd|g' "${TMP_DIR}/boot/grub/loopback.cfg"
 
-                        if [ ${LEGACY_IMAGE} -eq 1 ]; then      
+                        if [ -f "${BUILD_DIR}/isolinux/txt.cfg" ]; then  
+                                export LEGACY_IMAGE=1   
                                 sed -i -e 's|/casper/vmlinuz|/casper/hwe-vmlinuz|g' "${TMP_DIR}/isolinux/txt.cfg"
                                 sed -i -e 's|/casper/initrd|/casper/hwe-initrd|g' "${TMP_DIR}/isolinux/txt.cfg"                         
                         fi
@@ -306,7 +313,9 @@ set_kernel_autoinstall(){
         sed -i -e 's/---/ autoinstall  ---/g' "${BUILD_DIR}/boot/grub/grub.cfg"
         sed -i -e 's/---/ autoinstall  ---/g' "${BUILD_DIR}/boot/grub/loopback.cfg"
 
-        if [ ${LEGACY_IMAGE} -eq 1 ]; then      
+        if [ -f "${BUILD_DIR}/isolinux/txt.cfg" ]; then   
+                log "🧩 Adding autoinstall parameter to isolinux..."   
+                export LEGACY_IMAGE=1
                 sed -i -e 's/---/ autoinstall  ---/g' "${BUILD_DIR}/isolinux/txt.cfg"
         fi
 
@@ -357,8 +366,10 @@ reassemble_iso(){
         fi
         
         log "📦 Repackaging extracted files into an ISO image..."
-
         if [ ${LEGACY_IMAGE} -eq 1 ]; then 
+
+                log "📦 Using isolinux method..."
+        
                 xorriso -as mkisofs -r -V "ubuntu-autoinstall-${TODAY}" -J \
                         -b isolinux/isolinux.bin \
                         -c isolinux/boot.cat \
@@ -372,6 +383,8 @@ reassemble_iso(){
                         -no-emul-boot \
                         -isohybrid-gpt-basdat -o "${SCRIPT_DIR}/${DESTINATION_ISO}" "${BUILD_DIR}" &>/dev/null
         else
+                log "📦 Using El Torito method..."
+                
                 xorriso -as mkisofs \
                         -r -V "ubuntu-autoinstall-${TODAY}" -J -joliet-long -l \
                         -iso-level 3 \
@@ -397,8 +410,8 @@ reassemble_iso(){
 cleanup() {
         trap - SIGINT SIGTERM ERR EXIT
         if [ -n "${TMP_DIR+x}" ]; then
-                rm -rf "${TMP_DIR}"
-                rm -rf "${BUILD_DIR}"
+                #rm -rf "${TMP_DIR}"
+                #rm -rf "${BUILD_DIR}"
                 log "🚽 Deleted temporary working directory ${TMP_DIR}"
         fi
 }
@@ -422,14 +435,18 @@ main(){
         create_tmp_dirs
 
         parse_params "$@"
+
+        if [ ! -f "$SOURCE_ISO" ]; then
         
-        if [ "${USE_RELEASE_ISO}" -eq 1 ]; then
-                latest_release
-        else
-                daily_release
+                if [ "${USE_RELEASE_ISO}" -eq 1 ]; then
+                        latest_release
+                else
+                        daily_release
+                fi
+                
+                check_legacy
         fi
 
-        check_legacy
         verify_deps
         download_iso
 
