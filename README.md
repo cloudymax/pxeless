@@ -95,6 +95,8 @@ docker run -it --mount type=bind,source="$(pwd)",target=/app iso-generator \
 image-create.sh -a -u user-data.basic -n jammy
 ```
 
+## Credentials
+
 The credentials for the included example user-data.basic are `usn: vmadmin`, and `pwd: password`.
 To create your own credentials run:
 
