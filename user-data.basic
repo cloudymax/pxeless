@@ -21,5 +21,3 @@ autoinstall:
         shell: /bin/bash
         lock_passwd: false
         passwd: "$6$rounds=4096$saltsaltlettuce$Lp/FV.2oOgew7GbM6Nr8KMGMBn7iFM0x9ZwLqtx9Y4QJmKvfcnS.2zx4MKmymCPQGpHS7gqYOiqWjvdCIV2uN."
-    package_update: true
-    package_upgrade: true
