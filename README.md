@@ -28,11 +28,12 @@ Pxeless is based on [covertsh/ubuntu-autoinstall-generator](https://github.com/c
 
 - [My Magical Adventure with Cloud-Init by Xe Iaso](https://xeiaso.net/blog/cloud-init-2021-06-04)
 
-You can also refer to the provided example files:
-- [Basic](image-creator/user-data.basic)
-- [Advanced](image-creator/user-data.advanced)
+- [Basic Example](image-creator/user-data.basic)
+
+- [Advanced Example](image-creator/user-data.advanced)
 
 ## Command-line options
+
 ```
 Usage: image-create.sh [-h] [-v] [-n] [-a] [-e] [-u user-data-file] [-m meta-data-file] [-k] [-c] [-r] [-s source-iso-file] [-d destination-iso-file]
 
