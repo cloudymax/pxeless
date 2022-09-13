@@ -96,6 +96,11 @@ image-create.sh -a -u user-data.basic -n jammy
 ```
 
 The credentials for the included example user-data.basic are `usn: vmadmin`, and `pwd: password`.
+To create your own credentials run:
+
+```bash
+mkpasswd -m sha-512 --rounds=4096 "some-password" -s "some-salt"
+```
 
 ### Example output
 ```
