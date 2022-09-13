@@ -4,7 +4,21 @@ An automated system install tool for when PXE is not an option, or is not an opt
 
 Pxeless is based on [covertsh/ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator), and generates a customized Ubuntu auto-intstall ISO using [cloud-init](https://cloudinit.readthedocs.io/en/latest/) and the new **autoinstall** feature of Ubuntu's Ubiquity installer. 
 
+## Behavior
+
+ - Find an unmodified Ubuntu ISO image, 
+ - Download it, 
+ - Extract it, 
+ - Add some kernel command line parameters, 
+ - Add our custom cloud-init config,
+ - Repack the data into a new ISO.
+ - Create a bootable USB drive (Optional)
+
+<img src="https://raw.githubusercontent.com/cloudymax/pxeless/develop/liveiso.drawio.svg">
+
 ## References
+
+- The original project : [covertsh/ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator)
 
 - [Ubuntu autoinstall reference](https://ubuntu.com/server/docs/install/autoinstall-reference).
 
@@ -17,18 +31,6 @@ Pxeless is based on [covertsh/ubuntu-autoinstall-generator](https://github.com/c
 You can also refer to the provided example files:
 - [Basic](image-creator/user-data.basic)
 - [Advanced](image-creator/user-data.advanced)
-
-## Behavior
-
- - Find an unmodified Ubuntu ISO image, 
- - Download it, 
- - Extract it, 
- - Add some kernel command line parameters, 
- - Add our custom cloud-init config,
- - Repack the data into a new ISO.
- - Create a bootable USB drive (Optional)
-
-<img src="https://raw.githubusercontent.com/cloudymax/pxeless/develop/liveiso.drawio.svg">
 
 ## Command-line options
 ```
