@@ -1,0 +1,79 @@
+#cloud-config
+autoinstall:
+  version: 1
+  update: yes
+  keyboard: {layout: us, toggle: null, variant: ''}
+  locale: en_US.UTF-8
+  storage:
+    layout:
+        name: direct
+        match:
+          ssd: yes
+          size: smallest
+  identity:
+    hostname: pxeless
+    password: "$6$rounds=4096$saltsaltlettuce$Lp/FV.2oOgew7GbM6Nr8KMGMBn7iFM0x9ZwLqtx9Y4QJmKvfcnS.2zx4MKmymCPQGpHS7gqYOiqWjvdCIV2uN."
+    username: vmadmin
+  ssh:
+    allow-pw: true
+    install-server: true
+  packages: 
+    - software-properties-common
+    - ca-certificates
+    - curl
+    - wget
+    - git
+  user-data: # Cloud-init starts here after reboot
+    disable_root: false
+    users:
+      - name: vmadmin
+        gecos: VM adminsitrator
+        groups: users, admin, docker, sudo
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        shell: /bin/bash
+        lock_passwd: false
+        passwd: "$6$rounds=4096$saltsaltlettuce$Lp/FV.2oOgew7GbM6Nr8KMGMBn7iFM0x9ZwLqtx9Y4QJmKvfcnS.2zx4MKmymCPQGpHS7gqYOiqWjvdCIV2uN."
+    apt:
+      primary:
+        - arches: [default]
+          uri: http://us.archive.ubuntu.com/ubuntu/
+      sources:
+        kubectl.list:
+          source: deb [arch=amd64] https://apt.kubernetes.io/ kubernetes-xenial main
+          keyid: 59FE0256827269DC81578F928B57C5C2836F4BEB
+        helm.list:
+          source: deb https://baltocdn.com/helm/stable/debian/ all main
+          keyid: 81BF832E2F19CD2AA0471959294AC4827C1A168A
+    package_update: true
+    package_upgrade: true
+    packages:
+      - kubectl
+      - wget
+      - helm
+      - htop
+      - docker.io
+      - build-essential
+      - python3-pip
+      - procps
+      - file
+      - whois
+    runcmd:
+      - mkdir -p /new_kernel
+      - wget -O /new_kernel/linux-headers-5.19.0-051900-generic_5.19.0-051900.202207312230_amd64.deb https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.19/amd64/linux-headers-5.19.0-051900-generic_5.19.0-051900.202207312230_amd64.deb
+      - wget -O /new_kernel/linux-headers-5.19.0-051900_5.19.0-051900.202207312230_all.deb https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.19/amd64/linux-headers-5.19.0-051900_5.19.0-051900.202207312230_all.deb
+      - wget -O /new_kernel/linux-image-unsigned-5.19.0-051900-generic_5.19.0-051900.202207312230_amd64.deb https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.19/amd64/linux-image-unsigned-5.19.0-051900-generic_5.19.0-051900.202207312230_amd64.deb
+      - wget -O /new_kernel/linux-modules-5.19.0-051900-generic_5.19.0-051900.202207312230_amd64.deb https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.19/amd64/linux-modules-5.19.0-051900-generic_5.19.0-051900.202207312230_amd64.deb
+      - dpkg -i /new_kernel/*
+      - wget https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+      - chmod +x /install.sh
+      - chmod 777 /install.sh
+      - sudo -u max NONINTERACTIVE=1 /bin/bash /install.sh
+      - sudo -u max /home/linuxbrew/.linuxbrew/bin/brew shellenv >> /home/max/.profile
+      - export GRUB_CMDLINE_LINUX_DEFAULT="GRUB_CMDLINE_LINUX_DEFAULT=\"preempt=voluntary iommu=pt amd_iommu=on intel_iommu=on\""
+      - sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"\"/$GRUB_CMDLINE_LINUX_DEFAULT/g" /etc/default/grub
+      - sed -i "s/GRUB_DEFAULT=0/GRUB_DEFAULT=saved/g" /etc/default/grub
+      - sed -i "s/FONTSIZE=\"8x16\"/FONTSIZE=\"16x32\"/g" /etc/default/console-setup
+      - grub-reboot 1
+      - update-grub
+      - update-initramfs -k all -u
+      - reboot now
