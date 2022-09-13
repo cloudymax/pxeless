@@ -4,7 +4,19 @@ An automated system install tool for when PXE is not an option, or is not an opt
 
 Pxeless is based on [covertsh/ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator), and generates a customized Ubuntu auto-intstall ISO using [cloud-init](https://cloudinit.readthedocs.io/en/latest/) and the new **autoinstall** feature of Ubuntu's Ubiquity installer. 
 
-The credentials for the included example user-data.basic are `usn: vmadmin`, and `pwd: password`.
+## References
+
+- [Ubuntu autoinstall reference](https://ubuntu.com/server/docs/install/autoinstall-reference).
+
+- [Cloud-Init options and examples](https://cloudinit.readthedocs.io/en/latest/index.html)
+
+- [How-To: Make Ubuntu Autoinstall ISO with Cloud-init by Dr Donald Kinghorn](https://www.pugetsystems.com/labs/hpc/How-To-Make-Ubuntu-Autoinstall-ISO-with-Cloud-init-2213/)
+
+- [My Magical Adventure with Cloud-Init by Xe Iaso](https://xeiaso.net/blog/cloud-init-2021-06-04)
+
+You can also refer to the provided example files:
+- [Basic](image-creator/user-data.basic)
+- [Advanced](image-creator/user-data.advanced)
 
 ## Behavior
 
@@ -15,50 +27,8 @@ The credentials for the included example user-data.basic are `usn: vmadmin`, and
  - Add our custom cloud-init config,
  - Repack the data into a new ISO.
  - Create a bootable USB drive (Optional)
- 
 
 <img src="https://raw.githubusercontent.com/cloudymax/pxeless/develop/liveiso.drawio.svg">
-
-
-## How it works
-
-First we download the ISO of your choice - a daily build, or a release. (Daily builds are faster because they don't require as many updates/upgrades)
-
-By default, the source ISO image is checked for integrity and authenticity using GPG. This can be disabled with ```-k```.
-
-We combine an `autoistall` config from the Ubuntu [Ubiquity installer](https://wiki.ubuntu.com/Ubiquity), and a [cloud-init](https://cloudinit.readthedocs.io/en/latest/) `cloud-config` / `user-data` file. 
-
-The resulting product is a fully-automated Ubuntu install with pre-provision capabilities for basic users, groups, packages, storage, networks etc... This serves as an easy stepping-off point to Ansible, puppet, Chef and other configuration-management tooling for enterprise users, or to personalization tools like [jessebot/onboardme](https://github.com/jessebot/onboardme) for every-day users.
-
-> Be aware that, while similar in schema, the Autoinstall and Cloud-Init portions of the file do not mix - the `user-data` key marks the transition from autoinstall to cloud-init syntax.
-
-## References
-
-- Autoinstall configuration options and schema can be found [HERE](https://ubuntu.com/server/docs/install/autoinstall-reference).
-
-- Cloud-Init options and examples may be found [HERE](https://cloudinit.readthedocs.io/en/latest/index.html)
-
-- You can also refer to the provided example file [HERE](image-creator/user-data.example)
-
-## **Usage**
-
-- Build a combined `autoinstall` + `cloud-init` image by using the ```-a``` flag and providing a **user-data** file containing the autoinstall configuration and cloud-init data.
-A **meta-data** file may be included if you choose. The file will be empty if it is not specified. You may read more about providing a `meta-data` file [HERE](https://cloudinit.readthedocs.io/en/latest/topics/instancedata.html)
-
-- With an 'all-in-one' ISO, you simply boot a machine using the ISO and the installer will do the rest.
-
-- This script can use an existing ISO image or download the latest daily image from the Ubuntu project. 
-Using a fresh ISO speeds things up because there won't be as many packages to update during the installation.
-
-- By default, the source ISO image is checked for integrity and authenticity using GPG. This can be disabled with `-k`.
-
-- the newly added `-n`, `--code-name` flag allows you to specify an Ubuntu code-name instead of an exact version ie: `jammy`, `focal`
-
-```bash
-docker build -t iso-generator . && \
-docker run -it --mount type=bind,source="$(pwd)",target=/app iso-generator \
-image-create.sh -a -u user-data.basic -n jammy
-```
 
 ## Command-line options
 ```
@@ -102,7 +72,27 @@ Available options:
 -d, --destination       Destination ISO file. By default <script directory>/ubuntu-autoinstall-<current date>.iso will be
                         created, overwriting any existing file.
 ```
+## **Usage**
 
+- Build a combined `autoinstall` + `cloud-init` image by using the ```-a``` flag and providing a **user-data** file containing the autoinstall configuration and cloud-init data.
+A **meta-data** file may be included if you choose. The file will be empty if it is not specified. You may read more about providing a `meta-data` file [HERE](https://cloudinit.readthedocs.io/en/latest/topics/instancedata.html)
+
+- With an 'all-in-one' ISO, you simply boot a machine using the ISO and the installer will do the rest.
+
+- This script can use an existing ISO image or download the latest daily image from the Ubuntu project. 
+Using a fresh ISO speeds things up because there won't be as many packages to update during the installation.
+
+- By default, the source ISO image is checked for integrity and authenticity using GPG. This can be disabled with `-k`.
+
+- the newly added `-n`, `--code-name` flag allows you to specify an Ubuntu code-name instead of an exact version ie: `jammy`, `focal`
+
+```bash
+docker build -t iso-generator . && \
+docker run -it --mount type=bind,source="$(pwd)",target=/app iso-generator \
+image-create.sh -a -u user-data.basic -n jammy
+```
+
+The credentials for the included example user-data.basic are `usn: vmadmin`, and `pwd: password`.
 
 ### Example output
 ```
@@ -145,6 +135,17 @@ image-create.sh -a -u user-data.example -n jammy
 [2022-06-19 14:37:54] 👍 Repackaged into ubuntu-autoinstall-2022-06-19.iso
 [2022-06-19 14:37:54] ✅ Completed.
 ```
+## How it works
+
+First we download the ISO of your choice - a daily build, or a release. (Daily builds are faster because they don't require as many updates/upgrades)
+
+By default, the source ISO image is checked for integrity and authenticity using GPG. This can be disabled with ```-k```.
+
+We combine an `autoistall` config from the Ubuntu [Ubiquity installer](https://wiki.ubuntu.com/Ubiquity), and a [cloud-init](https://cloudinit.readthedocs.io/en/latest/) `cloud-config` / `user-data` file. 
+
+The resulting product is a fully-automated Ubuntu install with pre-provision capabilities for basic users, groups, packages, storage, networks etc... This serves as an easy stepping-off point to Ansible, puppet, Chef and other configuration-management tooling for enterprise users, or to personalization tools like [jessebot/onboardme](https://github.com/jessebot/onboardme) for every-day users.
+
+> Be aware that, while similar in schema, the Autoinstall and Cloud-Init portions of the file do not mix - the `user-data` key marks the transition from autoinstall to cloud-init syntax.
 
 ## Create a bootable usb flash drive
 
