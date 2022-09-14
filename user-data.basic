@@ -11,7 +11,7 @@ autoinstall:
   ssh:
     allow-pw: true
     install-server: true
-  user-data: # Cloud-init starts here after reboot
+  user-data: # Cloud-init starts here
     disable_root: false
     users:
       - name: vmadmin
