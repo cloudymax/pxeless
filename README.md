@@ -59,6 +59,9 @@ Available options:
 
 -m, --meta-data         Path to meta-data file. Will be an empty file if not specified and using -a
 
+-x, --extra-files       Specifies an folder with files and folders, which will be copied into the root of the iso image.
+                        If not set, nothing is copied
+
 -k, --no-verify         Disable GPG verification of the source ISO file. By default SHA256SUMS-<current date> and
                         SHA256SUMS-<current date>.gpg files in the script directory will be used to verify the authenticity and integrity
                         of the source ISO file. If they are not present the latest daily SHA256SUMS will be
