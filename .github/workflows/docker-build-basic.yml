@@ -1,8 +1,10 @@
-name: basic build
+name: build docker image
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "develop" ]
+    tags:
+      - "v*.*.*"
     
 jobs:
   build-basic:
