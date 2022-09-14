@@ -26,6 +26,7 @@ export_metadata(){
         export USE_HWE_KERNEL=0
         export MD5_CHECKSUM=1
         export USE_RELEASE_ISO=0
+        export EXTRA_FILES_FOLDER=""
 
         export LEGACY_IMAGE=0
         export CURRENT_RELEASE=""
@@ -62,6 +63,9 @@ Available options:
 -u, --user-data         Path to user-data file. Required if using -a
 
 -m, --meta-data         Path to meta-data file. Will be an empty file if not specified and using -a
+
+-x, --extra-files       Specifies an folder with files and folders, which will be copied into the root of the iso image.
+                        If not set, nothing is copied
 
 -k, --no-verify         Disable GPG verification of the source ISO file. By default SHA256SUMS-<current date> and
                         SHA256SUMS-<current date>.gpg files in the script directory will be used to verify the authenticity and integrity
@@ -115,6 +119,10 @@ parse_params() {
                         ;;
                 -n | --code-name)
                         CODE_NAME="${2-}"
+                        shift
+                        ;;
+                -x | --extra-files)
+                        EXTRA_FILES_FOLDER="${2-}"
                         shift
                         ;;
                 -?*) die "Unknown option: $1" ;;
@@ -342,6 +350,13 @@ set_kernel_autoinstall(){
         fi
 }
 
+# Add extra files from a folder into the build dir
+insert_extra_files(){
+        log "➕ Adding additional files to the iso image..."
+        cp -R "${EXTRA_FILES_FOLDER}/." "${BUILD_DIR}/"
+        log "👍 Added additional files"
+}
+
 # re-create the MD5 checksum data
 md5_checksums(){
         if [ ${MD5_CHECKSUM} -eq 1 ]; then
@@ -457,6 +472,10 @@ main(){
         extract_images
         set_kernel_autoinstall
         set_hwe_kernel
+        
+        if [ -n "$EXTRA_FILES_FOLDER" ]; then
+                insert_extra_files
+        fi
 
         if [ ${MD5_CHECKSUM} -eq 1 ]; then
                 md5_checksums
