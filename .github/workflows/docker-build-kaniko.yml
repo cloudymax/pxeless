@@ -2,7 +2,9 @@ name: build-kaniko
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "develop" ]
+    tags:
+      - "v*.*.*"
 
 jobs:
   build-kaniko:
@@ -23,4 +25,3 @@ jobs:
           push: true
           tags: deserializeme/pxeless:kaniko
           labels: ${{ steps.metadata.outputs.labels }}
-
