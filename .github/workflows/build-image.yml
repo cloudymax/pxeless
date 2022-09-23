@@ -16,7 +16,7 @@ jobs:
 
       - name: Build Iso
         run: |
-          ./image-create.sh -a -u user-data.basic -n jammy -k
+          -a -u user-data.basic -n jammy -k
 
       - name: version
         run: echo "::set-output name=version::${{ github.ref_name }}"
