@@ -12,7 +12,11 @@ jobs:
       options: -v ${{ github.workspace }}:/data
     steps:
       - name: Build Iso
-        run: ls -hal 
+        run: |
+          ls -hal 
+          pwd
+          ls /data
+          ls /app
           
       - name: version
         run: echo "::set-output name=version::${{ github.ref_name }}"
