@@ -106,6 +106,7 @@ parse_params() {
                         ;;
                 -s | --source)
                         SOURCE_ISO="${2-}"
+                        [[ ! -f "$SOURCE_ISO" ]] && die "💥 Source ISO file could not be found."
                         shift
                         ;;
                 -d | --destination)
@@ -221,10 +222,8 @@ download_iso(){
         else
                 log "☑️ Using existing ${SOURCE_ISO} file."
                 if [ ${GPG_VERIFY} -eq 1 ]; then
-                        if [ "${SOURCE_ISO}" != "${ORIGINAL_ISO}" ]; then
-                                export GPG_VERIFY=0
-                                log "⚠️ Automatic GPG verification disabled. When the source ISO file is not the latest daily or release image verification cannot be performed."
-                        fi
+                        export GPG_VERIFY=0
+                        log "⚠️ Automatic GPG verification disabled. Assume ISO file is already verified."
                 fi
         fi
 }
