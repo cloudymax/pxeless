@@ -1,22 +1,20 @@
 name: Build Image Iso
-
 on:
   push:
     branches: [ "develop" ]
     tags:
       - "v*.*.*"
-      
 jobs:
   build-image:
     runs-on: ubuntu-latest
-    container: deserializeme/pxeless:latest
-
+    container: 
+      image: deserializeme/pxeless:latest
+      options: --user 1000:1001
     steps:
       - uses: actions/checkout@v3
-
       - name: Build Iso
-        run: |
-          -a -u user-data.basic -n jammy -k
+        run: -a -k -u user-data.basic -n jammy
+          
 
       - name: version
         run: echo "::set-output name=version::${{ github.ref_name }}"
