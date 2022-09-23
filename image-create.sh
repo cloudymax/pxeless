@@ -106,6 +106,7 @@ parse_params() {
                         ;;
                 -s | --source)
                         SOURCE_ISO="${2-}"
+                        [[ ! -f "$SOURCE_ISO" ]] && die "💥 Source ISO file could not be found."
                         shift
                         ;;
                 -d | --destination)
