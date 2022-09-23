@@ -8,7 +8,6 @@ trap cleanup SIGINT SIGTERM ERR EXIT
 export_metadata(){
 
         export TODAY=$(date +"%Y-%m-%d")
-        export SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
         export USER_DATA_FILE=''
         export META_DATA_FILE=''
         export CODE_NAME=""
@@ -17,7 +16,7 @@ export_metadata(){
         export ORIGINAL_ISO="ubuntu-original-$TODAY.iso"
         export EFI_IMAGE="ubuntu-original-$TODAY.efi"
         export MBR_IMAGE="ubuntu-original-$TODAY.mbr"
-        export SOURCE_ISO="${SCRIPT_DIR}/${ORIGINAL_ISO}"
+        export SOURCE_ISO="${ORIGINAL_ISO}"
         export DESTINATION_ISO="ubuntu-autoinstall.iso"
         export SHA_SUFFIX="${TODAY}"
         export UBUNTU_GPG_KEY_ID="843938DF228D22F7B3742BC0D94AA3F0EFE21092"
@@ -217,12 +216,12 @@ download_iso(){
 
         if [ ! -f "${SOURCE_ISO}" ]; then
                 log "🌎 Downloading ISO image for ${IMAGE_NAME} ..."
-                wget -O "${SCRIPT_DIR}/${ORIGINAL_ISO}" "${BASE_URL}/${ISO_FILE_NAME}" -q
-                log "👍 Downloaded and saved to ${SCRIPT_DIR}/${ORIGINAL_ISO}"
+                wget -O "${ORIGINAL_ISO}" "${BASE_URL}/${ISO_FILE_NAME}" -q
+                log "👍 Downloaded and saved to ${ORIGINAL_ISO}"
         else
                 log "☑️ Using existing ${SOURCE_ISO} file."
                 if [ ${GPG_VERIFY} -eq 1 ]; then
-                        if [ "${SOURCE_ISO}" != "${SCRIPT_DIR}/${ORIGINAL_ISO}" ]; then
+                        if [ "${SOURCE_ISO}" != "${ORIGINAL_ISO}" ]; then
                                 export GPG_VERIFY=0
                                 log "⚠️ Automatic GPG verification disabled. When the source ISO file is not the latest daily or release image verification cannot be performed."
                         fi
@@ -233,6 +232,7 @@ download_iso(){
 # Verify iso GPG keys
 verify_gpg(){
         if [ ${GPG_VERIFY} -eq 1 ]; then
+                export GNUPGHOME=${TMP_DIR}
                 if [ ! -f "${TMP_DIR}/SHA256SUMS-${SHA_SUFFIX}" ]; then
                         log "🌎 Downloading SHA256SUMS & SHA256SUMS.gpg files..."
                         curl -NsSL "${BASE_URL}/SHA256SUMS" -o "${TMP_DIR}/SHA256SUMS-${SHA_SUFFIX}"
@@ -396,7 +396,7 @@ reassemble_iso(){
                         -eltorito-alt-boot \
                         -e boot/grub/efi.img \
                         -no-emul-boot \
-                        -isohybrid-gpt-basdat -o "${SCRIPT_DIR}/${DESTINATION_ISO}" "${BUILD_DIR}" &>/dev/null
+                        -isohybrid-gpt-basdat -o "${DESTINATION_ISO}" "${BUILD_DIR}" &>/dev/null
         else
                 log "📦 Using El Torito method..."
                 
@@ -414,7 +414,7 @@ reassemble_iso(){
                         -eltorito-alt-boot \
                         -e '--interval:appended_partition_2:all::' \
                         -no-emul-boot \
-                        -o "${SCRIPT_DIR}/${DESTINATION_ISO}" "${BUILD_DIR}" &>/dev/null
+                        -o "${DESTINATION_ISO}" "${BUILD_DIR}" &>/dev/null
         fi
 
         log "👍 Repackaged into ${DESTINATION_ISO}"
