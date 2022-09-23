@@ -11,6 +11,7 @@ jobs:
       image: deserializeme/pxeless:latest
       options: -v ${{ github.workspace }}:/data
     steps:
+      - uses: actions/checkout@v3
       - name: Build Iso
         run: |
           /app/image-create.sh -a -k -u /data/user-data.basic -n jammy
