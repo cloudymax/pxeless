@@ -11,7 +11,6 @@ jobs:
       image: deserializeme/pxeless:latest
       options: --user 1000:1001
     steps:
-      - uses: actions/checkout@v3
       - name: Build Iso
         run: -a -k -u user-data.basic -n jammy
           
