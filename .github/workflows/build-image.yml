@@ -12,7 +12,7 @@ jobs:
       options: -v ${{ github.workspace }}:/data
     steps:
       - name: Build Iso
-        run: image-create.sh -a -u user-data.basic -n jammy 
+        run: ls -hal 
           
       - name: version
         run: echo "::set-output name=version::${{ github.ref_name }}"
