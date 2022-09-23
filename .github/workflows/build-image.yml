@@ -12,7 +12,7 @@ jobs:
       options: -v ${{ github.workspace }}:/data
     steps:
       - name: Build Iso
-        run: ls
+        run: image-create.sh -a -u user-data.basic -n jammy 
           
 
       - name: version
