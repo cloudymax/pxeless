@@ -9,6 +9,9 @@ RUN apt-get -y update && \
     mkdir /root/.gnupg && \
     chmod 600 /root/.gnupg
 
-WORKDIR /app
+COPY image-create.sh /app/
 
-ENTRYPOINT [ "/bin/bash" ]
+VOLUME /data
+WORKDIR /data
+
+ENTRYPOINT [ "/app/image-create.sh" ]

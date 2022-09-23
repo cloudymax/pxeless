@@ -93,9 +93,9 @@ Using a fresh ISO speeds things up because there won't be as many packages to up
 - the newly added `-n`, `--code-name` flag allows you to specify an Ubuntu code-name instead of an exact version ie: `jammy`, `focal`
 
 ```bash
-docker build -t iso-generator . && \
-docker run -it --mount type=bind,source="$(pwd)",target=/app iso-generator \
-image-create.sh -a -u user-data.basic -n jammy
+docker build -t pxeless . && \
+docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) pxeless \
+-a -u user-data.basic -n jammy
 ```
 
 ## Credentials
@@ -109,9 +109,9 @@ mkpasswd -m sha-512 --rounds=4096 "some-password" -s "some-salt"
 
 ### Example output
 ```
-docker build -t iso-generator . && \
-docker run -it --mount type=bind,source="$(pwd)",target=/app iso-generator \
-image-create.sh -a -u user-data.basic -n jammy
+docker build -t pxeless . && \
+docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) pxeless \
+-a -u user-data.basic -n jammy
 ...
 ...
 ...
