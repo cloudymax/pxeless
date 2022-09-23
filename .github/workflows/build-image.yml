@@ -9,10 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     container: 
       image: deserializeme/pxeless:latest
-      options: --user 1000:1001
+      options: -v ${{ github.workspace }}:/data
     steps:
       - name: Build Iso
-        run: -a -k -u user-data.basic -n jammy
+        run: |
+          -a -k -u user-data.basic -n jammy
           
 
       - name: version
