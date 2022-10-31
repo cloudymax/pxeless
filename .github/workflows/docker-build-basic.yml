@@ -23,6 +23,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           
+      - name: GitHub Tag Name example
+        run: |
+          echo "Tag from GITHUB_REF: $GITHUB_REF"
+          echo "Tag name from GITHUB_REF_NAME: $GITHUB_REF_NAME"
+          echo "Tag name from github.ref_name: ${{  github.ref_name }}"
+          
       - name: Push the latest Docker image as a tagged version
         run: docker push deserializeme/pxeless:$GITHUB_REF_NAME
         
