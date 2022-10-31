@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "develop" ]
     tags:
-      - "v*.*.*"
+      - "*.*.*"
     
 jobs:
   build-basic:
@@ -23,5 +23,8 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           
-      - name: Push the latest Docker image
+      - name: Push the latest Docker image as a tagged version
+        run: docker push deserializeme/pxeless:${{  github.ref_name }}
+        
+      - name: Push the latest Docker image and overwrite latest
         run: docker push deserializeme/pxeless:latest
