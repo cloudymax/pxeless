@@ -24,7 +24,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           
       - name: Push the latest Docker image as a tagged version
-        run: docker push deserializeme/pxeless:${{  github.ref_name }}
+        run: docker push deserializeme/pxeless:$GITHUB_REF_NAME
         
       - name: Push the latest Docker image and overwrite latest
         run: docker push deserializeme/pxeless:latest
