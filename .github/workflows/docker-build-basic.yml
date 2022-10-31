@@ -1,8 +1,8 @@
 name: build docker image
 
 on:
-  push:
-    branches: [ "develop" ]
+  release:
+    types: [created]
     tags:
       - "*.*.*"
     
