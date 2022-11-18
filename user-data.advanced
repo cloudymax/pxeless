@@ -61,8 +61,8 @@ autoinstall:
       - wget https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
       - chmod +x /install.sh
       - chmod 777 /install.sh
-      - sudo -u max NONINTERACTIVE=1 /bin/bash /install.sh
-      - sudo -u max /home/linuxbrew/.linuxbrew/bin/brew shellenv >> /home/max/.profile
+      - sudo -u vmadmin NONINTERACTIVE=1 /bin/bash /install.sh
+      - sudo -u vmadmin /home/linuxbrew/.linuxbrew/bin/brew shellenv >> /home/vmadmin/.profile
       - export GRUB_CMDLINE_LINUX_DEFAULT="GRUB_CMDLINE_LINUX_DEFAULT=\"preempt=voluntary iommu=pt amd_iommu=on intel_iommu=on\""
       - sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"\"/$GRUB_CMDLINE_LINUX_DEFAULT/g" /etc/default/grub
       - sed -i "s/GRUB_DEFAULT=0/GRUB_DEFAULT=saved/g" /etc/default/grub
