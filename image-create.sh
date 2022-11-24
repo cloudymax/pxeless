@@ -298,15 +298,15 @@ set_hwe_kernel(){
                 if grep -q "hwe-vmlinuz" "${BUILD_DIR}/boot/grub/grub.cfg"; then
                         log "☑️ Destination ISO will use HWE kernel."
 
-                        sed -i -e 's|/casper/vmlinuz|/casper/hwe-vmlinuz|g' "${TMP_DIR}/boot/grub/grub.cfg"
-                        sed -i -e 's|/casper/initrd|/casper/hwe-initrd|g' "${TMP_DIR}/boot/grub/grub.cfg"
-                        sed -i -e 's|/casper/vmlinuz|/casper/hwe-vmlinuz|g' "${TMP_DIR}/boot/grub/loopback.cfg"
-                        sed -i -e 's|/casper/initrd|/casper/hwe-initrd|g' "${TMP_DIR}/boot/grub/loopback.cfg"
+                        sed -i -e 's|/casper/vmlinuz|/casper/hwe-vmlinuz|g' "${BUILD_DIR}/boot/grub/grub.cfg"
+                        sed -i -e 's|/casper/initrd|/casper/hwe-initrd|g' "${BUILD_DIR}/boot/grub/grub.cfg"
+                        sed -i -e 's|/casper/vmlinuz|/casper/hwe-vmlinuz|g' "${BUILD_DIR}/boot/grub/loopback.cfg"
+                        sed -i -e 's|/casper/initrd|/casper/hwe-initrd|g' "${BUILD_DIR}/boot/grub/loopback.cfg"
 
                         if [ -f "${BUILD_DIR}/isolinux/txt.cfg" ]; then  
                                 export LEGACY_IMAGE=1   
-                                sed -i -e 's|/casper/vmlinuz|/casper/hwe-vmlinuz|g' "${TMP_DIR}/isolinux/txt.cfg"
-                                sed -i -e 's|/casper/initrd|/casper/hwe-initrd|g' "${TMP_DIR}/isolinux/txt.cfg"                         
+                                sed -i -e 's|/casper/vmlinuz|/casper/hwe-vmlinuz|g' "${BUILD_DIR}/isolinux/txt.cfg"
+                                sed -i -e 's|/casper/initrd|/casper/hwe-initrd|g' "${BUILD_DIR}/isolinux/txt.cfg"                         
                         fi
                 else
                         log "⚠️ This source ISO does not support the HWE kernel. Proceeding with the regular kernel."
