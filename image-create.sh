@@ -295,7 +295,7 @@ extract_images(){
 # enable the hardware execution kernel if desired
 set_hwe_kernel(){
         if [ ${USE_HWE_KERNEL} -eq 1 ]; then
-                if grep -q "hwe-vmlinuz" "${TMP_DIR}/boot/grub/grub.cfg"; then
+                if grep -q "hwe-vmlinuz" "${BUILD_DIR}/boot/grub/grub.cfg"; then
                         log "☑️ Destination ISO will use HWE kernel."
 
                         sed -i -e 's|/casper/vmlinuz|/casper/hwe-vmlinuz|g' "${TMP_DIR}/boot/grub/grub.cfg"
