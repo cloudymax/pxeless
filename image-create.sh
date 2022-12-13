@@ -324,6 +324,7 @@ set_kernel_autoinstall(){
                 log "🧩 Adding autoinstall parameter to isolinux..."   
                 export LEGACY_IMAGE=1
                 sed -i -e 's/---/ autoinstall  ---/g' "${BUILD_DIR}/isolinux/txt.cfg"
+                sed -i -r 's/timeout\s+[0-9]+/timeout 1/g' "${BUILD_DIR}/isolinux/isolinux.cfg"
         fi
 
         log "👍 Added parameter to UEFI and BIOS kernel command lines."
