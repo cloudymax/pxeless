@@ -181,6 +181,51 @@ export IMAGE_FILE="ubuntu-autoinstall.iso"
 ### Contributors
 
 <!-- readme: contributors -start -->
+<table>
+<tr>
+    <td align="center">
+        <a href="https://github.com/cloudymax">
+            <img src="https://avatars.githubusercontent.com/u/84841307?v=4" width="100;" alt="cloudymax"/>
+            <br />
+            <sub><b>Max!</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/lmunch">
+            <img src="https://avatars.githubusercontent.com/u/5563316?v=4" width="100;" alt="lmunch"/>
+            <br />
+            <sub><b>Lars Munch</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/koenvandesande">
+            <img src="https://avatars.githubusercontent.com/u/803537?v=4" width="100;" alt="koenvandesande"/>
+            <br />
+            <sub><b>Koen Van De Sande</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/Poeschl">
+            <img src="https://avatars.githubusercontent.com/u/5469257?v=4" width="100;" alt="Poeschl"/>
+            <br />
+            <sub><b>Markus Pöschl</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/ToroNZ">
+            <img src="https://avatars.githubusercontent.com/u/8522935?v=4" width="100;" alt="ToroNZ"/>
+            <br />
+            <sub><b>Toro</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/webbertakken">
+            <img src="https://avatars.githubusercontent.com/u/20756439?v=4" width="100;" alt="webbertakken"/>
+            <br />
+            <sub><b>Webber Takken</b></sub>
+        </a>
+    </td></tr>
+</table>
 <!-- readme: contributors -end -->
 
 ### License
