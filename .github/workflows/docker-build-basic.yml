@@ -23,7 +23,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: name/app
+          images: deserializeme/pxeless
       -
         name: Login to DockerHub
         if: github.event_name != 'pull_request'
@@ -38,4 +38,4 @@ jobs:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
-          labels: deserializeme/pxeless:latest
+          labels: ${{ steps.meta.outputs.labels }}
