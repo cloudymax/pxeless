@@ -178,6 +178,11 @@ export IMAGE_FILE="ubuntu-autoinstall.iso"
  sudo dd bs=4M if=$IMAGE_FILE of="$DISK_NAME" status=progress oflag=sync
 ```
 
+### Contributors
+
+<!-- readme: contributors -start -->
+<!-- readme: contributors -end -->
+
 ### License
 MIT license.
 
