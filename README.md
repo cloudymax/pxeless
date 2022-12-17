@@ -1,4 +1,4 @@
-# Pxeless
+# Pxeless [![GitHub Release](https://img.shields.io/github/v/release/cloudymax/pxeless?style=flat&labelColor=858585&color=6BF847&logo=GitHub&logoColor=white)](https://github.com/cloudymax/pxeless/releases)
 
 An automated system install tool for when PXE is not an option, or is not an option *yet*.
 
