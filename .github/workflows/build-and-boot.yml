@@ -38,7 +38,7 @@ jobs:
         with:
           files: ubuntu-autoinstall.iso
           
-      - name: install qemu deps
+      - name: install qemu and boot iso
         run: |
           apt-get update && apt-get install -y qemu-kvm \
           bridge-utils \
@@ -50,15 +50,8 @@ jobs:
           whois \
           git \
           git-extras \
-          guestfs-tools
-          
-      - uses: actions/download-artifact@main
-        with:
-          name: ubuntu-autoinstall.iso
-          
-      - name: run vm
-        run: |
-          qemu-img create -f qcow2 hdd.img 8G && \
+          guestfs-tools && \
+          qemu-img create -f qcow2 hdd.img 4G && \
           qemu-system-x86_64 \
           -machine accel=kvm,type=q35 \
           -cpu host,kvm=off,hv_vendor_id=null \
