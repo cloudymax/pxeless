@@ -40,7 +40,7 @@ jobs:
           
       - name: install qemu deps
         run: |
-          apt-get install -y qemu-kvm \
+          apt-get update && apt-get install -y qemu-kvm \
           bridge-utils \
           virtinst\
           ovmf \
