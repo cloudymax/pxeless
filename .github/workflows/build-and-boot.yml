@@ -35,7 +35,7 @@ jobs:
           -drive if=none,id=disk0,cache=none,format=qcow2,aio=threads,file=hdd.img \
           -netdev user,id=network0,hostfwd=tcp::1234-:22 \
           -device virtio-net-pci,netdev=network0 \
-          -serial stdio \
+          -nographic \
           -bios /usr/share/ovmf/OVMF.fd \
           -usbdevice tablet
           
