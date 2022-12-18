@@ -15,6 +15,33 @@ jobs:
       - name: Build Iso
         run: |
           /app/image-create.sh -a -k -u /data/user-data.basic -n jammy
+        
+      - name: install qemu and boot iso
+        run: |
+          apt-get update && apt-get install -y qemu-kvm \
+          bridge-utils \
+          virtinst \
+          ovmf \
+          qemu-utils \
+          cloud-image-utils \
+          ubuntu-drivers-common \
+          whois \
+          git \
+          git-extras \
+          guestfs-tools && \
+          qemu-img create -f qcow2 hdd.img 4G && \
+          qemu-system-x86_64 \
+          -m 1G \
+          -cdrom ubuntu-autoinstall.iso \
+          -object iothread,id=io1 \
+          -device virtio-blk-pci,drive=disk0,iothread=io1 \
+          -drive if=none,id=disk0,cache=none,format=qcow2,aio=threads,file=hdd.img \
+          -netdev user,id=network0,hostfwd=tcp::1234-:22 \
+          -device virtio-net-pci,netdev=network0 \
+          -serial stdio -vga virtio -parallel none \
+          -bios /usr/share/ovmf/OVMF.fd \
+          -usbdevice tablet
+          
           
       - name: version
         run: echo "::set-output name=version::${{ github.ref_name }}"
@@ -37,33 +64,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: ubuntu-autoinstall.iso
-          
-      - name: install qemu and boot iso
-        run: |
-          apt-get update && apt-get install -y qemu-kvm \
-          bridge-utils \
-          virtinst \
-          ovmf \
-          qemu-utils \
-          cloud-image-utils \
-          ubuntu-drivers-common \
-          whois \
-          git \
-          git-extras \
-          guestfs-tools && \
-          qemu-img create -f qcow2 hdd.img 4G && \
-          qemu-system-x86_64 \
-          -machine accel=kvm,type=q35 \
-          -cpu host,kvm=off,hv_vendor_id=null \
-          -smp 1,sockets=1,cores=1,threads=1,maxcpus=1 \
-          -m 1G \
-          -cdrom ubuntu-autoinstall.iso \
-          -object iothread,id=io1 \
-          -device virtio-blk-pci,drive=disk0,iothread=io1 \
-          -drive if=none,id=disk0,cache=none,format=qcow2,aio=threads,file=hdd.img \
-          -netdev user,id=network0,hostfwd=tcp::1234-:22 \
-          -device virtio-net-pci,netdev=network0 \
-          -serial stdio -vga virtio -parallel none \
-          -bios /usr/share/ovmf/OVMF.fd \
-          -usbdevice tablet
           
