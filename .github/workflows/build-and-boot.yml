@@ -42,7 +42,7 @@ jobs:
         run: |
           apt-get update && apt-get install -y qemu-kvm \
           bridge-utils \
-          virtinst\
+          virtinst \
           ovmf \
           qemu-utils \
           cloud-image-utils \
