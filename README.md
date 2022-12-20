@@ -93,8 +93,7 @@ Using a fresh ISO speeds things up because there won't be as many packages to up
 - the newly added `-n`, `--code-name` flag allows you to specify an Ubuntu code-name instead of an exact version ie: `jammy`, `focal`
 
 ```bash
-docker build -t pxeless . && \
-docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) pxeless \
+docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) deserializeme/pxeless \
 -a -u user-data.basic -n jammy
 ```
 
