@@ -159,11 +159,86 @@ The resulting product is a fully-automated Ubuntu install with pre-provision cap
 
 > Be aware that, while similar in schema, the Autoinstall and Cloud-Init portions of the file do not mix - the `user-data` key marks the transition from autoinstall to cloud-init syntax.
 
-## Create a bootable usb flash drive
+## Testing with QEMU
 
-```zsh
-export IMAGE_FILE="ubuntu-autoinstall.iso"
+You will need to have a VNC client ([tigerVNC](https://tigervnc.org/) or [Remmina](https://remmina.org/) etc...) installed as well as the following packages:
+
+```bash
+    sudo apt-get install -y qemu-kvm \
+        bridge-utils \
+        virtinst\
+        ovmf \
+        qemu-utils \
+        cloud-image-utils \
+        ubuntu-drivers-common \
+        whois \
+        git \
+        guestfs-tools
 ```
+
+- You will need to replace my host IP (192.168.50.100) with your own. 
+- Also change the path to the ISO file to match your system. 
+- I have also set this VM to forward ssh over port 1234 instead of 22, feel free to change that as well.
+
+1. Do fresh clone of the pxeless repo
+
+2. Create the iso with
+    
+    ```bash
+    docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) deserializeme/pxeless -a -u user-data.basic -n jammy
+    ```
+3.  Create a virtual disk with
+
+    ```bash
+    qemu-img create -f qcow2 hdd.img 8G
+    ```
+    
+4. Create a test VM to boot the ISO files with
+
+    ```bash
+    sudo qemu-system-x86_64 -machine accel=kvm,type=q35 \
+    -cpu host,kvm=off,hv_vendor_id=null \
+    -smp 2,sockets=1,cores=1,threads=2,maxcpus=2 \
+    -m 2G \
+    -cdrom /home/max/repos/pxeless/ubuntu-autoinstall.iso \
+    -object iothread,id=io1 \
+    -device virtio-blk-pci,drive=disk0,iothread=io1 \
+    -drive if=none,id=disk0,cache=none,format=qcow2,aio=threads,file=hdd.img \
+    -netdev user,id=network0,hostfwd=tcp::1234-:22 \
+    -device virtio-net-pci,netdev=network0 \
+    -serial stdio -vga virtio -parallel none \
+    -bios /usr/share/ovmf/OVMF.fd \
+    -usbdevice tablet \
+    -vnc 192.168.50.100:0
+    ```
+5. Select "Try or install Ubuntu" from the grub pop-up
+    <img width="753" alt="Screenshot 2022-12-29 at 06 57 01" src="https://user-images.githubusercontent.com/84841307/209909893-e245bd60-87f2-4eca-990a-27c467f136e0.png">
+
+6. Connect to the VM using VNC so we can watch the grub process run.
+
+    <img width="555" alt="Screenshot 2022-12-29 at 07 01 06" src="https://user-images.githubusercontent.com/84841307/209911849-6416d311-aa45-4bbb-b77f-ae947bf0c281.png">
+
+
+7. After the install process completes and the VM reboots, select the "Boot from next volume" grub option to prevent installing again
+
+    <img width="753" alt="Screenshot 2022-12-29 at 06 58 50" src="https://user-images.githubusercontent.com/84841307/209909997-cb4886f7-1cda-41db-8f19-eb8493a1f5e9.png">
+8. I was then able to log into he machine using `vmadmin` and `password` for the credentials
+    
+    <img width="555" alt="Screenshot 2022-12-29 at 07 00 01" src="https://user-images.githubusercontent.com/84841307/209910585-bfd540da-0eca-4209-87f9-fea0b0e36b95.png">
+
+9. Finally i tried to SSH to the machine (since the vm I created is using SLIRP networking I have to reach it via a forwarded port)
+    
+    <img width="857" alt="Screenshot 2022-12-29 at 07 05 58" src="https://user-images.githubusercontent.com/84841307/209910665-f36001fc-0f83-469b-bb6f-725fd333ecf7.png">
+
+The most common issues I run into with this process are improperly formatted yaml in the user-data file, and errors in the process of burning the ISO to a USB drive.
+
+In those cases, the machine will perform a partial install but instead of seeing `pxeless login:` as the machine name at login it will still say `ubuntu login:`.
+
+I prefer to use [Etcher](https://www.balena.io/etcher/) to create the USB drives on MacOS and dd on Linux as they seem to cause the fewest errors.
+
+  ```zsh
+  export IMAGE_FILE="ubuntu-autoinstall.iso"
+  ```
 
  ```zsh
  # /dev/sdb is assumed for the sake of the example
