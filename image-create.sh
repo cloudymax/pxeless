@@ -331,7 +331,7 @@ set_kernel_autoinstall(){
 
         if [ ${ALL_IN_ONE} -eq 1 ]; then
                 log "🧩 Adding user-data and meta-data files..."
-                mkdir "${BUILD_DIR}/nocloud"
+                mkdir -p "${BUILD_DIR}/nocloud"
                 cp "$USER_DATA_FILE" "${BUILD_DIR}/nocloud/user-data"
 
                 if [ -n "${META_DATA_FILE}" ]; then
