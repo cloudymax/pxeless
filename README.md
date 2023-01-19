@@ -2,14 +2,14 @@
 
 An automated system install tool for when PXE is not an option, or is not an option *yet*.
 
-Pxeless is based on [covertsh/ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator), and generates a customized Ubuntu auto-intstall ISO using [cloud-init](https://cloudinit.readthedocs.io/en/latest/) and the new **autoinstall** feature of Ubuntu's Ubiquity installer. 
+Pxeless is based on [covertsh/ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator), and generates a customized Ubuntu auto-intstall ISO using [cloud-init](https://cloudinit.readthedocs.io/en/latest/) and the new **autoinstall** feature of Ubuntu's Ubiquity installer.
 
 ## Behavior
 
- - Find an unmodified Ubuntu ISO image, 
- - Download it, 
- - Extract it, 
- - Add some kernel command line parameters, 
+ - Find an unmodified Ubuntu ISO image,
+ - Download it,
+ - Extract it,
+ - Add some kernel command line parameters,
  - Add our custom cloud-init config,
  - Repack the data into a new ISO.
  - Create a bootable USB drive (Optional)
@@ -78,6 +78,7 @@ Available options:
 -d, --destination       Destination ISO file. By default <script directory>/ubuntu-autoinstall-<current date>.iso will be
                         created, overwriting any existing file.
 ```
+
 ## **Usage**
 
 - Build a combined `autoinstall` + `cloud-init` image by using the ```-a``` flag and providing a **user-data** file containing the autoinstall configuration and cloud-init data.
@@ -85,7 +86,7 @@ A **meta-data** file may be included if you choose. The file will be empty if it
 
 - With an 'all-in-one' ISO, you simply boot a machine using the ISO and the installer will do the rest.
 
-- This script can use an existing ISO image or download the latest daily image from the Ubuntu project. 
+- This script can use an existing ISO image or download the latest daily image from the Ubuntu project.
 Using a fresh ISO speeds things up because there won't be as many packages to update during the installation.
 
 - By default, the source ISO image is checked for integrity and authenticity using GPG. This can be disabled with `-k`.
@@ -124,7 +125,7 @@ docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) pxeless \
 [2022-06-19 14:36:41] 🔎 Checking for required utilities...
 [2022-06-19 14:36:41] 👍 All required utilities are installed.
 [2022-06-19 14:36:41] 🌎 Downloading ISO image for Ubuntu Server 22.04 LTS (Jammy Jellyfish) ...
-/app/ubuntu-original-2022-06-19.iso                100%[===============================================================================================================>]   1.37G  31.8MB/s    in 45s     
+/app/ubuntu-original-2022-06-19.iso                100%[===============================================================================================================>]   1.37G  31.8MB/s    in 45s
 [2022-06-19 14:37:27] 👍 Downloaded and saved to /app/ubuntu-original-2022-06-19.iso
 [2022-06-19 14:37:27] 🌎 Downloading SHA256SUMS & SHA256SUMS.gpg files...
 [2022-06-19 14:37:27] 🌎 Downloading and saving Ubuntu signing key...
@@ -153,7 +154,7 @@ First we download the ISO of your choice - a daily build, or a release. (Daily b
 
 By default, the source ISO image is checked for integrity and authenticity using GPG. This can be disabled with ```-k```.
 
-We combine an `autoistall` config from the Ubuntu [Ubiquity installer](https://wiki.ubuntu.com/Ubiquity), and a [cloud-init](https://cloudinit.readthedocs.io/en/latest/) `cloud-config` / `user-data` file. 
+We combine an `autoistall` config from the Ubuntu [Ubiquity installer](https://wiki.ubuntu.com/Ubiquity), and a [cloud-init](https://cloudinit.readthedocs.io/en/latest/) `cloud-config` / `user-data` file.
 
 The resulting product is a fully-automated Ubuntu install with pre-provision capabilities for basic users, groups, packages, storage, networks etc... This serves as an easy stepping-off point to Ansible, puppet, Chef and other configuration-management tooling for enterprise users, or to personalization tools like [jessebot/onboardme](https://github.com/jessebot/onboardme) for every-day users.
 
@@ -176,14 +177,14 @@ You will need to have a VNC client ([tigerVNC](https://tigervnc.org/) or [Remmin
         guestfs-tools
 ```
 
-- You will need to replace my host IP (192.168.50.100) with your own. 
-- Also change the path to the ISO file to match your system. 
+- You will need to replace my host IP (192.168.50.100) with your own.
+- Also change the path to the ISO file to match your system.
 - I have also set this VM to forward ssh over port 1234 instead of 22, feel free to change that as well.
 
 1. Do fresh clone of the pxeless repo
 
 2. Create the iso with
-    
+
     ```bash
     docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) deserializeme/pxeless -a -u user-data.basic -n jammy
     ```
@@ -192,7 +193,7 @@ You will need to have a VNC client ([tigerVNC](https://tigervnc.org/) or [Remmin
     ```bash
     qemu-img create -f qcow2 hdd.img 8G
     ```
-    
+
 4. Create a test VM to boot the ISO files with
 
     ```bash
@@ -223,11 +224,11 @@ You will need to have a VNC client ([tigerVNC](https://tigervnc.org/) or [Remmin
 
     <img width="753" alt="Screenshot 2022-12-29 at 06 58 50" src="https://user-images.githubusercontent.com/84841307/209909997-cb4886f7-1cda-41db-8f19-eb8493a1f5e9.png">
 8. I was then able to log into he machine using `vmadmin` and `password` for the credentials
-    
+
     <img width="555" alt="Screenshot 2022-12-29 at 07 00 01" src="https://user-images.githubusercontent.com/84841307/209910585-bfd540da-0eca-4209-87f9-fea0b0e36b95.png">
 
 9. Finally i tried to SSH to the machine (since the vm I created is using SLIRP networking I have to reach it via a forwarded port)
-    
+
     <img width="857" alt="Screenshot 2022-12-29 at 07 05 58" src="https://user-images.githubusercontent.com/84841307/209910665-f36001fc-0f83-469b-bb6f-725fd333ecf7.png">
 
 The most common issues I run into with this process are improperly formatted yaml in the user-data file, and errors in the process of burning the ISO to a USB drive.
