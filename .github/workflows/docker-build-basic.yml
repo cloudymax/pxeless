@@ -6,7 +6,7 @@ on:
     branches:
       - 'develop'
     tags:
-      - 'v*'
+      - '*'
   pull_request:
     branches:
       - 'develop'
