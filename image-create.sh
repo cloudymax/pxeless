@@ -217,7 +217,7 @@ download_iso(){
 
         if [ ! -f "${SOURCE_ISO}" ]; then
                 log "🌎 Downloading ISO image for ${IMAGE_NAME} ..."
-                wget -O "${ORIGINAL_ISO}" "${BASE_URL}/${ISO_FILE_NAME}" -q
+                wget -O "${ORIGINAL_ISO}" "${BASE_URL}/${ISO_FILE_NAME}"
                 log "👍 Downloaded and saved to ${ORIGINAL_ISO}"
         else
                 log "☑️ Using existing ${SOURCE_ISO} file."
@@ -352,9 +352,29 @@ set_kernel_autoinstall(){
 
 # Add extra files from a folder into the build dir
 insert_extra_files(){
+        SQUASH_FS="ubuntu-server-minimal.squashfs"
+	rm -rf "${SQUASH_FS}"
+        
         log "➕ Adding additional files to the iso image..."
-        cp -R "${EXTRA_FILES_FOLDER}/." "${BUILD_DIR}/"
-        log "👍 Added additional files"
+        
+        log "➕➕ Step 1. Copy squashfs to safe location..."
+        cp "${BUILD_DIR}/casper/${SQUASH_FS}" .
+        
+        log "➕➕ Step 2. Expand filesystem..."
+        unsquashfs "${SQUASH_FS}"
+        
+        log "➕➕ Step 3. Copy extra files to /media..."
+        cp -R "${EXTRA_FILES_FOLDER}/." "squashfs-root/media/"
+        
+        log "➕➕ Step 4. Rebuilding squashfs.."
+        mksquashfs squashfs-root/ "${SQUASH_FS}" -comp xz -b 1M -noappend
+        
+        log "➕➕ Step 5. Copy squashfs copied back to {BUILD_DIR}/casper/${SQUASH_FS}"
+        cp "${SQUASH_FS}" "${BUILD_DIR}/casper/${SQUASH_FS}"
+
+	log "�~^~U�~^~U S6. Cleaning up directories..."
+	rm -rf "${SQUASH_FS}"
+	rm -rf squashfs-root
 }
 
 # re-create the MD5 checksum data
@@ -452,7 +472,7 @@ main(){
         parse_params "$@"
 
         if [ ! -f "$SOURCE_ISO" ]; then
-        
+         
                 if [ "${USE_RELEASE_ISO}" -eq 1 ]; then
                         latest_release
                 else
