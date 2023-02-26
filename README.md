@@ -59,8 +59,7 @@ Available options:
 
 -m, --meta-data         Path to meta-data file. Will be an empty file if not specified and using -a
 
--x, --extra-files       Specifies an folder with files and folders, which will be copied into the root of the iso image.
-                        If not set, nothing is copied
+-x, --extra-files       Specify a folder that will have its contents copied into the /media                         directory of the live system. If not set, nothing is copied.
 
 -k, --no-verify         Disable GPG verification of the source ISO file. By default SHA256SUMS-<current date> and
                         SHA256SUMS-<current date>.gpg files in the script directory will be used to verify the authenticity and integrity
@@ -109,8 +108,7 @@ mkpasswd -m sha-512 --rounds=4096 "some-password" -s "some-salt"
 
 ### Example output
 ```
-docker build -t pxeless . && \
-docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) pxeless \
+docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) deserializeme/pxeless \
 -a -u user-data.basic -n jammy
 ...
 ...
