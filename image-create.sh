@@ -355,24 +355,24 @@ insert_extra_files(){
         SQUASH_FS="ubuntu-server-minimal.squashfs"
 	rm -rf "${SQUASH_FS}"
         
-        log "➕ Adding additional files to the iso image..."
+        log "Adding additional files to the iso image..."
         
-        log "➕➕ Step 1. Copy squashfs to safe location..."
+        log "Step 1. Copy squashfs to safe location..."
         cp "${BUILD_DIR}/casper/${SQUASH_FS}" .
         
-        log "➕➕ Step 2. Expand filesystem..."
+        log "Step 2. Expand filesystem..."
         unsquashfs "${SQUASH_FS}"
         
-        log "➕➕ Step 3. Copy extra files to /media..."
+        log "Step 3. Copy extra files to /media..."
         cp -R "${EXTRA_FILES_FOLDER}/." "squashfs-root/media/"
         
-        log "➕➕ Step 4. Rebuilding squashfs.."
+        log "Step 4. Rebuilding squashfs.."
         mksquashfs squashfs-root/ "${SQUASH_FS}" -comp xz -b 1M -noappend
         
-        log "➕➕ Step 5. Copy squashfs copied back to {BUILD_DIR}/casper/${SQUASH_FS}"
+        log "Step 5. Copy squashfs copied back to {BUILD_DIR}/casper/${SQUASH_FS}"
         cp "${SQUASH_FS}" "${BUILD_DIR}/casper/${SQUASH_FS}"
 
-	log "�~^~U�~^~U S6. Cleaning up directories..."
+	log "➕➕ Step 6. Cleaning up directories..."
 	rm -rf "${SQUASH_FS}"
 	rm -rf squashfs-root
 }
