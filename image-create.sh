@@ -352,7 +352,12 @@ set_kernel_autoinstall(){
 
 # Add extra files from a folder into the build dir
 insert_extra_files(){
-        SQUASH_FS="ubuntu-server-minimal.squashfs"
+        if [ ${LEGACY_IMAGE} -eq 1 ]; then
+		SQUASH_FS="filesystem.squashfs"
+	else
+		SQUASH_FS="ubuntu-server-minimal.squashfs"
+	fi
+	
 	rm -rf "${SQUASH_FS}"
         
         log "Adding additional files to the iso image..."
@@ -386,6 +391,8 @@ md5_checksums(){
                 md5=$(md5sum "${BUILD_DIR}/boot/grub/loopback.cfg" | cut -f1 -d ' ')
                 sed -i -e 's,^.*[[:space:]] ./boot/grub/loopback.cfg,'"$md5"'  ./boot/grub/loopback.cfg,' "${BUILD_DIR}/md5sum.txt"
                 log "👍 Updated hashes."
+		md5=$(md5sum "${BUILD_DIR}/.disk/info" | cut -f1 -d ' ')
+		sed -i -e 's,^.*[[:space:]] .disk/info,'"$md5"'  .disk/info,' "${BUILD_DIR}/md5sum.txt"
         else
                 log "🗑️ Clearing MD5 hashes..."
                 echo > "${BUILD_DIR}/md5sum.txt"
@@ -502,7 +509,7 @@ main(){
         fi
 
         reassemble_iso
-        cleanup
+       # cleanup
 }
 
 main "$@"
