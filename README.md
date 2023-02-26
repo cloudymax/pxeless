@@ -20,11 +20,15 @@ Pxeless is based on [covertsh/ubuntu-autoinstall-generator](https://github.com/c
 
 - The original project : [covertsh/ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator)
 
-- [Ubuntu autoinstall reference](https://ubuntu.com/server/docs/install/autoinstall-reference).
+- [Ubuntu autoinstall reference](https://ubuntu.com/server/docs/install/autoinstall-reference)
 
-- [Cloud-Init options and examples](https://cloudinit.readthedocs.io/en/latest/index.html)
+- [Cloud-Init's Official Docs: options and examples](https://cloudinit.readthedocs.io/en/latest/index.html)
 
 - [How-To: Make Ubuntu Autoinstall ISO with Cloud-init by Dr Donald Kinghorn](https://www.pugetsystems.com/labs/hpc/How-To-Make-Ubuntu-Autoinstall-ISO-with-Cloud-init-2213/)
+
+- [How to Create Custom Debian Based ISO](https://dev.to/otomato_io/how-to-create-custom-debian-based-iso-4g37)
+
+- [Ubuntu 22.04 Server Autoinstall ISO](https://www.pugetsystems.com/labs/hpc/ubuntu-22-04-server-autoinstall-iso/)
 
 - [My Magical Adventure with Cloud-Init by Xe Iaso](https://xeiaso.net/blog/cloud-init-2021-06-04)
 
@@ -97,15 +101,6 @@ docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) deserializeme/p
 -a -u user-data.basic -n jammy
 ```
 
-## Credentials
-
-The credentials for the included example user-data.basic are `usn: vmadmin`, and `pwd: password`.
-To create your own credentials run:
-
-```bash
-mkpasswd -m sha-512 --rounds=4096 "some-password" -s "some-salt"
-```
-
 ### Example output
 ```
 docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) deserializeme/pxeless \
@@ -157,6 +152,16 @@ We combine an `autoistall` config from the Ubuntu [Ubiquity installer](https://w
 The resulting product is a fully-automated Ubuntu install with pre-provision capabilities for basic users, groups, packages, storage, networks etc... This serves as an easy stepping-off point to Ansible, puppet, Chef and other configuration-management tooling for enterprise users, or to personalization tools like [jessebot/onboardme](https://github.com/jessebot/onboardme) for every-day users.
 
 > Be aware that, while similar in schema, the Autoinstall and Cloud-Init portions of the file do not mix - the `user-data` key marks the transition from autoinstall to cloud-init syntax.
+
+
+## Credentials
+
+The credentials for the included example user-data.basic are `usn: vmadmin`, and `pwd: password`.
+To create your own credentials run:
+
+```bash
+mkpasswd -m sha-512 --rounds=4096 "some-password" -s "some-salt"
+```
 
 ## Testing with QEMU
 
