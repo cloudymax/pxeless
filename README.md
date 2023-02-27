@@ -4,24 +4,7 @@ It's an automated system install and image-creation tool for situations where pr
 
 PXEless is based on [covertsh/ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator), and generates a customized Ubuntu auto-intstall ISO. This is accomplished by using [cloud-init](https://cloudinit.readthedocs.io/en/latest/) and Ubuntu's [Ubiquity installer](https://wiki.ubuntu.com/Ubiquity) - specifically the server variant known as [Subiquity](https://github.com/canonical/subiquity), which itself wraps [Curtin](https://launchpad.net/curtin).
 
-## How does PXEless work?
-
-1. Download the ISO of your choice - a daily build, or a release.
-2. Extracts the EFI, MBR, and File-System from the ISO
-3. Adds some kernel command line parameters
-4. Adds customised autoinstall and cloud-init configuration files
-5. Adds arbitrary files to the squashfs (Optional)
-6. Repacks the data into a new ISO.
-
-The resulting product is a fully-automated Ubuntu installer. This serves as an easy stepping-off point for configuration-management tooling like Ansible, Puppet, and Chef or personalization tools like [jessebot/onboardme](https://github.com/jessebot/onboardme).
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/cloudymax/pxeless/develop/liveiso.drawio.svg" />
-</p>
-
-> Be aware that, while similar in schema, the Autoinstall and Cloud-Init portions of the `user-data` file do not mix. The `user-data` key marks the transition from autoinstall to cloud-init syntax. [example](https://github.com/cloudymax/pxeless/blob/62c028c885a9c37318092dd67a02005b3595f610/user-data.basic#L14)
-
-
+---
 ## Quickstart
 
 1. Clone the rpos
@@ -36,12 +19,18 @@ The resulting product is a fully-automated Ubuntu installer. This serves as an e
     cd pxeless
     ```
 
-3. Execute via Docker
+3. Running with Docker
 
     ```bash
     docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) deserializeme/pxeless \
     -a -u user-data.basic -n jammy
     ```
+    
+    > Run with `--privileged` flag when using `-x` or `--extra-files`
+    
+      ```bash
+      docker run --privileged --rm --volume "$(pwd):/data" pxe -a -u user-data.basic -n jammy -x /data/extras
+      ```
     
 4. The credentials for the included example user-data.basic are `usn: vmadmin`, and `pwd: password`.
 To create your own credentials run:
@@ -49,12 +38,30 @@ To create your own credentials run:
     ```bash
     mkpasswd -m sha-512 --rounds=4096 "some-password" -s "some-salt"
     ```
+    
+---
+
+## How does it work?
+
+1. Downloads the ISO of your choice - a daily build, or a release.
+2. Extracts the EFI, MBR, and File-System from the ISO
+3. Adds some kernel command line parameters
+4. Adds customised autoinstall and cloud-init configuration files
+5. Adds arbitrary files to the squashfs (Optional, requres `--privileged` mode in Docker)
+6. Repacks the data into a new ISO.
+
+The resulting product is a fully-automated Ubuntu installer. This serves as an easy stepping-off point for configuration-management tooling like Ansible, Puppet, and Chef or personalization tools like [jessebot/onboardme](https://github.com/jessebot/onboardme).
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/cloudymax/pxeless/develop/liveiso.drawio.svg" />
+</p>
+
+> Be aware that, while similar in schema, the Autoinstall and Cloud-Init portions of the `user-data` file do not mix. The `user-data` key marks the transition from autoinstall to cloud-init syntax. [example](https://github.com/cloudymax/pxeless/blob/62c028c885a9c37318092dd67a02005b3595f610/user-data.basic#L14)
+
+---
 
 ## Command-line options
 
-<details>
-  <summary>Click to expand</summary>
-    
 |Short  |Long    |Description|
 | :--- | :---  | :---    |
 | -h    | --help | Print this help and exit |
@@ -64,13 +71,11 @@ To create your own credentials run:
 | -e  | --use-hwe-kernel| Force the generated ISO to boot using the hardware enablement (HWE) kernel. Not supported by early Ubuntu 20.04 release ISOs. |
 | -u  | --user-data| Path to user-data file. Required if using -a|
 | -m  | --meta-data| Path to meta-data file. Will be an empty file if not specified and using the `-a` flag. You may read more about providing a `meta-data` file [HERE](https://cloudinit.readthedocs.io/en/latest/topics/instancedata.html)|
-| -x  | --extra-files| Specifies an folder with files and folders, which will be copied into the root of the iso image. If not set, nothing is copied|
+| -x  | --extra-files| Specifies an folder with files and folders, which will be copied into the root of the iso image. If not set, nothing is copied. Requires use of `--privileged` flag when running in docker|
 | -k  | --no-verify| Disable GPG verification of the source ISO file. By default SHA256SUMS-<current date> and SHA256SUMS-<current date>.gpg files in the script directory will be used to verify the authenticity and integrity of the source ISO file. If they are not present the latest daily SHA256SUMS will be downloaded and saved in the script directory. The Ubuntu signing key will be downloaded and saved in a new keyring in the script directory.|
 | -r  | --use-release-iso| Use the current release ISO instead of the daily ISO. The file will be used if it already exists.|
 | -s  | --source| Source ISO file. By default the latest daily ISO for Ubuntu 20.04 will be downloaded  and saved as `script directory/ubuntu-original-current date.iso` That file will be used by default if it already exists.|
 | -d  | --destination |      Destination ISO file. By default script directory/ubuntu-autoinstall-current date.iso will be created, overwriting any existing file.|
-
-</details>
 
 ## Sources 
 
