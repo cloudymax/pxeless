@@ -4,7 +4,26 @@ It's an automated system install and image-creation tool for situations where pr
 
 PXEless is based on [covertsh/ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator), and generates a customized Ubuntu auto-intstall ISO. This is accomplished by using [cloud-init](https://cloudinit.readthedocs.io/en/latest/) and Ubuntu's [Ubiquity installer](https://wiki.ubuntu.com/Ubiquity) - specifically the server variant known as [Subiquity](https://github.com/canonical/subiquity), which itself wraps [Curtin](https://launchpad.net/curtin).
 
----
+PXEless works by:
+
+  1. Downloading the ISO of your choice - a daily build, or a release.
+  2. Extracting the EFI, MBR, and File-System from the ISO
+  3. Adding some kernel command line parameters
+  4. Adding customised autoinstall and cloud-init configuration files
+  5. Copying arbitrary files to the squashfs (Optional, requres `--privileged` mode in Docker)
+  6. Repacking the data into a new ISO.
+
+The resulting product is a fully-automated Ubuntu installer. This serves as an easy stepping-off point for configuration-management tooling like Ansible, Puppet, and Chef or personalization tools like [jessebot/onboardme](https://github.com/jessebot/onboardme). Please note that while similar in schema, the Autoinstall and Cloud-Init portions of the `user-data` file do not mix. The `user-data` key marks the transition from autoinstall to cloud-init syntax as see [HERE](https://github.com/cloudymax/pxeless/blob/62c028c885a9c37318092dd67a02005b3595f610/user-data.basic#L14)
+
+## Application Flow
+
+<figure>
+  <img
+  src="https://raw.githubusercontent.com/cloudymax/pxeless/develop/liveiso.drawio.svg"
+  alt="Diagram showing the flow of information through the PXEless process. 1. Downloading the ISO. 2. Extracting the EFI, MBR, and File-System from the ISO. 3. Adding some kernel command line parameters. 4. Adding customised autoinstall and cloud-init configuration files. 5.Repacking the data into a new ISO.">
+</figure>
+
+
 ## Quickstart
 
 1. Clone the rpos
@@ -19,46 +38,42 @@ PXEless is based on [covertsh/ubuntu-autoinstall-generator](https://github.com/c
     cd pxeless
     ```
 
-3. Running with Docker
+3. Run in a Docker container
 
-    ```bash
-    docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) deserializeme/pxeless \
-    -a -u user-data.basic -n jammy
-    ```
-    
-    > Run with `--privileged` flag when using `-x` or `--extra-files`
-    
+    - Basic Usage:
+      ```bash
+      docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) deserializeme/pxeless \
+      -a -u user-data.basic -n jammy
+      ```
+          
+    - Adding extra files to the ISO via the `-x` or `--extra-files` flag requires root access in order to chroot the squashfs.
       ```bash
       docker run --privileged --rm --volume "$(pwd):/data" pxe -a -u user-data.basic -n jammy -x /data/extras
       ```
+
+
+4. Writing your ISO to a USB drive
+
+    - On MacOS I reccommend using [Etcher](https://www.balena.io/etcher/) 
     
-4. The credentials for the included example user-data.basic are `usn: vmadmin`, and `pwd: password`.
-To create your own credentials run:
-
-    ```bash
-    mkpasswd -m sha-512 --rounds=4096 "some-password" -s "some-salt"
-    ```
+    - On Linux use `dd`.
     
----
+          ```bash
+          # /dev/sdb is assumed for the sake of the example
+  
+          export IMAGE_FILE="ubuntu-autoinstall.iso"
 
-## How does it work?
+          sudo fdisk -l |grep "Disk /dev/"
 
-1. Downloads the ISO of your choice - a daily build, or a release.
-2. Extracts the EFI, MBR, and File-System from the ISO
-3. Adds some kernel command line parameters
-4. Adds customised autoinstall and cloud-init configuration files
-5. Adds arbitrary files to the squashfs (Optional, requres `--privileged` mode in Docker)
-6. Repacks the data into a new ISO.
+          export DISK_NAME="/dev/sdb"
 
-The resulting product is a fully-automated Ubuntu installer. This serves as an easy stepping-off point for configuration-management tooling like Ansible, Puppet, and Chef or personalization tools like [jessebot/onboardme](https://github.com/jessebot/onboardme).
+          sudo umount "$DISK_NAME"
 
-<p align="center">
-<img src="https://raw.githubusercontent.com/cloudymax/pxeless/develop/liveiso.drawio.svg" />
-</p>
+          sudo dd bs=4M if=$IMAGE_FILE of="$DISK_NAME" status=progress oflag=sync
+          ```
 
-> Be aware that, while similar in schema, the Autoinstall and Cloud-Init portions of the `user-data` file do not mix. The `user-data` key marks the transition from autoinstall to cloud-init syntax. [example](https://github.com/cloudymax/pxeless/blob/62c028c885a9c37318092dd67a02005b3595f610/user-data.basic#L14)
 
----
+4. Boot your ISO file on a physical machine for VM and log-in. If you used my `user-data.basic` file the user is `vmadmin`, and the password is `password`. You can create your own credentials by running `mkpasswd --method=SHA-512 --rounds=4096` as documented on [THIS](https://cloudinit.readthedocs.io/en/0.7.8/topics/examples.html) page at line 49.
 
 ## Command-line options
 
@@ -184,28 +199,6 @@ The most common issues I run into with this process are improperly formatted yam
 In those cases, the machine will perform a partial install but instead of seeing `pxeless login:` as the machine name at login it will still say `ubuntu login:`.
     
 </details>
-
-## Burn your ISO to a USB drive
-
-I prefer to use [Etcher](https://www.balena.io/etcher/) to create the USB drives on MacOS and dd on Linux as they seem to cause the fewest errors.
-
-To burn the ISO manually do the following:
-    
-  ```bash
-  export IMAGE_FILE="ubuntu-autoinstall.iso"
-  ```
-
-  ```bsh
-  # /dev/sdb is assumed for the sake of the example
-
-  sudo fdisk -l |grep "Disk /dev/"
-
-  export DISK_NAME="/dev/sdb"
-
-  sudo umount "$DISK_NAME"
-
-  sudo dd bs=4M if=$IMAGE_FILE of="$DISK_NAME" status=progress oflag=sync
-  ```
 
 ### Contributors
 
