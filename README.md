@@ -2,30 +2,25 @@
 
 It's an automated system install and image-creation tool for situations where provisioning machines via a PXE server is not an option, or is not an option *yet*. It's ideal for small-scale greenfielding, proofs-of-concept, and general management of on-prem compute infrastructure in a cloud-native way without the cloud.
 
-PXEless is based on [covertsh/ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator), and generates a customized Ubuntu auto-intstall ISO. This is accomplished by using [cloud-init](https://cloudinit.readthedocs.io/en/latest/) and Ubuntu's [Ubiquity installer](https://wiki.ubuntu.com/Ubiquity) - specifically the server variant known as [Subiquity](https://github.com/canonical/subiquity), which itself wraps [Curtin](https://launchpad.net/curtin). 
-
-PXEless currently only supports creating ISO's using Ubuntu Server (Focal and Jammy). Users who's needs ae not met by PXEless may find these other FOSS projects useful:
-
-| Name | Description |
-| ---  | ---         |
-|[Tinkerbell](https://github.com/tinkerbell) | A flexible bare metal provisioning engine. Open-sourced by the folks @equinixmetal; currently a sandbox project in the CNCF |
-|[Metal³](https://github.com/metal3-io)| Bare Metal Host Provisioning for Kubernetes and preferred starting point for [Cluster API](https://cluster-api.sigs.k8s.io/) |
-|[Metal-as-a-Service](https://github.com/maas/maas)| Treat physical servers like virtual machines in the cloud. MAAS turns your bare metal into an elastic cloud-like resource|
-|[Packer](https://github.com/hashicorp/packer)| A tool for creating identical machine images for multiple platforms from a single source configuration. 
-|[Clonezilla Live!](https://gitlab.com/stevenshiau/clonezilla)| A partition or disk clone tool similar to Norton Ghost®. It saves and restores only used blocks in hard drive. Two types of Clonezilla are available, Clonezilla live and Clonezilla SE (Server Edition)|
+PXEless is based on [covertsh/ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator), and generates a customized Ubuntu auto-intstall ISO. This is accomplished by using [cloud-init](https://cloudinit.readthedocs.io/en/latest/) and Ubuntu's [Ubiquity installer](https://wiki.ubuntu.com/Ubiquity) - specifically the server variant known as [Subiquity](https://github.com/canonical/subiquity), which itself wraps [Curtin](https://launchpad.net/curtin).
 
 ## How does PXEless work?
 
-1. Downloads an Ubuntu ISO image from Canonical,
+1. Download the ISO of your choice - a daily build, or a release.
 2. Extracts the EFI, MBR, and File-System from the ISO
 3. Adds some kernel command line parameters
-4. Adds customised cloud-init configuration files
+4. Adds customised autoinstall and cloud-init configuration files
 5. Adds arbitrary files to the squashfs (Optional)
 6. Repacks the data into a new ISO.
+
+The resulting product is a fully-automated Ubuntu installer. This serves as an easy stepping-off point for configuration-management tooling like Ansible, Puppet, and Chef or personalization tools like [jessebot/onboardme](https://github.com/jessebot/onboardme).
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/cloudymax/pxeless/develop/liveiso.drawio.svg" />
 </p>
+
+> Be aware that, while similar in schema, the Autoinstall and Cloud-Init portions of the `user-data` file do not mix. The `user-data` key marks the transition from autoinstall to cloud-init syntax. [example](https://github.com/cloudymax/pxeless/blob/62c028c885a9c37318092dd67a02005b3595f610/user-data.basic#L14)
+
 
 ## Quickstart
 
@@ -47,19 +42,18 @@ PXEless currently only supports creating ISO's using Ubuntu Server (Focal and Ja
     docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) deserializeme/pxeless \
     -a -u user-data.basic -n jammy
     ```
-
-- The credentials for the included example user-data.basic are `usn: vmadmin`, and `pwd: password`.
+    
+4. The credentials for the included example user-data.basic are `usn: vmadmin`, and `pwd: password`.
 To create your own credentials run:
 
     ```bash
     mkpasswd -m sha-512 --rounds=4096 "some-password" -s "some-salt"
     ```
 
-
 ## Command-line options
 
 |Short  |Long    |Description|
-| :---: | :---:  | :---:     |
+| :--- | :---  | :---    |
 | -h    | --help | Print this help and exit |
 | -v  |--verbose| Print script debug info|
 | -n  | --code-name| The Code Name of the Ubuntu release to download (bionic, focal, jammy etc...)|
@@ -86,59 +80,20 @@ This project is made possible through the open-source work of the following auth
 |[My Magical Adventure with Cloud-Init](https://xeiaso.net/blog/cloud-init-2021-06-04)| [Xe Iaso](https://xeiaso.net/) | Excellent practical example of how to manipulate cloud-init's execution order by specifying module order|
 |[Basic user-data example](user-data.basic) | Cloudymax | A very basic user-data file that will provision a user with a password |
 |[Advanced user-data example](user-data.advanced) | Cloudymax | |
+    
+    
+## Need something different?
 
-### Example output
-```
-docker build -t pxeless . && \
-docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) pxeless \
--a -u user-data.basic -n jammy
-...
-...
-...
-...
-[2022-06-19 14:36:41] 📁 Created temporary working directory /tmp/tmp.divHIg2PfD
-[2022-06-19 14:36:41] 📁 Created temporary build directory /tmp/tmp.GzoJu7mqPa
-[2022-06-19 14:36:41] 👶 Starting up...
-[2022-06-19 14:36:41] 🔎 Checking for daily jammy release...
-[2022-06-19 14:36:41] ✅ Daily release is 22.04
-[2022-06-19 14:36:41] ✅ 22.04 is greater than 20.10. Not a legacy image.
-[2022-06-19 14:36:41] 🔎 Checking for required utilities...
-[2022-06-19 14:36:41] 👍 All required utilities are installed.
-[2022-06-19 14:36:41] 🌎 Downloading ISO image for Ubuntu Server 22.04 LTS (Jammy Jellyfish) ...
-/app/ubuntu-original-2022-06-19.iso                100%[===============================================================================================================>]   1.37G  31.8MB/s    in 45s
-[2022-06-19 14:37:27] 👍 Downloaded and saved to /app/ubuntu-original-2022-06-19.iso
-[2022-06-19 14:37:27] 🌎 Downloading SHA256SUMS & SHA256SUMS.gpg files...
-[2022-06-19 14:37:27] 🌎 Downloading and saving Ubuntu signing key...
-[2022-06-19 14:37:28] 👍 Downloaded and saved to /tmp/tmp.divHIg2PfD/843938DF228D22F7B3742BC0D94AA3F0EFE21092.keyring
-[2022-06-19 14:37:28] 🔐 Verifying /app/ubuntu-original-2022-06-19.iso integrity and authenticity...
-[2022-06-19 14:37:41] 👍 Verification succeeded.
-[2022-06-19 14:37:41] 🔧 Extracting ISO image...
-[2022-06-19 14:37:49] 👍 Extracted to /tmp/tmp.GzoJu7mqPa
-[2022-06-19 14:37:49] 🔧 Extracting MBR image...
-[2022-06-19 14:37:49] 👍 Extracted to /tmp/tmp.divHIg2PfD/ubuntu-original-2022-06-19.mbr
-[2022-06-19 14:37:49] 🔧 Extracting EFI image...
-[2022-06-19 14:37:49] 👍 Extracted to /tmp/tmp.divHIg2PfD/ubuntu-original-2022-06-19.efi
-[2022-06-19 14:37:49] 🧩 Adding autoinstall parameter to kernel command line...
-[2022-06-19 14:37:49] 👍 Added parameter to UEFI and BIOS kernel command lines.
-[2022-06-19 14:37:49] 🧩 Adding user-data and meta-data files...
-[2022-06-19 14:37:49] 👍 Added data and configured kernel command line.
-[2022-06-19 14:37:49] 👷 Updating /tmp/tmp.GzoJu7mqPa/md5sum.txt with hashes of modified files...
-[2022-06-19 14:37:49] 👍 Updated hashes.
-[2022-06-19 14:37:49] 📦 Repackaging extracted files into an ISO image...
-[2022-06-19 14:37:54] 👍 Repackaged into ubuntu-autoinstall-2022-06-19.iso
-[2022-06-19 14:37:54] ✅ Completed.
-```
-## How it works
+PXEless currently only supports creating ISO's using Ubuntu Server (Focal and Jammy). Users who's needs ae not met by PXEless may find these other FOSS projects useful:
 
-First we download the ISO of your choice - a daily build, or a release. (Daily builds are faster because they don't require as many updates/upgrades)
+| Project Name | Description |
+| ---  | ---         |
+|[Tinkerbell](https://github.com/tinkerbell) | A flexible bare metal provisioning engine. Open-sourced by the folks @equinixmetal; currently a sandbox project in the CNCF |
+|[Metal³](https://github.com/metal3-io)| Bare Metal Host Provisioning for Kubernetes and preferred starting point for [Cluster API](https://cluster-api.sigs.k8s.io/) |
+|[Metal-as-a-Service](https://github.com/maas/maas)| Treat physical servers like virtual machines in the cloud. MAAS turns your bare metal into an elastic cloud-like resource|
+|[Packer](https://github.com/hashicorp/packer)| A tool for creating identical machine images for multiple platforms from a single source configuration. 
+|[Clonezilla Live!](https://gitlab.com/stevenshiau/clonezilla)| A partition or disk clone tool similar to Norton Ghost®. It saves and restores only used blocks in hard drive. Two types of Clonezilla are available, Clonezilla live and Clonezilla SE (Server Edition)|
 
-By default, the source ISO image is checked for integrity and authenticity using GPG. This can be disabled with ```-k```.
-
-We combine an `autoistall` config from the Ubuntu [Ubiquity installer](https://wiki.ubuntu.com/Ubiquity), and a [cloud-init](https://cloudinit.readthedocs.io/en/latest/) `cloud-config` / `user-data` file.
-
-The resulting product is a fully-automated Ubuntu install with pre-provision capabilities for basic users, groups, packages, storage, networks etc... This serves as an easy stepping-off point to Ansible, puppet, Chef and other configuration-management tooling for enterprise users, or to personalization tools like [jessebot/onboardme](https://github.com/jessebot/onboardme) for every-day users.
-
-> Be aware that, while similar in schema, the Autoinstall and Cloud-Init portions of the file do not mix - the `user-data` key marks the transition from autoinstall to cloud-init syntax.
 
 ## Testing with QEMU
 
