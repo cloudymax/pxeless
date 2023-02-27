@@ -86,7 +86,7 @@ The resulting product is a fully-automated Ubuntu installer. This serves as an e
 | -e  | --use-hwe-kernel| Force the generated ISO to boot using the hardware enablement (HWE) kernel. Not supported by early Ubuntu 20.04 release ISOs. |
 | -u  | --user-data| Path to user-data file. Required if using -a|
 | -m  | --meta-data| Path to meta-data file. Will be an empty file if not specified and using the `-a` flag. You may read more about providing a `meta-data` file [HERE](https://cloudinit.readthedocs.io/en/latest/topics/instancedata.html)|
-| -x  | --extra-files| Specifies an folder with files and folders, which will be copied into the root of the iso image. If not set, nothing is copied. Requires use of `--privileged` flag when running in docker|
+| -x  | --extra-files| Specifies a folder with files and folders, which will be copied into the root of the iso image. If not set, nothing is copied. Requires use of `--privileged` flag when running in docker|
 | -k  | --no-verify| Disable GPG verification of the source ISO file. By default SHA256SUMS-<current date> and SHA256SUMS-<current date>.gpg files in the script directory will be used to verify the authenticity and integrity of the source ISO file. If they are not present the latest daily SHA256SUMS will be downloaded and saved in the script directory. The Ubuntu signing key will be downloaded and saved in a new keyring in the script directory.|
 | -r  | --use-release-iso| Use the current release ISO instead of the daily ISO. The file will be used if it already exists.|
 | -s  | --source| Source ISO file. By default the latest daily ISO for Ubuntu 20.04 will be downloaded  and saved as `script directory/ubuntu-original-current date.iso` That file will be used by default if it already exists.|
