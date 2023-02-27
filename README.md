@@ -52,6 +52,9 @@ To create your own credentials run:
 
 ## Command-line options
 
+<details>
+  <summary>Click to expand</summary>
+    
 |Short  |Long    |Description|
 | :--- | :---  | :---    |
 | -h    | --help | Print this help and exit |
@@ -67,10 +70,12 @@ To create your own credentials run:
 | -s  | --source| Source ISO file. By default the latest daily ISO for Ubuntu 20.04 will be downloaded  and saved as `script directory/ubuntu-original-current date.iso` That file will be used by default if it already exists.|
 | -d  | --destination |      Destination ISO file. By default script directory/ubuntu-autoinstall-current date.iso will be created, overwriting any existing file.|
 
+</details>
+
 ## Sources 
 
 This project is made possible through the open-source work of the following authors and many others. Thank you all for sharing your time, effort, and knowledge freely with us. You are the giants upon whos shoulders we stand. :heart:
-
+    
 | Reference | Author | Description |
 | ---     |  ---   |    ---      |
 | [ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator)| [covertsh](github.com/covertsh)| The original project that PXEless is based off of. If the original author ever becomes active again, I would love to merge these changes back. |
@@ -80,7 +85,7 @@ This project is made possible through the open-source work of the following auth
 |[My Magical Adventure with Cloud-Init](https://xeiaso.net/blog/cloud-init-2021-06-04)| [Xe Iaso](https://xeiaso.net/) | Excellent practical example of how to manipulate cloud-init's execution order by specifying module order|
 |[Basic user-data example](user-data.basic) | Cloudymax | A very basic user-data file that will provision a user with a password |
 |[Advanced user-data example](user-data.advanced) | Cloudymax | |
-    
+
     
 ## Need something different?
 
@@ -95,7 +100,10 @@ PXEless currently only supports creating ISO's using Ubuntu Server (Focal and Ja
 |[Clonezilla Live!](https://gitlab.com/stevenshiau/clonezilla)| A partition or disk clone tool similar to Norton Ghost®. It saves and restores only used blocks in hard drive. Two types of Clonezilla are available, Clonezilla live and Clonezilla SE (Server Edition)|
 
 
-## Testing with QEMU
+## Testing your ISO with QEMU
+
+<details>
+  <summary>Click to expand</summary>
 
 You will need to have a VNC client ([tigerVNC](https://tigervnc.org/) or [Remmina](https://remmina.org/) etc...) installed as well as the following packages:
 
@@ -169,24 +177,30 @@ You will need to have a VNC client ([tigerVNC](https://tigervnc.org/) or [Remmin
 The most common issues I run into with this process are improperly formatted yaml in the user-data file, and errors in the process of burning the ISO to a USB drive.
 
 In those cases, the machine will perform a partial install but instead of seeing `pxeless login:` as the machine name at login it will still say `ubuntu login:`.
+    
+</details>
+
+## Burn your ISO to a USB drive
 
 I prefer to use [Etcher](https://www.balena.io/etcher/) to create the USB drives on MacOS and dd on Linux as they seem to cause the fewest errors.
 
-  ```zsh
+To burn the ISO manually do the following:
+    
+  ```bash
   export IMAGE_FILE="ubuntu-autoinstall.iso"
   ```
 
- ```zsh
- # /dev/sdb is assumed for the sake of the example
+  ```bsh
+  # /dev/sdb is assumed for the sake of the example
 
- sudo fdisk -l |grep "Disk /dev/"
+  sudo fdisk -l |grep "Disk /dev/"
 
- export DISK_NAME="/dev/sdb"
+  export DISK_NAME="/dev/sdb"
 
- sudo umount "$DISK_NAME"
+  sudo umount "$DISK_NAME"
 
- sudo dd bs=4M if=$IMAGE_FILE of="$DISK_NAME" status=progress oflag=sync
-```
+  sudo dd bs=4M if=$IMAGE_FILE of="$DISK_NAME" status=progress oflag=sync
+  ```
 
 ### Contributors
 
