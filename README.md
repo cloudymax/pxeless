@@ -46,7 +46,7 @@ The resulting product is a fully-automated Ubuntu installer. This serves as an e
       -a -u user-data.basic -n jammy
       ```
           
-    - Adding extra files to the ISO via the `-x` or `--extra-files` flag requires root access in order to chroot the squashfs.
+    - Adding extra files to the ISO via the `-x` or `--extra-files` flag requires root access in order to chroot the squashfs. The contents of the `extras` directory will be copied to the `/media` dir of the image's filesystem. The extra-files are mounted as `/data/<directory>` when running in a docker conatiner because we mount `$(pwd)` as `/data/`
       ```bash
       docker run --privileged --rm --volume "$(pwd):/data" pxe -a -u user-data.basic -n jammy -x /data/extras
       ```
