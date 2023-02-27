@@ -63,7 +63,7 @@ Available options:
 
 -m, --meta-data         Path to meta-data file. Will be an empty file if not specified and using -a
 
--x, --extra-files       Specifies an folder with files and folders, which will be copied into the root of the iso image.
+-x, --extra-files       Specifies a folder whos contents will be copied into the /media directroy of the squashfs.
                         If not set, nothing is copied
 
 -k, --no-verify         Disable GPG verification of the source ISO file. By default SHA256SUMS-<current date> and
