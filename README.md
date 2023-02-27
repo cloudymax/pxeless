@@ -1,169 +1,109 @@
-# Pxeless [![GitHub Release](https://img.shields.io/github/v/release/cloudymax/pxeless?style=flat&labelColor=858585&color=6BF847&logo=GitHub&logoColor=white)](https://github.com/cloudymax/pxeless/releases)
+# What is PXEless? [![GitHub Release](https://img.shields.io/github/v/release/cloudymax/pxeless?style=flat&labelColor=858585&color=6BF847&logo=GitHub&logoColor=white)](https://github.com/cloudymax/pxeless/releases)
 
-An automated system install tool for when PXE is not an option, or is not an option *yet*.
+It's an automated system install and image-creation tool for situations where provisioning machines via a PXE server is not an option, or is not an option *yet*. It's ideal for small-scale greenfielding, proofs-of-concept, and general management of on-prem compute infrastructure in a cloud-native way without the cloud.
 
-Pxeless is based on [covertsh/ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator), and generates a customized Ubuntu auto-intstall ISO using [cloud-init](https://cloudinit.readthedocs.io/en/latest/) and the new **autoinstall** feature of Ubuntu's Ubiquity installer.
+PXEless is based on [covertsh/ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator), and generates a customized Ubuntu auto-intstall ISO. This is accomplished by using [cloud-init](https://cloudinit.readthedocs.io/en/latest/) and Ubuntu's [Ubiquity installer](https://wiki.ubuntu.com/Ubiquity) - specifically the server variant known as [Subiquity](https://github.com/canonical/subiquity), which itself wraps [Curtin](https://launchpad.net/curtin).
 
-## Behavior
+## How does PXEless work?
 
- - Find an unmodified Ubuntu ISO image,
- - Download it,
- - Extract it,
- - Add some kernel command line parameters,
- - Add our custom cloud-init config,
- - Repack the data into a new ISO.
- - Create a bootable USB drive (Optional)
+1. Download the ISO of your choice - a daily build, or a release.
+2. Extracts the EFI, MBR, and File-System from the ISO
+3. Adds some kernel command line parameters
+4. Adds customised autoinstall and cloud-init configuration files
+5. Adds arbitrary files to the squashfs (Optional)
+6. Repacks the data into a new ISO.
 
-<img src="https://raw.githubusercontent.com/cloudymax/pxeless/develop/liveiso.drawio.svg">
+The resulting product is a fully-automated Ubuntu installer. This serves as an easy stepping-off point for configuration-management tooling like Ansible, Puppet, and Chef or personalization tools like [jessebot/onboardme](https://github.com/jessebot/onboardme).
 
-## References
+<p align="center">
+<img src="https://raw.githubusercontent.com/cloudymax/pxeless/develop/liveiso.drawio.svg" />
+</p>
 
-- The original project : [covertsh/ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator)
+> Be aware that, while similar in schema, the Autoinstall and Cloud-Init portions of the `user-data` file do not mix. The `user-data` key marks the transition from autoinstall to cloud-init syntax. [example](https://github.com/cloudymax/pxeless/blob/62c028c885a9c37318092dd67a02005b3595f610/user-data.basic#L14)
 
-- [Ubuntu autoinstall reference](https://ubuntu.com/server/docs/install/autoinstall-reference)
 
-- [Cloud-Init's Official Docs: options and examples](https://cloudinit.readthedocs.io/en/latest/index.html)
+## Quickstart
 
-- [How-To: Make Ubuntu Autoinstall ISO with Cloud-init by Dr Donald Kinghorn](https://www.pugetsystems.com/labs/hpc/How-To-Make-Ubuntu-Autoinstall-ISO-with-Cloud-init-2213/)
+1. Clone the rpos
 
-- [How to Create Custom Debian Based ISO](https://dev.to/otomato_io/how-to-create-custom-debian-based-iso-4g37)
+    ```bash
+    git clone https://github.com/cloudymax/pxeless.git
+    ```
 
-- [Ubuntu 22.04 Server Autoinstall ISO](https://www.pugetsystems.com/labs/hpc/ubuntu-22-04-server-autoinstall-iso/)
+2. Change directory to the root of the repo
 
-- [My Magical Adventure with Cloud-Init by Xe Iaso](https://xeiaso.net/blog/cloud-init-2021-06-04)
+    ```bash
+    cd pxeless
+    ```
 
-- [Basic Example](user-data.basic)
+3. Execute via Docker
 
-- [Advanced Example](user-data.advanced)
+    ```bash
+    docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) deserializeme/pxeless \
+    -a -u user-data.basic -n jammy
+    ```
+    
+4. The credentials for the included example user-data.basic are `usn: vmadmin`, and `pwd: password`.
+To create your own credentials run:
+
+    ```bash
+    mkpasswd -m sha-512 --rounds=4096 "some-password" -s "some-salt"
+    ```
 
 ## Command-line options
 
-```
-Usage: image-create.sh [-h] [-v] [-n] [-a] [-e] [-u user-data-file] [-m meta-data-file] [-k] [-c] [-r] [-s source-iso-file] [-d destination-iso-file]
+<details>
+  <summary>Click to expand</summary>
+    
+|Short  |Long    |Description|
+| :--- | :---  | :---    |
+| -h    | --help | Print this help and exit |
+| -v  |--verbose| Print script debug info|
+| -n  | --code-name| The Code Name of the Ubuntu release to download (bionic, focal, jammy etc...)|
+| -a  | --all-in-one| Bake user-data and meta-data into the generated ISO. By default you will need to boot systems with a CIDATA volume attached containing your autoinstall user-data and meta-data files. For more information see: https://ubuntu.com/server/docs/install/autoinstall-quickstart |
+| -e  | --use-hwe-kernel| Force the generated ISO to boot using the hardware enablement (HWE) kernel. Not supported by early Ubuntu 20.04 release ISOs. |
+| -u  | --user-data| Path to user-data file. Required if using -a|
+| -m  | --meta-data| Path to meta-data file. Will be an empty file if not specified and using the `-a` flag. You may read more about providing a `meta-data` file [HERE](https://cloudinit.readthedocs.io/en/latest/topics/instancedata.html)|
+| -x  | --extra-files| Specifies an folder with files and folders, which will be copied into the root of the iso image. If not set, nothing is copied|
+| -k  | --no-verify| Disable GPG verification of the source ISO file. By default SHA256SUMS-<current date> and SHA256SUMS-<current date>.gpg files in the script directory will be used to verify the authenticity and integrity of the source ISO file. If they are not present the latest daily SHA256SUMS will be downloaded and saved in the script directory. The Ubuntu signing key will be downloaded and saved in a new keyring in the script directory.|
+| -r  | --use-release-iso| Use the current release ISO instead of the daily ISO. The file will be used if it already exists.|
+| -s  | --source| Source ISO file. By default the latest daily ISO for Ubuntu 20.04 will be downloaded  and saved as `script directory/ubuntu-original-current date.iso` That file will be used by default if it already exists.|
+| -d  | --destination |      Destination ISO file. By default script directory/ubuntu-autoinstall-current date.iso will be created, overwriting any existing file.|
 
-💁 This script will create fully-automated Ubuntu installation media.
+</details>
 
-Available options:
+## Sources 
 
--h, --help              Print this help and exit
+This project is made possible through the open-source work of the following authors and many others. Thank you all for sharing your time, effort, and knowledge freely with us. You are the giants upon whos shoulders we stand. :heart:
+    
+| Reference | Author | Description |
+| ---     |  ---   |    ---      |
+| [ubuntu-autoinstall-generator](https://github.com/covertsh/ubuntu-autoinstall-generator)| [covertsh](github.com/covertsh)| The original project that PXEless is based off of. If the original author ever becomes active again, I would love to merge these changes back. |
+|[Ubuntu Autoinstall Docs](https://ubuntu.com/server/docs/install/autoinstall-reference)| Canonical | Official documentation for the Ubuntu Autoinstall process |
+[Cloud-Init Docs](https://cloudinit.readthedocs.io/en/latest/index.html) | Canonical | The official docs for the Cloud-Init project|
+|[How-To: Make Ubuntu Autoinstall ISO with Cloud-init](https://www.pugetsystems.com/labs/hpc/How-To-Make-Ubuntu-Autoinstall-ISO-with-Cloud-init-2213/) | [Dr Donald Kinghorn](https://www.pugetsystems.com/bios/donkinghorn/) | A great walkthrough of how to manually create an AutoInstall USB drive using Cloud-Init on Ubuntu 20.04 |
+|[My Magical Adventure with Cloud-Init](https://xeiaso.net/blog/cloud-init-2021-06-04)| [Xe Iaso](https://xeiaso.net/) | Excellent practical example of how to manipulate cloud-init's execution order by specifying module order|
+|[Basic user-data example](user-data.basic) | Cloudymax | A very basic user-data file that will provision a user with a password |
+|[Advanced user-data example](user-data.advanced) | Cloudymax | |
 
--v, --verbose           Print script debug info
+    
+## Need something different?
 
--n, --code-name         The Code Name of the Ubuntu release to download (bionic, focal, jammy etc...)
+PXEless currently only supports creating ISO's using Ubuntu Server (Focal and Jammy). Users who's needs ae not met by PXEless may find these other FOSS projects useful:
 
--a, --all-in-one        Bake user-data and meta-data into the generated ISO. By default you will
-                        need to boot systems with a CIDATA volume attached containing your
-                        autoinstall user-data and meta-data files.
-                        For more information see: https://ubuntu.com/server/docs/install/autoinstall-quickstart
-
--e, --use-hwe-kernel    Force the generated ISO to boot using the hardware enablement (HWE) kernel. Not supported
-                        by early Ubuntu 20.04 release ISOs.
-
--u, --user-data         Path to user-data file. Required if using -a
-
--m, --meta-data         Path to meta-data file. Will be an empty file if not specified and using -a
-
--x, --extra-files       Specify a folder that will have its contents copied into the /media                         directory of the live system. If not set, nothing is copied.
-
--k, --no-verify         Disable GPG verification of the source ISO file. By default SHA256SUMS-<current date> and
-                        SHA256SUMS-<current date>.gpg files in the script directory will be used to verify the authenticity and integrity
-                        of the source ISO file. If they are not present the latest daily SHA256SUMS will be
-                        downloaded and saved in the script directory. The Ubuntu signing key will be downloaded and
-                        saved in a new keyring in the script directory.
-
--r, --use-release-iso   Use the current release ISO instead of the daily ISO. The file will be used if it already
-                        exists.
-
--s, --source            Source ISO file. By default the latest daily ISO for Ubuntu 20.04 will be downloaded
-                        and saved as <script directory>/ubuntu-original-<current date>.iso
-                        That file will be used by default if it already exists.
-
--d, --destination       Destination ISO file. By default <script directory>/ubuntu-autoinstall-<current date>.iso will be
-                        created, overwriting any existing file.
-```
-
-## **Usage**
-
-- Build a combined `autoinstall` + `cloud-init` image by using the ```-a``` flag and providing a **user-data** file containing the autoinstall configuration and cloud-init data.
-A **meta-data** file may be included if you choose. The file will be empty if it is not specified. You may read more about providing a `meta-data` file [HERE](https://cloudinit.readthedocs.io/en/latest/topics/instancedata.html)
-
-- With an 'all-in-one' ISO, you simply boot a machine using the ISO and the installer will do the rest.
-
-- This script can use an existing ISO image or download the latest daily image from the Ubuntu project.
-Using a fresh ISO speeds things up because there won't be as many packages to update during the installation.
-
-- By default, the source ISO image is checked for integrity and authenticity using GPG. This can be disabled with `-k`.
-
-- the newly added `-n`, `--code-name` flag allows you to specify an Ubuntu code-name instead of an exact version ie: `jammy`, `focal`
-
-```bash
-docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) deserializeme/pxeless \
--a -u user-data.basic -n jammy
-```
-
-### Example output
-```
-docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) deserializeme/pxeless \
--a -u user-data.basic -n jammy
-...
-...
-...
-...
-[2022-06-19 14:36:41] 📁 Created temporary working directory /tmp/tmp.divHIg2PfD
-[2022-06-19 14:36:41] 📁 Created temporary build directory /tmp/tmp.GzoJu7mqPa
-[2022-06-19 14:36:41] 👶 Starting up...
-[2022-06-19 14:36:41] 🔎 Checking for daily jammy release...
-[2022-06-19 14:36:41] ✅ Daily release is 22.04
-[2022-06-19 14:36:41] ✅ 22.04 is greater than 20.10. Not a legacy image.
-[2022-06-19 14:36:41] 🔎 Checking for required utilities...
-[2022-06-19 14:36:41] 👍 All required utilities are installed.
-[2022-06-19 14:36:41] 🌎 Downloading ISO image for Ubuntu Server 22.04 LTS (Jammy Jellyfish) ...
-/app/ubuntu-original-2022-06-19.iso                100%[===============================================================================================================>]   1.37G  31.8MB/s    in 45s
-[2022-06-19 14:37:27] 👍 Downloaded and saved to /app/ubuntu-original-2022-06-19.iso
-[2022-06-19 14:37:27] 🌎 Downloading SHA256SUMS & SHA256SUMS.gpg files...
-[2022-06-19 14:37:27] 🌎 Downloading and saving Ubuntu signing key...
-[2022-06-19 14:37:28] 👍 Downloaded and saved to /tmp/tmp.divHIg2PfD/843938DF228D22F7B3742BC0D94AA3F0EFE21092.keyring
-[2022-06-19 14:37:28] 🔐 Verifying /app/ubuntu-original-2022-06-19.iso integrity and authenticity...
-[2022-06-19 14:37:41] 👍 Verification succeeded.
-[2022-06-19 14:37:41] 🔧 Extracting ISO image...
-[2022-06-19 14:37:49] 👍 Extracted to /tmp/tmp.GzoJu7mqPa
-[2022-06-19 14:37:49] 🔧 Extracting MBR image...
-[2022-06-19 14:37:49] 👍 Extracted to /tmp/tmp.divHIg2PfD/ubuntu-original-2022-06-19.mbr
-[2022-06-19 14:37:49] 🔧 Extracting EFI image...
-[2022-06-19 14:37:49] 👍 Extracted to /tmp/tmp.divHIg2PfD/ubuntu-original-2022-06-19.efi
-[2022-06-19 14:37:49] 🧩 Adding autoinstall parameter to kernel command line...
-[2022-06-19 14:37:49] 👍 Added parameter to UEFI and BIOS kernel command lines.
-[2022-06-19 14:37:49] 🧩 Adding user-data and meta-data files...
-[2022-06-19 14:37:49] 👍 Added data and configured kernel command line.
-[2022-06-19 14:37:49] 👷 Updating /tmp/tmp.GzoJu7mqPa/md5sum.txt with hashes of modified files...
-[2022-06-19 14:37:49] 👍 Updated hashes.
-[2022-06-19 14:37:49] 📦 Repackaging extracted files into an ISO image...
-[2022-06-19 14:37:54] 👍 Repackaged into ubuntu-autoinstall-2022-06-19.iso
-[2022-06-19 14:37:54] ✅ Completed.
-```
-## How it works
-
-First we download the ISO of your choice - a daily build, or a release. (Daily builds are faster because they don't require as many updates/upgrades)
-
-By default, the source ISO image is checked for integrity and authenticity using GPG. This can be disabled with ```-k```.
-
-We combine an `autoistall` config from the Ubuntu [Ubiquity installer](https://wiki.ubuntu.com/Ubiquity), and a [cloud-init](https://cloudinit.readthedocs.io/en/latest/) `cloud-config` / `user-data` file.
-
-The resulting product is a fully-automated Ubuntu install with pre-provision capabilities for basic users, groups, packages, storage, networks etc... This serves as an easy stepping-off point to Ansible, puppet, Chef and other configuration-management tooling for enterprise users, or to personalization tools like [jessebot/onboardme](https://github.com/jessebot/onboardme) for every-day users.
-
-> Be aware that, while similar in schema, the Autoinstall and Cloud-Init portions of the file do not mix - the `user-data` key marks the transition from autoinstall to cloud-init syntax.
+| Project Name | Description |
+| ---  | ---         |
+|[Tinkerbell](https://github.com/tinkerbell) | A flexible bare metal provisioning engine. Open-sourced by the folks @equinixmetal; currently a sandbox project in the CNCF |
+|[Metal³](https://github.com/metal3-io)| Bare Metal Host Provisioning for Kubernetes and preferred starting point for [Cluster API](https://cluster-api.sigs.k8s.io/) |
+|[Metal-as-a-Service](https://github.com/maas/maas)| Treat physical servers like virtual machines in the cloud. MAAS turns your bare metal into an elastic cloud-like resource|
+|[Packer](https://github.com/hashicorp/packer)| A tool for creating identical machine images for multiple platforms from a single source configuration. 
+|[Clonezilla Live!](https://gitlab.com/stevenshiau/clonezilla)| A partition or disk clone tool similar to Norton Ghost®. It saves and restores only used blocks in hard drive. Two types of Clonezilla are available, Clonezilla live and Clonezilla SE (Server Edition)|
 
 
-## Credentials
+## Testing your ISO with QEMU
 
-The credentials for the included example user-data.basic are `usn: vmadmin`, and `pwd: password`.
-To create your own credentials run:
-
-```bash
-mkpasswd -m sha-512 --rounds=4096 "some-password" -s "some-salt"
-```
-
-## Testing with QEMU
+<details>
+  <summary>Click to expand</summary>
 
 You will need to have a VNC client ([tigerVNC](https://tigervnc.org/) or [Remmina](https://remmina.org/) etc...) installed as well as the following packages:
 
@@ -237,24 +177,30 @@ You will need to have a VNC client ([tigerVNC](https://tigervnc.org/) or [Remmin
 The most common issues I run into with this process are improperly formatted yaml in the user-data file, and errors in the process of burning the ISO to a USB drive.
 
 In those cases, the machine will perform a partial install but instead of seeing `pxeless login:` as the machine name at login it will still say `ubuntu login:`.
+    
+</details>
+
+## Burn your ISO to a USB drive
 
 I prefer to use [Etcher](https://www.balena.io/etcher/) to create the USB drives on MacOS and dd on Linux as they seem to cause the fewest errors.
 
-  ```zsh
+To burn the ISO manually do the following:
+    
+  ```bash
   export IMAGE_FILE="ubuntu-autoinstall.iso"
   ```
 
- ```zsh
- # /dev/sdb is assumed for the sake of the example
+  ```bsh
+  # /dev/sdb is assumed for the sake of the example
 
- sudo fdisk -l |grep "Disk /dev/"
+  sudo fdisk -l |grep "Disk /dev/"
 
- export DISK_NAME="/dev/sdb"
+  export DISK_NAME="/dev/sdb"
 
- sudo umount "$DISK_NAME"
+  sudo umount "$DISK_NAME"
 
- sudo dd bs=4M if=$IMAGE_FILE of="$DISK_NAME" status=progress oflag=sync
-```
+  sudo dd bs=4M if=$IMAGE_FILE of="$DISK_NAME" status=progress oflag=sync
+  ```
 
 ### Contributors
 
