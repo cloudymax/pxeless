@@ -516,7 +516,7 @@ main(){
         fi
 
         reassemble_iso
-       # cleanup
+        cleanup
 }
 
 main "$@"
