@@ -217,7 +217,7 @@ download_iso(){
 
         if [ ! -f "${SOURCE_ISO}" ]; then
                 log "🌎 Downloading ISO image for ${IMAGE_NAME} ..."
-                wget -O "${ORIGINAL_ISO}" "${BASE_URL}/${ISO_FILE_NAME}"
+                wget -O "${ORIGINAL_ISO}" "${BASE_URL}/${ISO_FILE_NAME}" -q
                 log "👍 Downloaded and saved to ${ORIGINAL_ISO}"
         else
                 log "☑️ Using existing ${SOURCE_ISO} file."
