@@ -371,7 +371,7 @@ insert_extra_files(){
 	cd "${SQUASH_DIR}"
         
         log " - Step 2. Expand filesystem..."
-        sudo nsquashfs "${SQUASH_FS}"
+        sudo unsquashfs "${SQUASH_FS}"
         
         log " - Step 3. Copy extra files to /media..."
         sudo cp -R "${EXTRA_FILES_FOLDER}/." "squashfs-root/media/"
