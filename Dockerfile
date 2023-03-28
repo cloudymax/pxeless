@@ -24,4 +24,4 @@ WORKDIR /data
 
 COPY image-create.sh /data
 
-ENTRYPOINT [ "/app/image-create.sh" ]
+ENTRYPOINT [ "/data/image-create.sh" ]
