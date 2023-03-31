@@ -29,7 +29,7 @@ jobs:
           echo "vnc will available at $(hostname -I |awk 'print $1'):0"
           qemu-img create -f qcow2 hdd.img 4G && \
           sudo qemu-system-x86_64 -machine q35 -cpu host \
-          -smp 4 -m 4G -cdrom ubuntu-autoinstall.iso \
+          -accel=hvf -smp 4 -m 4G -cdrom ubuntu-autoinstall.iso \
           -display none -drive if=virtio,file=hdd.img,index=0,media=disk \
           -vga virtio -serial stdio -parallel none \
           -netdev user,id=n1 -device virtio-net-pci,netdev=n1 \
