@@ -220,6 +220,13 @@ In those cases, the machine will perform a partial install but instead of seeing
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/meraj-kashi">
+            <img src="https://avatars.githubusercontent.com/u/55163548?v=4" width="100;" alt="meraj-kashi"/>
+            <br />
+            <sub><b>Meraj Kashi</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/koenvandesande">
             <img src="https://avatars.githubusercontent.com/u/803537?v=4" width="100;" alt="koenvandesande"/>
             <br />
@@ -239,7 +246,8 @@ In those cases, the machine will perform a partial install but instead of seeing
             <br />
             <sub><b>Toro</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/webbertakken">
             <img src="https://avatars.githubusercontent.com/u/20756439?v=4" width="100;" alt="webbertakken"/>
