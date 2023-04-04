@@ -26,6 +26,7 @@ export_metadata(){
         export MD5_CHECKSUM=1
         export USE_RELEASE_ISO=0
         export EXTRA_FILES_FOLDER=""
+        export OFFLINE_INSTALLER=""
 
         export LEGACY_IMAGE=0
         export CURRENT_RELEASE=""
@@ -45,45 +46,47 @@ Usage: image-create.sh [-h] [-v] [-n] [-a] [-e] [-u user-data-file] [-m meta-dat
 
 Available options:
 
--h, --help              Print this help and exit
+-h, --help                Print this help and exit
 
--v, --verbose           Print script debug info
+-v, --verbose             Print script debug info
 
--n, --code-name         The Code Name of the Ubuntu release to download (bionic, focal, jammy etc...)
+-n, --code-name           The Code Name of the Ubuntu release to download (bionic, focal, jammy etc...)
 
--a, --all-in-one        Bake user-data and meta-data into the generated ISO. By default you will
-                        need to boot systems with a CIDATA volume attached containing your
-                        autoinstall user-data and meta-data files.
-                        For more information see: https://ubuntu.com/server/docs/install/autoinstall-quickstart
+-a, --all-in-one          Bake user-data and meta-data into the generated ISO. By default you will
+                          need to boot systems with a CIDATA volume attached containing your
+                          autoinstall user-data and meta-data files.
+                          For more information see: https://ubuntu.com/server/docs/install/autoinstall-quickstart
 
--e, --use-hwe-kernel    Force the generated ISO to boot using the hardware enablement (HWE) kernel. Not supported
-                        by early Ubuntu 20.04 release ISOs.
+-e, --use-hwe-kernel      Force the generated ISO to boot using the hardware enablement (HWE) kernel. Not supported
+                          by early Ubuntu 20.04 release ISOs.
 
--u, --user-data         Path to user-data file. Required if using -a
+-u, --user-data           Path to user-data file. Required if using -a
 
--m, --meta-data         Path to meta-data file. Will be an empty file if not specified and using -a
+-m, --meta-data           Path to meta-data file. Will be an empty file if not specified and using -a
 
--x, --extra-files       Specifies a folder whos contents will be copied into the /media directroy of the squashfs.
-                        If not set, nothing is copied
+-x, --extra-files         Specifies a folder whos contents will be copied into the /media directroy of the squashfs.
+                          If not set, nothing is copied
 
--k, --no-verify         Disable GPG verification of the source ISO file. By default SHA256SUMS-<current date> and
-                        SHA256SUMS-<current date>.gpg files in the script directory will be used to verify the authenticity and integrity
-                        of the source ISO file. If they are not present the latest daily SHA256SUMS will be
-                        downloaded and saved in the script directory. The Ubuntu signing key will be downloaded and
-                        saved in a new keyring in the script directory.
+-k, --no-verify           Disable GPG verification of the source ISO file. By default SHA256SUMS-<current date> and
+                          SHA256SUMS-<current date>.gpg files in the script directory will be used to verify the authenticity and integrity
+                          of the source ISO file. If they are not present the latest daily SHA256SUMS will be
+                          downloaded and saved in the script directory. The Ubuntu signing key will be downloaded and
+                          saved in a new keyring in the script directory.
 
--r, --use-release-iso   Use the current release ISO instead of the daily ISO. The file will be used if it already
-                        exists.
+-r, --use-release-iso     Use the current release ISO instead of the daily ISO. The file will be used if it already
+                          exists.
 
--s, --source            Source ISO file path. By default the latest daily ISO for Ubuntu server will be downloaded
-                        and saved as <script directory>/ubuntu-original-<current date>.iso
-                        That file will be used by default if it already exists.
+-s, --source              Source ISO file path. By default the latest daily ISO for Ubuntu server will be downloaded
+                          and saved as <script directory>/ubuntu-original-<current date>.iso
+                          That file will be used by default if it already exists.
 
--l, --legacy            When using the -s, --source flags you must specify the --legacy flag if the source image is based on isolinux.
-                        Otherwise, eltorito usage is assumed 
+-l, --legacy              When using the -s, --source flags you must specify the --legacy flag if the source image is based on isolinux.
+                          Otherwise, eltorito usage is assumed 
 
--d, --destination       Destination ISO file. By default <script directory>/ubuntu-autoinstall-<current date>.iso will be
-                        created, overwriting any existing file.
+-d, --destination         Destination ISO file. By default <script directory>/ubuntu-autoinstall-<current date>.iso will be
+                          created, overwriting any existing file.
+-o, --offline-installer   Run a bash script to customize image, including install packages and configuration.
+                          It should be used with -x, and the bash script should be avilable in the same extras directory.
 EOF
         exit
 }
@@ -123,6 +126,10 @@ parse_params() {
                         ;;
                 -x | --extra-files)
                         EXTRA_FILES_FOLDER="${2-}"
+                        shift
+                        ;;
+                -o | --offline-installer)
+                        OFFLINE_INSTALLER="${2-}"
                         shift
                         ;;
                 -?*) die "Unknown option: $1" ;;
@@ -350,7 +357,7 @@ set_kernel_autoinstall(){
         fi
 }
 
-# Add extra files from a folder into the build dir
+# Add extra files from a folder into the build dir and run offline installer
 insert_extra_files(){
         
 	SQUASH_DIR=$(mktemp -d)
@@ -375,7 +382,12 @@ insert_extra_files(){
         
         log " - Step 3. Copy extra files to /media..."
         sudo cp -R "${EXTRA_FILES_FOLDER}/." "squashfs-root/media/"
-        
+
+        if [ -n "$OFFLINE_INSTALLER" ]; then
+                log " - Step 3.5. Runing offline installer script..."
+                sudo chroot squashfs-root/ /bin/bash "/media/${OFFLINE_INSTALLER}"
+        fi
+
         log " - Step 4. Rebuilding squashfs.."
         sudo mksquashfs squashfs-root/ "${SQUASH_FS}" -comp xz -b 1M -noappend
         
