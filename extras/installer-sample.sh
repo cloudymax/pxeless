@@ -4,11 +4,14 @@
 echo 'nameserver 8.8.8.8' > /etc/resolv.conf
 
 apt update
+# List of packages to be installed during build
 apt install -y \
         vim \
         htop
-echo ' ' > /etc/resolv.conf
+        
 apt clean
+
+echo ' ' > /etc/resolv.conf
 
 history -c
 exit
