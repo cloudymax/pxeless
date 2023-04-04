@@ -51,6 +51,11 @@ The resulting product is a fully-automated Ubuntu installer. This serves as an e
       docker run --privileged --rm --volume "$(pwd):/data" deserializeme/pxeless -a -u user-data.basic -n jammy -x /data/extras
       ```
 
+        - Running an offline installer script to customize image during build procedure. Adding a bash script as content of the `extras` directory. The script should be passed to `image-create` using  `-o` or `--offline-installer`:
+         ```bash
+         docker run --privileged --rm --volume "$(pwd):/data" deserializeme/pxeless -a -u user-data.basic -n jammy -x /data/extras -o installer-sample.sh
+        ```
+
 
 4. Writing your ISO to a USB drive
 
