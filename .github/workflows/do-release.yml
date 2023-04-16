@@ -13,6 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Zip artifact for deployment
+        run: zip pxeless-$RELEASE_VERSION.zip ./* -r
+        shell: bash
+        env: 
+          RELEASE_VERSION: ${{github.event.inputs.release_version}}
+      
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
@@ -20,4 +26,4 @@ jobs:
           draft: true
           name: ${{github.event.inputs.release_version}}
           files: |
-            ./*
+            pxeless-*.zip
