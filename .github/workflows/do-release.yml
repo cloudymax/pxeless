@@ -41,7 +41,6 @@ jobs:
           images: |
             deserializeme/pxeless
           tags: |
-            "latest",
             "${{github.event.inputs.release_version}}"
           
       - name: Login to DockerHub
