@@ -218,17 +218,17 @@ In those cases, the machine will perform a partial install but instead of seeing
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/lmunch">
-            <img src="https://avatars.githubusercontent.com/u/5563316?v=4" width="100;" alt="lmunch"/>
-            <br />
-            <sub><b>Lars Munch</b></sub>
-        </a>
-    </td>
-    <td align="center">
         <a href="https://github.com/meraj-kashi">
             <img src="https://avatars.githubusercontent.com/u/55163548?v=4" width="100;" alt="meraj-kashi"/>
             <br />
             <sub><b>Meraj Kashi</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/lmunch">
+            <img src="https://avatars.githubusercontent.com/u/5563316?v=4" width="100;" alt="lmunch"/>
+            <br />
+            <sub><b>Lars Munch</b></sub>
         </a>
     </td>
     <td align="center">
