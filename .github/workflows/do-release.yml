@@ -13,15 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: add a tag
-        run: |
-          git tag ${{ github.event.inputs.release_version }}
-        shell: bash
-        env:
-          RELEASE_VERSION: ${{github.event.inputs.release_version}}
-
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           generate_release_notes: true
           draft: true
+          name: ${{github.event.inputs.release_version}}
+          files: |
+            ./*
