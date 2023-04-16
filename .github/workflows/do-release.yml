@@ -6,12 +6,10 @@ on:
         description: 'Release Version'
         required: true
         default: 'v0.0.0'
+
 jobs:
-  build-and-boot:
+  generate-code-release:
     runs-on: ubuntu-latest
-    container: 
-      image: deserializeme/pxeless:latest
-      options: -v ${{ github.workspace }}:/data
     steps:
       - uses: actions/checkout@v3
 
@@ -23,10 +21,6 @@ jobs:
         env:
           RELEASE_VERSION: ${{github.event.inputs.release_version}}
 
-      #- name: Build ISO Image
-      #  run: |
-      #    /app/image-create.sh -a -k -u /data/user-data.basic -n jammy
-        
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
@@ -35,5 +29,3 @@ jobs:
           files: |
             pxeless-*.zip
             #ubuntu-autoinstall.iso
-          
-          
