@@ -41,8 +41,7 @@ jobs:
           images: |
             deserializeme/pxeless
           tags: |
-            "${{github.event.inputs.release_version}}",
-            latest
+            "${{github.event.inputs.release_version}}"
           
       - name: Login to DockerHub
         if: github.event_name != 'pull_request'
