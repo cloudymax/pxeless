@@ -14,20 +14,26 @@ jobs:
       options: -v ${{ github.workspace }}:/data
     steps:
       - uses: actions/checkout@v3
-      - name: Build Iso
-        run: |
-          /app/image-create.sh -a -k -u /data/user-data.basic -n jammy
 
-      - name: version
-        run: echo "::set-output name=version::${{ github.ref_name }}"
-        id: version
-    
+      - name: Zip Source Code Folder
+        run: |
+          git tag ${{ github.event.inputs.release_version }}
+          tar -zcvf pxeless-$RELEASE_VERSION.tar.gz .
+        shell: bash
+        env:
+          RELEASE_VERSION: ${{github.event.inputs.release_version}}
+
+      #- name: Build ISO Image
+      #  run: |
+      #    /app/image-create.sh -a -k -u /data/user-data.basic -n jammy
+        
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           generate_release_notes: true
           draft: true
           files: |
-            ubuntu-autoinstall.iso
+            pxeless-*.zip
+            #ubuntu-autoinstall.iso
           
           
