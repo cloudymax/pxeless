@@ -1,9 +1,11 @@
-name: Build and boot
+name: Do Release
 on:
-  push:
-    branches: [ "develop" ]
-    tags:
-      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'Release Version'
+        required: true
+        default: 'v0.0.0'
 jobs:
   build-and-boot:
     runs-on: ubuntu-latest
@@ -16,44 +18,16 @@ jobs:
         run: |
           /app/image-create.sh -a -k -u /data/user-data.basic -n jammy
 
-      - name: install qemu and boot iso
-        run: |
-          apt-get update && apt-get install -y qemu-kvm \
-          bridge-utils \
-          virtinst \
-          ovmf \
-          qemu-utils \
-          cloud-image-utils \
-          whois \
-          guestfs-tools && \
-          echo "vnc will available at $(hostname -I |awk 'print $1'):0"
-          qemu-img create -f qcow2 hdd.img 4G && \
-          sudo qemu-system-x86_64 -machine q35 \
-          -smp 4 -m 4G -cdrom ubuntu-autoinstall.iso \
-          -display none -drive if=virtio,file=hdd.img,index=0,media=disk \
-          -vga virtio -serial stdio -parallel none \
-          -netdev user,id=n1 -device virtio-net-pci,netdev=n1 \
-          -vnc $(hostname -I |awk 'print $1'):0
-          
       - name: version
         run: echo "::set-output name=version::${{ github.ref_name }}"
         id: version
     
-      - name: release
-        uses: actions/create-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        id: create_release
-        with:
-          draft: false
-          prerelease: false
-          release_name: ${{ steps.version.outputs.version }}
-          tag_name: ${{ github.ref }}
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          
-      - name: upload linux artifact
+      - name: Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ubuntu-autoinstall.iso
+          generate_release_notes: true
+          draft: true
+          files: |
+            ubuntu-autoinstall.iso
+          
           
