@@ -13,10 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Zip Source Code Folder
+      - name: add a tag
         run: |
           git tag ${{ github.event.inputs.release_version }}
-          tar -zcvf pxeless-$RELEASE_VERSION.tar.gz .
         shell: bash
         env:
           RELEASE_VERSION: ${{github.event.inputs.release_version}}
@@ -26,6 +25,3 @@ jobs:
         with:
           generate_release_notes: true
           draft: true
-          files: |
-            pxeless-*.zip
-            #ubuntu-autoinstall.iso
