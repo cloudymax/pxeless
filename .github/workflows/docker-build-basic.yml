@@ -1,15 +1,7 @@
-name: ci
+name: Build-And-Push Docker Image
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - 'develop'
-    tags:
-      - '*'
-  pull_request:
-    branches:
-      - 'develop'
 
 jobs:
   docker:
