@@ -64,19 +64,19 @@ The resulting product is a fully-automated Ubuntu installer. This serves as an e
     
     - On Linux use `dd`.
     
-          ```bash
-          # /dev/sdb is assumed for the sake of the example
+        ```bash
+        # /dev/sdb is assumed for the sake of the example
   
-          export IMAGE_FILE="ubuntu-autoinstall.iso"
+        export IMAGE_FILE="ubuntu-autoinstall.iso"
 
-          sudo fdisk -l |grep "Disk /dev/"
+        sudo fdisk -l |grep "Disk /dev/"
 
-          export DISK_NAME="/dev/sdb"
+        export DISK_NAME="/dev/sdb"
 
-          sudo umount "$DISK_NAME"
+        sudo umount "$DISK_NAME"
 
-          sudo dd bs=4M if=$IMAGE_FILE of="$DISK_NAME" status=progress oflag=sync
-          ```
+        sudo dd bs=4M if=$IMAGE_FILE of="$DISK_NAME" status=progress oflag=sync
+        ```
 
 
 4. Boot your ISO file on a physical machine for VM and log-in. If you used my `user-data.basic` file the user is `vmadmin`, and the password is `password`. You can create your own credentials by running `mkpasswd --method=SHA-512 --rounds=4096` as documented on [THIS](https://cloudinit.readthedocs.io/en/0.7.8/topics/examples.html) page at line 49.
