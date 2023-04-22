@@ -1,7 +1,6 @@
-name: Build Selenium Images
+name: sync dockerhub readme
 on:
   workflow_dispatch:
-
 jobs:
   sync-readme:
     runs-on: ubuntu-latest
