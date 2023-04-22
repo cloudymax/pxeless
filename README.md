@@ -10,7 +10,7 @@ PXEless works by:
   2. Extracting the EFI, MBR, and File-System from the ISO
   3. Adding some kernel command line parameters
   4. Adding customised autoinstall and cloud-init configuration files
-  5. Copying arbitrary files to the squashfs (Optional, requres `--privileged` mode in Docker)
+  5. Copying arbitrary files to / running scripts against the squashfs (Optional)
   6. Repacking the data into a new ISO.
 
 The resulting product is a fully-automated Ubuntu installer. This serves as an easy stepping-off point for configuration-management tooling like Ansible, Puppet, and Chef or personalization tools like [jessebot/onboardme](https://github.com/jessebot/onboardme). Please note that while similar in schema, the Autoinstall and Cloud-Init portions of the `user-data` file do not mix. The `user-data` key marks the transition from autoinstall to cloud-init syntax as seen [HERE](https://github.com/cloudymax/pxeless/blob/62c028c885a9c37318092dd67a02005b3595f610/user-data.basic#L14)
