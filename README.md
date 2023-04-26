@@ -48,13 +48,13 @@ The resulting product is a fully-automated Ubuntu installer. This serves as an e
           
     - Adding static files to the ISO 
       ```bash
-      docker run --privileged --rm --volume "$(pwd):/data" deserializeme/pxeless -a -u user-data.basic -n jammy -x /data/extras
+      docker run --rm --volume "$(pwd):/data" deserializeme/pxeless -a -u user-data.basic -n jammy -x /data/extras
       ```
       > Adding extra files to the ISO via the `-x` or `--extra-files` flag requires root access in order to chroot the squashfs. The contents of the `extras` directory will be copied to the `/media` dir of the image's filesystem. The extra-files are mounted as `/data/<directory>` when running in a docker conatiner because we mount `$(pwd)` as `/data/`
 
     - Offline Installation 
       ```bash
-         docker run --privileged --rm --volume "$(pwd):/data" deserializeme/pxeless -a -u user-data.basic -n jammy -x /data/extras -o installer-sample.sh
+         docker run --rm --volume "$(pwd):/data" deserializeme/pxeless -a -u user-data.basic -n jammy -x /data/extras -o installer-sample.sh
       ```
       > Running an offline installer script to customize image during build procedure. Adding a bash script as content of the `extras` directory. The script should be passed to `image-create` using  `-o` or `--offline-installer`:
 
