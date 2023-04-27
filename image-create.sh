@@ -138,6 +138,8 @@ parse_params() {
                 shift
         done
 
+        echo "CODE NAME IS: $CODE_NAME"
+
         log "👶 Starting up..."
 
         # check required params and arguments
@@ -197,12 +199,12 @@ verify_deps(){
         log "👍 All required utilities are installed."
 }
 
-# get the url and iso infor for the latest release
+# get the url and iso info for the latest release
 latest_release(){
         BASE_URL="https://releases.ubuntu.com/${CODE_NAME}/"
         log "🔎 Checking for latest ${CODE_NAME} release..."
         ISO_FILE_NAME=$(curl -sSL "${BASE_URL}" |grep -oP "ubuntu-.*-server-amd64.iso" |head -n 1)
-        IMAGE_NAME=$(curl -sSL ${BASE_URL} |grep -o 'Ubuntu .* LTS .*)' |head -n 1)
+        IMAGE_NAME=$(curl -sSL ${BASE_URL} |grep -o 'Ubuntu .* .*)' |head -n 1)
         CURRENT_RELEASE=$(echo "${ISO_FILE_NAME}" | cut -f2 -d-)
         SHA_SUFFIX="${CURRENT_RELEASE}"
         log "✅ Latest release is ${CURRENT_RELEASE}"
@@ -213,7 +215,7 @@ daily_release(){
         BASE_URL="https://cdimage.ubuntu.com/ubuntu-server/${CODE_NAME}/daily-live/current"
         log "🔎 Checking for daily ${CODE_NAME} release..."
         ISO_FILE_NAME=$(curl -sSL "${BASE_URL}" |grep -oP "${CODE_NAME}-live-server-amd64.iso" |head -n 1)
-        IMAGE_NAME=$(curl -sSL ${BASE_URL} |grep -o 'Ubuntu .* LTS .*)' |head -n 1)
+        IMAGE_NAME=$(curl -sSL ${BASE_URL} |grep -o 'Ubuntu .* .*)' |head -n 1)
         CURRENT_RELEASE=$(echo "${IMAGE_NAME}" | awk '{print $3}')
         SHA_SUFFIX="${CURRENT_RELEASE}"
         log "✅ Daily release is ${CURRENT_RELEASE}"
@@ -224,7 +226,11 @@ download_iso(){
 
         if [ ! -f "${SOURCE_ISO}" ]; then
                 log "🌎 Downloading ISO image for ${IMAGE_NAME} ..."
-                wget -O "${ORIGINAL_ISO}" "${BASE_URL}/${ISO_FILE_NAME}" -q
+                wget --no-verbose \
+                    --show-progress \
+                    --progress=bar:force:noscroll \
+                    -O "${ORIGINAL_ISO}" "${BASE_URL}/${ISO_FILE_NAME}"
+
                 log "👍 Downloaded and saved to ${ORIGINAL_ISO}"
         else
                 log "☑️ Using existing ${SOURCE_ISO} file."
