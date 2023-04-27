@@ -82,7 +82,7 @@ The resulting product is a fully-automated Ubuntu installer. This serves as an e
 4. Boot your ISO file on a physical machine for VM and log-in. If you used my `user-data.basic` file the user is `vmadmin`, and the password is `password`. You can create your own credentials by running `mkpasswd --method=SHA-512 --rounds=4096` as documented on [THIS](https://cloudinit.readthedocs.io/en/0.7.8/topics/examples.html) page at line 49.
 
 ## Command-line options
-
+  
 |Short  |Long    |Description|
 | :--- | :---  | :---    |
 | -h    | --help | Print this help and exit |
