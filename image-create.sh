@@ -404,7 +404,7 @@ insert_extra_files(){
         rm -rf "${SQUASH_FS}"
         rm -rf squashfs-root
 
-        cd "$1"
+        cd -
 }
 
 # re-create the MD5 checksum data
@@ -498,7 +498,6 @@ die() {
 
 
 main(){
-        SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
         export_metadata
         create_tmp_dirs
 
@@ -527,7 +526,7 @@ main(){
         set_hwe_kernel
 
         if [ -n "$EXTRA_FILES_FOLDER" ]; then
-                insert_extra_files "$SCRIPT_DIR"
+                insert_extra_files
         fi
 
         if [ ${MD5_CHECKSUM} -eq 1 ]; then
