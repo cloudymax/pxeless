@@ -248,18 +248,32 @@ In those cases, the machine will perform a partial install but instead of seeing
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/n0k0m3">
+            <img src="https://avatars.githubusercontent.com/u/10925298?v=4" width="100;" alt="n0k0m3"/>
+            <br />
+            <sub><b>N0k0m3</b></sub>
+        </a>
+    </td></tr>
+<tr>
+    <td align="center">
         <a href="https://github.com/ToroNZ">
             <img src="https://avatars.githubusercontent.com/u/8522935?v=4" width="100;" alt="ToroNZ"/>
             <br />
             <sub><b>Toro</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/webbertakken">
             <img src="https://avatars.githubusercontent.com/u/20756439?v=4" width="100;" alt="webbertakken"/>
             <br />
             <sub><b>Webber Takken</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/snyk-bot">
+            <img src="https://avatars.githubusercontent.com/u/19733683?v=4" width="100;" alt="snyk-bot"/>
+            <br />
+            <sub><b>Snyk Bot</b></sub>
         </a>
     </td></tr>
 </table>
