@@ -26,7 +26,7 @@ The resulting product is a fully-automated Ubuntu installer. This serves as an e
 
 ## Docker Quickstart
 
-  It is advised to run PXEless in a docker container due to it's reliance on 
+  It is advised to run PXEless in a docker container due to it's reliance on Linux-only packages.
 
 > Skip 1 and 2 if you already have a cloud-init file
 
