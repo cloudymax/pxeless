@@ -282,6 +282,13 @@ In those cases, the machine will perform a partial install but instead of seeing
     </td></tr>
 <tr>
     <td align="center">
+        <a href="https://github.com/MrKinauJr">
+            <img src="https://avatars.githubusercontent.com/u/46278197?v=4" width="100;" alt="MrKinauJr"/>
+            <br />
+            <sub><b>MrKinauJr</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/ToroNZ">
             <img src="https://avatars.githubusercontent.com/u/8522935?v=4" width="100;" alt="ToroNZ"/>
             <br />
