@@ -19,7 +19,7 @@ apt-get install -y \
         htop
 
 # Clean the apt-package cache to prevent stale package data on install
-# as weel as prevent inflating the image size
+# as well as prevent inflating the image size
 apt-get clean
 
 # Remove our changes to the resolv.conf file
