@@ -1,4 +1,5 @@
-FROM ubuntu:kinetic
+# End of life 2024-01-20
+FROM ubuntu:lunar
 
 RUN apt-get -y update && \
 	apt-get -y install squashfuse \
