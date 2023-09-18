@@ -303,6 +303,13 @@ In those cases, the machine will perform a partial install but instead of seeing
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/ZerNox">
+            <img src="https://avatars.githubusercontent.com/u/13166371?v=4" width="100;" alt="ZerNox"/>
+            <br />
+            <sub><b>Null</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/snyk-bot">
             <img src="https://avatars.githubusercontent.com/u/19733683?v=4" width="100;" alt="snyk-bot"/>
             <br />
