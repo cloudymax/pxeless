@@ -1,5 +1,5 @@
 # End of life 2024-01-20
-FROM ubuntu:lunar
+FROM ubuntu:23.04
 
 RUN apt-get -y update && \
 	apt-get -y install squashfuse \
