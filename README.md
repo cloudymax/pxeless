@@ -282,6 +282,13 @@ In those cases, the machine will perform a partial install but instead of seeing
     </td></tr>
 <tr>
     <td align="center">
+        <a href="https://github.com/snyk-bot">
+            <img src="https://avatars.githubusercontent.com/u/19733683?v=4" width="100;" alt="snyk-bot"/>
+            <br />
+            <sub><b>Snyk Bot</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/MrKinauJr">
             <img src="https://avatars.githubusercontent.com/u/46278197?v=4" width="100;" alt="MrKinauJr"/>
             <br />
@@ -307,13 +314,6 @@ In those cases, the machine will perform a partial install but instead of seeing
             <img src="https://avatars.githubusercontent.com/u/13166371?v=4" width="100;" alt="ZerNox"/>
             <br />
             <sub><b>Null</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/snyk-bot">
-            <img src="https://avatars.githubusercontent.com/u/19733683?v=4" width="100;" alt="snyk-bot"/>
-            <br />
-            <sub><b>Snyk Bot</b></sub>
         </a>
     </td></tr>
 </table>
