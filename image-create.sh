@@ -16,7 +16,7 @@ export_metadata(){
         export ORIGINAL_ISO="ubuntu-original-$TODAY.iso"
         export EFI_IMAGE="ubuntu-original-$TODAY.efi"
         export MBR_IMAGE="ubuntu-original-$TODAY.mbr"
-        export SOURCE_ISO="${ORIGINAL_ISO}"
+        export SOURCE_ISO=""
         export DESTINATION_ISO="ubuntu-autoinstall.iso"
         export SHA_SUFFIX="${TODAY}"
         export UBUNTU_GPG_KEY_ID="843938DF228D22F7B3742BC0D94AA3F0EFE21092"
@@ -207,6 +207,8 @@ latest_release(){
         IMAGE_NAME=$(curl -sSL ${BASE_URL} |grep -o 'Ubuntu .* .*)' |head -n 1)
         CURRENT_RELEASE=$(echo "${ISO_FILE_NAME}" | cut -f2 -d-)
         SHA_SUFFIX="${CURRENT_RELEASE}"
+        SOURCE_ISO="${ISO_FILE_NAME}" # request the release iso
+        ORIGINAL_ISO="${ISO_FILE_NAME}" # set it as the filename for the download
         log "✅ Latest release is ${CURRENT_RELEASE}"
 }
 
@@ -218,6 +220,7 @@ daily_release(){
         IMAGE_NAME=$(curl -sSL ${BASE_URL} |grep -o 'Ubuntu .* .*)' |head -n 1)
         CURRENT_RELEASE=$(echo "${IMAGE_NAME}" | awk '{print $3}')
         SHA_SUFFIX="${CURRENT_RELEASE}"
+        SOURCE_ISO="${ORIGINAL_ISO}" # pick up todays download
         log "✅ Daily release is ${CURRENT_RELEASE}"
 }
 
@@ -502,19 +505,17 @@ main(){
         create_tmp_dirs
 
         parse_params "$@"
+        verify_deps
 
-        if [ ! -f "$SOURCE_ISO" ]; then
-
+        if [[ -z "${SOURCE_ISO}" ]]; then
                 if [ "${USE_RELEASE_ISO}" -eq 1 ]; then
                         latest_release
                 else
                         daily_release
                 fi
-
                 check_legacy
         fi
 
-        verify_deps
         download_iso
 
         if [ ${GPG_VERIFY} -eq 1 ]; then
