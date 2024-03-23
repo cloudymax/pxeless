@@ -19,6 +19,8 @@ export_metadata(){
         export SOURCE_ISO=""
         export DESTINATION_ISO="ubuntu-autoinstall.iso"
         export SHA_SUFFIX="${TODAY}"
+        export DEFAULT_TIMEOUT="30"
+        export TIMEOUT="${DEFAULT_TIMEOUT}"
         export UBUNTU_GPG_KEY_ID="843938DF228D22F7B3742BC0D94AA3F0EFE21092"
         export GPG_VERIFY=1
         export ALL_IN_ONE=0
@@ -76,6 +78,8 @@ Available options:
 -r, --use-release-iso     Use the current release ISO instead of the daily ISO. The file will be used if it already
                           exists.
 
+-t, --timeout             Set the GRUB timeout. Defaults to 30.
+
 -s, --source              Source ISO file path. By default the latest daily ISO for Ubuntu server will be downloaded
                           and saved as <script directory>/ubuntu-original-<current date>.iso
                           That file will be used by default if it already exists.
@@ -130,6 +134,10 @@ parse_params() {
                         ;;
                 -o | --offline-installer)
                         OFFLINE_INSTALLER="${2-}"
+                        shift
+                        ;;
+                -t | --timeout)
+                        TIMEOUT="${2-}"
                         shift
                         ;;
                 -?*) die "Unknown option: $1" ;;
@@ -341,6 +349,13 @@ set_kernel_autoinstall(){
                 export LEGACY_IMAGE=1
                 sed -i -e 's/---/ autoinstall  ---/g' "${BUILD_DIR}/isolinux/txt.cfg"
                 sed -i -r 's/timeout\s+[0-9]+/timeout 1/g' "${BUILD_DIR}/isolinux/isolinux.cfg"
+        fi
+
+        if [[ "${TIMEOUT}" != "${DEFAULT_TIMEOUT}" ]]; then
+                log "🧩 Setting grub timeout to ${TIMEOUT} sec ..."
+                sed -i -e 's/set timeout=30/set timeout=1/g' "${BUILD_DIR}/boot/grub/grub.cfg"
+                sed -i -e 's/set timeout=30/set timeout=1/g' "${BUILD_DIR}/boot/grub/loopback.cfg"
+                log "👍 Set grub timeout to ${TIMEOUT} sec."
         fi
 
         log "👍 Added parameter to UEFI and BIOS kernel command lines."
