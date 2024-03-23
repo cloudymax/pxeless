@@ -315,6 +315,13 @@ In those cases, the machine will perform a partial install but instead of seeing
             <br />
             <sub><b>Null</b></sub>
         </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/dcd-arnold">
+            <img src="https://avatars.githubusercontent.com/u/100685413?v=4" width="100;" alt="dcd-arnold"/>
+            <br />
+            <sub><b>Arnold</b></sub>
+        </a>
     </td></tr>
 </table>
 <!-- readme: contributors -end -->
