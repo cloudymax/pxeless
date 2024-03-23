@@ -261,6 +261,13 @@ In those cases, the machine will perform a partial install but instead of seeing
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/snyk-bot">
+            <img src="https://avatars.githubusercontent.com/u/19733683?v=4" width="100;" alt="snyk-bot"/>
+            <br />
+            <sub><b>Snyk Bot</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/koenvandesande">
             <img src="https://avatars.githubusercontent.com/u/803537?v=4" width="100;" alt="koenvandesande"/>
             <br />
@@ -273,27 +280,20 @@ In those cases, the machine will perform a partial install but instead of seeing
             <br />
             <sub><b>Markus Pöschl</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/dcd-arnold">
             <img src="https://avatars.githubusercontent.com/u/100685413?v=4" width="100;" alt="dcd-arnold"/>
             <br />
             <sub><b>Arnold</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/n0k0m3">
             <img src="https://avatars.githubusercontent.com/u/10925298?v=4" width="100;" alt="n0k0m3"/>
             <br />
             <sub><b>N0k0m3</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/snyk-bot">
-            <img src="https://avatars.githubusercontent.com/u/19733683?v=4" width="100;" alt="snyk-bot"/>
-            <br />
-            <sub><b>Snyk Bot</b></sub>
         </a>
     </td>
     <td align="center">
